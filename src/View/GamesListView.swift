@@ -25,10 +25,7 @@ struct GamesListView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing, content: {
                 NavigationLink(destination: {
-                    // TODO: This is not working
-                    GameForm(onSave: { snapshot in
-                        self.modelContext.save(snapshot)
-                    })
+                    GameForm()
                 }, label: {
                     IconView(.plus)
                 })
@@ -54,10 +51,11 @@ fileprivate struct SearchView: View {
         ModelsView(models, "no results", content: {
             Form {
                 ForEach(models) { model in
-                    let snapshot: GameSnapshot = model.snapshot
                     NavigationLink(destination: {
-                        GameView(snapshot)
+                        let builder: GameBuilder = .init(model)
+                        GameView(builder)
                     }, label: {
+                        let snapshot: GameSnapshot = model.snapshot
                         VStack(alignment: .leading, spacing: 5) {
                             Text(snapshot.title)
                                 .bold()

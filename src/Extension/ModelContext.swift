@@ -36,19 +36,28 @@ extension ModelContext {
         self.store()
     }
     
-    // TODO: This is not working
     @discardableResult
-    func save(_ current: GameSnapshot) -> GameModel {
+    func save(_ builder: GameBuilder) -> GameResult {
+        let current: GameSnapshot = builder.snapshot
         let composite: GameFetchDescriptor = .getByCompositeKey(current)
-        let fetched: GameModel? = self.fetchModel(composite)
-        if let fetched: GameModel = fetched {
-            let updated: GameModel = fetched.setSnapshot(current)
-            self.store()
-            return updated
+        let new: GameModel? = self.fetchModel(composite)
+        let uuid: GameFetchDescriptor = .getByUUID(builder.original)
+        if let old: GameModel = self.fetchModel(uuid) {
+            if let new: GameModel = new, old.uuid != new.uuid {
+                return .init(new.snapshot, false, .edit)
+            } else {
+                old.updateFromSnapshot(current)
+                self.store()
+                return .init(current, true, .edit)
+            }
         } else {
-            let game: GameModel = .fromSnapshot(current)
-            self.add(game)
-            return game
+            if let new: GameModel = new {
+                return .init(new.snapshot, false, .add)
+            } else {
+                let game: GameModel = .fromSnapshot(current)
+                self.add(game)
+                return .init(current, true, .add)
+            }
         }
     }
     

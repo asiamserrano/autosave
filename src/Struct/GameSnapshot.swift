@@ -31,6 +31,14 @@ public struct GameSnapshot {
         return .init(model.uuid, model.title_trim, release, status, model.boxart_data)
     }
     
+    public static func fromBuilder(_ builder: GameBuilder) -> Self {
+        let title: String = builder.title.trimmed
+        let release: Date = builder.release
+        let status: GameStatusEnum = builder.status
+        let boxart: Data? = builder.boxart
+        return .init(.init(), title, release, status, boxart)
+    }
+    
     public let uuid: UUID
     public let title: String
     public let release: Date

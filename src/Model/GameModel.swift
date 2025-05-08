@@ -12,8 +12,8 @@ import SwiftData
 public class GameModel {
     
     public static func fromSnapshot(_ snapshot: GameSnapshot) -> GameModel {
-        let model: GameModel = .init(uuid: snapshot.uuid)
-        return model.setSnapshot(snapshot)
+        let uuid: UUID = snapshot.uuid
+        return .init(uuid: uuid).updateFromSnapshot(snapshot)
     }
     
     public private(set) var uuid: UUID
@@ -35,33 +35,24 @@ public class GameModel {
         self.status_bool = true
         self.boxart_data = nil
     }
-    
-//    public convenience init(_ snapshot: GameSnapshot) {
-//        self.init(uuid: snapshot.uuid)
-//        self.title_canon = snapshot.title_canon
-//        self.title_trim = snapshot.title_trim
-//        self.release_date = snapshot.release_date
-//        self.status_bool = snapshot.status_bool
-//        self.boxart_data = snapshot.boxart
-//    }
 
 }
 
 public extension GameModel {
     
     @discardableResult
-    func setStatus(_ status: GameStatusEnum) -> Self {
+    func setStatus(_ status: GameStatusEnum) -> GameModel {
         self.status_bool = status.bool
         return self
     }
     
     @discardableResult
-    func setSnapshot(_ snap: GameSnapshot) -> Self {
-        self.title_canon = snapshot.title_canon
-        self.title_trim = snapshot.title_trim
-        self.release_date = snapshot.release_date
-        self.status_bool = snapshot.status_bool
-        self.boxart_data = snapshot.boxart
+    func updateFromSnapshot(_ snap: GameSnapshot) -> GameModel {
+        self.title_canon = snap.title_canon
+        self.title_trim = snap.title_trim
+        self.release_date = snap.release_date
+        self.status_bool = snap.status_bool
+        self.boxart_data = snap.boxart
         return self
     }
     

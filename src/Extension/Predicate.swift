@@ -43,13 +43,13 @@ extension GamePredicate {
             $0.title_canon == title_canon && $0.release_date == release_date
         }
     }
-//    
-//    public static func getByUUID(_ uuid: UUID) -> GamePredicate {
-//        #Predicate {
-//            $0.uuid == uuid
-//        }
-//    }
-//    
+    
+    public static func getByUUID(_ uuid: UUID) -> GamePredicate {
+        #Predicate {
+            $0.uuid == uuid
+        }
+    }
+    
 //    public static func getByUUIDs(_ uuids: [UUID]) -> GamePredicate {
 //        #Predicate {
 //            uuids.contains($0.uuid)

@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1E639C702DCC1BC900E478BF /* GameBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E639C6F2DCC1BC900E478BF /* GameBuilder.swift */; };
+		1E639C762DCC1CE600E478BF /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E639C752DCC1CE600E478BF /* Set.swift */; };
+		1E639C782DCC1EA600E478BF /* GameResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E639C772DCC1EA600E478BF /* GameResult.swift */; };
 		1E90FC0E2DCB17F600682C80 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1E90FC0A2DCB17F600682C80 /* Assets.xcassets */; };
 		1E90FC0F2DCB17F600682C80 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E90FC0D2DCB17F600682C80 /* Item.swift */; };
 		1E90FC102DCB17F600682C80 /* autosaveApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E90FC0B2DCB17F600682C80 /* autosaveApp.swift */; };
@@ -37,6 +40,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1E639C6F2DCC1BC900E478BF /* GameBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameBuilder.swift; sourceTree = "<group>"; };
+		1E639C752DCC1CE600E478BF /* Set.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Set.swift; sourceTree = "<group>"; };
+		1E639C772DCC1EA600E478BF /* GameResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameResult.swift; sourceTree = "<group>"; };
 		1E90FBF92DCB170700682C80 /* autosave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = autosave.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E90FC0A2DCB17F600682C80 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1E90FC0B2DCB17F600682C80 /* autosaveApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = autosaveApp.swift; sourceTree = "<group>"; };
@@ -78,6 +84,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1E639C6E2DCC1BBD00E478BF /* Class */ = {
+			isa = PBXGroup;
+			children = (
+				1E639C6F2DCC1BC900E478BF /* GameBuilder.swift */,
+			);
+			path = Class;
+			sourceTree = "<group>";
+		};
 		1E90FBF02DCB170700682C80 = {
 			isa = PBXGroup;
 			children = (
@@ -119,6 +133,7 @@
 		62C56B312DCBA88B00C68855 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				1E639C6E2DCC1BBD00E478BF /* Class */,
 				62C56B532DCBB06000C68855 /* Struct */,
 				62C56B3A2DCBAA6B00C68855 /* Protocol */,
 				62C56B392DCBAA6400C68855 /* Enum */,
@@ -145,6 +160,7 @@
 				62C56B4D2DCBAFF900C68855 /* SortOrder.swift */,
 				62C56B4F2DCBB00100C68855 /* FetchDescriptor.swift */,
 				62C56B582DCBB47200C68855 /* Array.swift */,
+				1E639C752DCC1CE600E478BF /* Set.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -172,6 +188,7 @@
 			children = (
 				62C56B542DCBB08300C68855 /* GameSort.swift */,
 				62C56B562DCBB30B00C68855 /* GameSnapshot.swift */,
+				1E639C772DCC1EA600E478BF /* GameResult.swift */,
 			);
 			path = Struct;
 			sourceTree = "<group>";
@@ -252,6 +269,7 @@
 				62C56B5D2DCBB64500C68855 /* GamesListView.swift in Sources */,
 				1E90FC0F2DCB17F600682C80 /* Item.swift in Sources */,
 				62C56B612DCBB6F900C68855 /* Image.swift in Sources */,
+				1E639C702DCC1BC900E478BF /* GameBuilder.swift in Sources */,
 				62C56B592DCBB47200C68855 /* Array.swift in Sources */,
 				62C56B382DCBA8E700C68855 /* Date.swift in Sources */,
 				62C56B332DCBA89E00C68855 /* GameModel.swift in Sources */,
@@ -272,6 +290,8 @@
 				62C56B522DCBB02D00C68855 /* SortDescriptor.swift in Sources */,
 				62C56B422DCBAB3200C68855 /* Iterable.swift in Sources */,
 				62C56B4E2DCBAFF900C68855 /* SortOrder.swift in Sources */,
+				1E639C782DCC1EA600E478BF /* GameResult.swift in Sources */,
+				1E639C762DCC1CE600E478BF /* Set.swift in Sources */,
 				62C56B462DCBAEB600C68855 /* ModelContext.swift in Sources */,
 				62C56B552DCBB08300C68855 /* GameSort.swift in Sources */,
 				62C56B572DCBB30B00C68855 /* GameSnapshot.swift in Sources */,

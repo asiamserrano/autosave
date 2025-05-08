@@ -11,37 +11,30 @@ struct GameView: View {
     
     @Environment(\.modelContext) private var modelContext
     
-    @State var snapshot: GameSnapshot
+    @ObservedObject var builder: GameBuilder
     
-    init(_ snaphot: GameSnapshot) {
-        self._snapshot = .init(wrappedValue: snaphot)
+    init(_ builder: GameBuilder) {
+        self.builder = builder
     }
     
     var body: some View {
         Form {
             Section {
-                FormattedView("Title", self.snapshot.title)
-                FormattedView("Release Date", self.snapshot.release.long)
+                FormattedView("Title", self.builder.title)
+                FormattedView("Release Date", self.builder.release.long)
             }
         }
         .toolbar {
             
             ToolbarItem(placement: .topBarTrailing, content: {
                 NavigationLink(destination: {
-                    GameForm(self.snapshot, onSave: self.onSave)
+                    GameForm(self.builder)
                 }, label: {
                     Text("Edit")
                 })
             })
             
         }
-    }
-    
-    // TODO: This is not working
-    func onSave(_ input: GameSnapshot) -> GameModel {
-        let model: GameModel = self.modelContext.save(input)
-        self.snapshot = model.snapshot
-        return model
     }
     
     @ViewBuilder
