@@ -19,12 +19,12 @@ public extension GameFetchDescriptor {
         return .init(predicate: predicate, sortBy: .defaultValue)
     }
     
-    static func getByUUID(_ snapshot: GameSnapshot) -> Self {
-        let uuid: UUID = snapshot.uuid
+    static func getByUUID(_ builder: GameBuilder) -> Self {
+        let uuid: UUID = builder.uuid
         let predicate: GamePredicate = .getByUUID(uuid)
         return .init(predicate: predicate, sortBy: .defaultValue)
     }
-//    
+    
     static func getByStatus(_ status: GameStatusEnum) -> Self {
         let bool = status.bool
         let predicate: GamePredicate = .getForList(bool, .defaultValue)

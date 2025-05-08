@@ -20,8 +20,8 @@ struct GameView: View {
     var body: some View {
         Form {
             Section {
-                FormattedView("Title", self.builder.title)
-                FormattedView("Release Date", self.builder.release.long)
+                FormattedView(.title, self.builder.title)
+                FormattedView(.release_date, self.builder.release.long)
             }
         }
         .toolbar {
@@ -30,25 +30,10 @@ struct GameView: View {
                 NavigationLink(destination: {
                     GameForm(self.builder)
                 }, label: {
-                    Text("Edit")
+                    CustomText(.edit)
                 })
             })
             
-        }
-    }
-    
-    @ViewBuilder
-    func FormattedView(_ key: String, _ value: String) -> some View {
-        HStack {
-            HStack {
-                Text(key)
-                    .foregroundColor(.gray)
-                Spacer()
-            }
-            .frame(width: 95)
-            Text(value)
-                .multilineTextAlignment(.leading)
-                .foregroundColor(.black)
         }
     }
     

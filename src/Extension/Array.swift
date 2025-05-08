@@ -6,9 +6,22 @@
 //
 
 import Foundation
+import SwiftData
 
 public extension Array {
     
     static var defaultValue: Self { .init() }
+    
+    init(_ elements: Element...) {
+        self = elements
+    }
+    
+}
+
+extension Array where Element == any PersistentModel.Type {
+    
+    public static var defaultValue: Self {
+        [ GameModel.self ]
+    }
     
 }

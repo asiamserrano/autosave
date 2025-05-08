@@ -41,7 +41,7 @@ extension ModelContext {
         let current: GameSnapshot = builder.snapshot
         let composite: GameFetchDescriptor = .getByCompositeKey(current)
         let new: GameModel? = self.fetchModel(composite)
-        let uuid: GameFetchDescriptor = .getByUUID(builder.original)
+        let uuid: GameFetchDescriptor = .getByUUID(builder)
         if let old: GameModel = self.fetchModel(uuid) {
             if let new: GameModel = new, old.uuid != new.uuid {
                 return .init(new.snapshot, false, .edit)

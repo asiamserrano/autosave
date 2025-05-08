@@ -28,30 +28,26 @@ struct GameForm: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("Title", text: $builder.title)
+                    CustomTextField(.title, $builder.title)
                 }
                 Section {
-                    DatePicker("Release Date", selection: $builder.release, displayedComponents: .date)
+                    CustomDatePicker(.release_date, $builder.release)
                 }
-                
-                Text("isDisabled: \(self.builder.isDisabled.description)")
             }
             .navigationBarBackButtonHidden()
-//            .navigationTitle(self.type.rawValue)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        self.builder.reset()
+                    CustomButton(.cancel) {
+                        self.builder.cancel()
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
+                    CustomButton(.done) {
                         let result: GameResult = self.modelContext.save(self.builder)
                         if result.successful {
                             self.dismiss()
                         } else {
-                            print("failed")
                             self.builder.fail()
                         }
                     }
