@@ -45,13 +45,13 @@ public extension Enumerable {
     }
     
     
-//    static func cast(_ string: String) -> Self? {
-//        if let enumerable: Self = Self.cases.first(where: { $0.id == string || $0.display == string }) {
-//            return enumerable
-//        } else {
-//            return nil
-//        }
-//    }
+    static func cast(_ string: String) -> Self? {
+        if let enumerable: Self = Self.cases.first(where: { $0.id == string || $0.rawValue == string }) {
+            return enumerable
+        } else {
+            return nil
+        }
+    }
 //
 //    static func cast(_ other: any Enumerable) -> Self? {
 //        Self.cast(other.id)
@@ -67,12 +67,12 @@ public extension Enumerable {
 //        }
 //    }
 //    
-//    init(_ id: String) {
-//        if let found: Self = .cast(id) {
-//            self = found
-//        } else {
-//            fatalError("Unable to parse key: \(id)")
-//        }
-//    }
+    init(_ id: String) {
+        if let found: Self = .cast(id) {
+            self = found
+        } else {
+            fatalError("Unable to parse key: \(id)")
+        }
+    }
     
 }
