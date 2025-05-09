@@ -13,7 +13,7 @@
 		1E639C7A2DCD702100E478BF /* ConstantEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E639C792DCD702100E478BF /* ConstantEnum.swift */; };
 		1E639C7E2DCD708600E478BF /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E639C7D2DCD708600E478BF /* View.swift */; };
 		1E639C802DCD731F00E478BF /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E639C7F2DCD731F00E478BF /* CustomTextField.swift */; };
-		1E90FC0E2DCB17F600682C80 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1E90FC0A2DCB17F600682C80 /* Assets.xcassets */; };
+		1E639C822DCE4BE800E478BF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1E639C812DCE4BE800E478BF /* Assets.xcassets */; };
 		1E90FC102DCB17F600682C80 /* autosaveApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E90FC0B2DCB17F600682C80 /* autosaveApp.swift */; };
 		1E90FC112DCB17F600682C80 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E90FC0C2DCB17F600682C80 /* ContentView.swift */; };
 		62C56B332DCBA89E00C68855 /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C56B322DCBA89E00C68855 /* GameModel.swift */; };
@@ -48,8 +48,8 @@
 		1E639C792DCD702100E478BF /* ConstantEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstantEnum.swift; sourceTree = "<group>"; };
 		1E639C7D2DCD708600E478BF /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		1E639C7F2DCD731F00E478BF /* CustomTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextField.swift; sourceTree = "<group>"; };
+		1E639C812DCE4BE800E478BF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1E90FBF92DCB170700682C80 /* autosave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = autosave.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		1E90FC0A2DCB17F600682C80 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1E90FC0B2DCB17F600682C80 /* autosaveApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = autosaveApp.swift; sourceTree = "<group>"; };
 		1E90FC0C2DCB17F600682C80 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		62C56B322DCBA89E00C68855 /* GameModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
@@ -96,10 +96,41 @@
 			path = Class;
 			sourceTree = "<group>";
 		};
+		1E639C832DCE4C1D00E478BF /* main */ = {
+			isa = PBXGroup;
+			children = (
+				1E639C852DCE4C4300E478BF /* swift */,
+				1E639C842DCE4C2C00E478BF /* resources */,
+			);
+			path = main;
+			sourceTree = "<group>";
+		};
+		1E639C842DCE4C2C00E478BF /* resources */ = {
+			isa = PBXGroup;
+			children = (
+				1E639C812DCE4BE800E478BF /* Assets.xcassets */,
+			);
+			path = resources;
+			sourceTree = "<group>";
+		};
+		1E639C852DCE4C4300E478BF /* swift */ = {
+			isa = PBXGroup;
+			children = (
+				1E639C6E2DCC1BBD00E478BF /* Class */,
+				62C56B392DCBAA6400C68855 /* Enum */,
+				62C56B342DCBA8D500C68855 /* Extension */,
+				62C56B302DCBA85500C68855 /* Model */,
+				62C56B3A2DCBAA6B00C68855 /* Protocol */,
+				62C56B532DCBB06000C68855 /* Struct */,
+				62C56B2F2DCBA84800C68855 /* View */,
+				1E90FC0B2DCB17F600682C80 /* autosaveApp.swift */,
+			);
+			path = swift;
+			sourceTree = "<group>";
+		};
 		1E90FBF02DCB170700682C80 = {
 			isa = PBXGroup;
 			children = (
-				1E90FC0B2DCB17F600682C80 /* autosaveApp.swift */,
 				62C56B312DCBA88B00C68855 /* src */,
 				1E90FBFA2DCB170700682C80 /* Products */,
 			);
@@ -137,14 +168,7 @@
 		62C56B312DCBA88B00C68855 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				1E639C6E2DCC1BBD00E478BF /* Class */,
-				62C56B532DCBB06000C68855 /* Struct */,
-				62C56B3A2DCBAA6B00C68855 /* Protocol */,
-				62C56B392DCBAA6400C68855 /* Enum */,
-				62C56B342DCBA8D500C68855 /* Extension */,
-				62C56B2F2DCBA84800C68855 /* View */,
-				62C56B302DCBA85500C68855 /* Model */,
-				1E90FC0A2DCB17F600682C80 /* Assets.xcassets */,
+				1E639C832DCE4C1D00E478BF /* main */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -261,7 +285,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1E90FC0E2DCB17F600682C80 /* Assets.xcassets in Resources */,
+				1E639C822DCE4BE800E478BF /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
