@@ -13,14 +13,18 @@ struct GameForm: View {
         
     @Environment(\.dismiss) private var dismiss
     
-    @StateObject var builder: GameBuilder
+    @StateObject private var builder: GameBuilder
+    
+    @State private var snapshot: GameSnapshot
     
     init(_ builder: GameBuilder) {
+        let snapshot: GameSnapshot = builder.snapshot
         self._builder = .init(wrappedValue: builder)
+        self._snapshot = .init(wrappedValue: snapshot)
     }
     
-    init() {
-        let builder: GameBuilder = .init(.defaultValue)
+    init(_ status: GameStatusEnum) {
+        let builder: GameBuilder = .init(status)
         self.init(builder)
     }
         
@@ -38,13 +42,13 @@ struct GameForm: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     CustomButton(.cancel) {
-                        self.builder.cancel()
+                        self.builder.cancel(self.snapshot)
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     CustomButton(.done) {
-                        let result: GameResult = self.modelContext.save(self.builder)
+                        let result: GameResult = self.modelContext.save(self.snapshot, self.builder)
                         if result.successful {
                             self.dismiss()
                         } else {

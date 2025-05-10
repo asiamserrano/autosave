@@ -72,3 +72,17 @@ extension GamePredicate {
 //    }
     
 }
+
+public typealias PropertyPredicate = Predicate<PropertyModel>
+
+
+extension PropertyPredicate {
+    
+    public static func getByUUID(_ uuid: UUID) -> PropertyPredicate {
+        #Predicate {
+            $0.uuid == uuid
+        }
+    }
+    
+    
+}

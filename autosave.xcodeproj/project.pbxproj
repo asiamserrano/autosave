@@ -86,6 +86,7 @@
 		1E639C852DCE4C4300E478BF /* swift */ = {
 			isa = PBXGroup;
 			children = (
+				1E90FC0B2DCB17F600682C80 /* autosaveApp.swift */,
 				1E639C872DCE4EC600E478BF /* Class */,
 				1E639C8C2DCE4ECD00E478BF /* Enum */,
 				1E639C9E2DCE4ECF00E478BF /* Extension */,
@@ -93,7 +94,6 @@
 				1E639CB22DCE4ED700E478BF /* Protocol */,
 				1E639CB82DCE4ED900E478BF /* Struct */,
 				1E639CC22DCE4EDB00E478BF /* View */,
-				1E90FC0B2DCB17F600682C80 /* autosaveApp.swift */,
 			);
 			path = swift;
 			sourceTree = "<group>";

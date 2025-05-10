@@ -16,16 +16,21 @@ struct GamesListView: View {
     
     @State var search: String = .defaultValue
     
+    let status: GameStatusEnum
+    
+    public init(_ status: GameStatusEnum) {
+        self.status = status
+    }
+    
     var body: some View {
         ModelsView(models, "no games", content: {
-            SearchView(search)
-                .searchable(text: $search)
+            SearchView(status, search)
         })
-        .navigationTitle("My Games")
+        .searchable(text: $search)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing, content: {
                 NavigationLink(destination: {
-                    GameForm()
+                    GameForm(self.status)
                 }, label: {
                     IconView(.plus)
                 })
@@ -42,9 +47,10 @@ fileprivate struct SearchView: View {
     
     @Query var models: [GameModel]
     
-    init(_ search: String) {
+    init(_ status: GameStatusEnum, _ search: String) {
+        let bool: Bool = status.bool
         let canon = search.canonicalized
-        self._models = .init(filter: .getBySearch(canon), sort: .defaultValue(.defaultValue))
+        self._models = .init(filter: .getForList(bool, canon), sort: .defaultValue(.defaultValue))
     }
     
     var body: some View {
