@@ -7,12 +7,6 @@
 
 import SwiftUI
 
-fileprivate extension CGFloat {
-    
-    static var defaultSize: CGFloat { 15 }
-    
-}
-
 public struct IconView: View {
 
     private var iconName: IconEnum
