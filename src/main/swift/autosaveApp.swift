@@ -27,7 +27,8 @@ fileprivate struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     
     @State var status: GameStatusEnum = .defaultValue
-    @State var menu: MenuEnum = .defaultValue
+    // TODO: change this once other TODO is completed
+    @State var menu: MenuEnum = .properties
     
     var body: some View {
         NavigationStack {
@@ -36,15 +37,14 @@ fileprivate struct ContentView: View {
                 case .library, .wishlist:
                     GamesListView(self.status)
                 case .properties:
-                    Text("TBD")
+                    PropertiesListView()
                 }
             }
             .navigationTitle(self.menu.rawValue)
             .onChange(of: self.menu) {
                 switch self.menu {
                 case .library, .wishlist:
-                    let id: String = self.menu.id
-                    self.status = .init(id)
+                    self.status = .init(self.menu)
                 case .properties:
                     break
                 }
@@ -85,8 +85,14 @@ fileprivate struct ContentView: View {
         container.mainContext.undoManager = .init()
         
         for _ in 0..<20 {
-            let snapshot: GameSnapshot = .random
-            container.mainContext.save(snapshot)
+            let game: GameSnapshot = .random
+            container.mainContext.save(game)
+            
+        }
+        
+        for _ in 0..<40 {
+            let property: PropertySnapshot = .random
+            container.mainContext.save(property)
         }
         
         return container

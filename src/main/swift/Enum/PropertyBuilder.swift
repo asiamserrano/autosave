@@ -9,17 +9,40 @@ import Foundation
 
 public enum PropertyBuilder {
     
+    public static func random(_ type: PropertyEnum) -> Self {
+        switch type {
+        case .series, .developer, .publisher, .genre:
+            let input: InputEnum = .init(type)
+            let builder: InputBuilder = .init(input, .random)
+            return .input(builder)
+        case .mode:
+            let mode: ModeEnum = .random
+            return .mode(mode)
+        case .platform:
+            let system: SystemBuilder = .random
+            let format: FormatBuilder = .random
+            let builder: PlatformBuilder = .init(system, format)
+            return .platform(builder)
+        }
+    }
+    
+    public static var random: Self {
+        .random(.random)
+    }
+    
     public static func fromModel(_ model: PropertyModel) -> Self {
         let snapshot: PropertySnapshot = model.snapshot
         return .fromSnapshot(snapshot)
     }
     
     public static func fromSnapshot(_ snapshot: PropertySnapshot) -> Self {
+        let type: PropertyEnum = snapshot.type
         let canon: String = snapshot.string.canon
         let trim: String = snapshot.string.trim
-        switch snapshot.type {
+            
+        switch type {
         case .series, .developer, .publisher, .genre:
-            let input: InputEnum = .init(canon)
+            let input: InputEnum = .init(type)
             let builder: InputBuilder = .init(input, trim)
             return .input(builder)
         case .mode:

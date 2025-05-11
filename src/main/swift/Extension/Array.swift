@@ -22,7 +22,7 @@ extension Array where Element == any PersistentModel.Type {
     
     public static var defaultValue: Self {
         [
-            GameModel.self
+            GameModel.self, PropertyModel.self
         ]
     }
     
@@ -44,6 +44,14 @@ extension Array where Element == GameSortDescriptor {
         case .release: return .byRelease(order)
         case .title: return .byTitle(order)
         }
+    }
+    
+}
+
+extension Array where Element == PropertySortDescriptor {
+    
+    public static var defaultValue: Self {
+        .init(arrayLiteral: .type(.forward), .value(.forward))
     }
     
 }

@@ -8,6 +8,7 @@
 import Foundation
 
 public protocol Enumerable: Identifiable, Hashable, Comparable, Equatable, CaseIterable, Iterable {
+    var id: String { get }
     var rawValue: String { get }
 }
 
@@ -33,9 +34,13 @@ public extension Enumerable {
         lhs.index < rhs.index
     }
     
-    var id: String { String(describing: self) }
+    var description: String {
+        String(describing: self)
+    }
+    
+    var id: String { "\(self.index)_\(self.description)" }
         
-    var rawValue: String { self.id.capitalized }
+    var rawValue: String { self.description.capitalized }
     
     var className: String { String(describing: Self.self) }
     
@@ -44,35 +49,16 @@ public extension Enumerable {
         hasher.combine(self.className)
     }
     
-    
-    static func cast(_ string: String) -> Self? {
-        if let enumerable: Self = Self.cases.first(where: { $0.id == string || $0.rawValue == string }) {
-            return enumerable
-        } else {
-            return nil
-        }
-    }
-//
-//    static func cast(_ other: any Enumerable) -> Self? {
-//        Self.cast(other.id)
-//    }
-    
-    
-    
-//    init(_ other: any Enumerable) {
-//        if let found: Self = .cast(other) {
-//            self = found
-//        } else {
-//            fatalError("Unable to parse enumerable: \(other)")
-//        }
-//    }
-//    
-    init(_ id: String) {
-        if let found: Self = .cast(id) {
+    init(_ string: String) {
+        if let found: Self = Self.cases.first(where: { $0.id == string || $0.rawValue == string }) {
             self = found
         } else {
-            fatalError("Unable to parse key: \(id)")
+            fatalError("Unable to parse key: \(string)")
         }
     }
     
+    init(_ enumerable: any Enumerable) {
+        self.init(enumerable.id)
+    }
+     
 }

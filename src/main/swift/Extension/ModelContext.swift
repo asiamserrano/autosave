@@ -10,26 +10,20 @@ import SwiftData
 
 extension ModelContext {
     
-    public func fetchCount(_ status: GameStatusEnum) -> Int {
-        let desc: GameFetchDescriptor = .getByStatus(status)
-        do {
-            return try self.fetchCount(desc)
-        } catch {
-            print("error: \(error)")
-            return 0
-        }
-    }
-    
-    public func add(_ game: GameModel) -> Void {
-        self.insert(game)
+    public func remove(_ model: any PersistentModel) -> Void {
+        self.delete(model)
         self.store()
     }
-    
-    public func remove(_ game: GameModel) -> Void {
-        self.delete(game)
-        self.store()
-    }
-
+//
+//    public func fetchCount(_ status: GameStatusEnum) -> Int {
+//        let desc: GameFetchDescriptor = .getByStatus(status)
+//        do {
+//            return try self.fetchCount(desc)
+//        } catch {
+//            print("error: \(error)")
+//            return 0
+//        }
+//    }
 
     func move(_ game: GameModel, _ next: GameStatusEnum) -> Void {
         game.setStatus(next)
@@ -74,30 +68,46 @@ extension ModelContext {
         }
     }
     
-    // TODO: implement the saving of a property
-//    @discardableResult
-//    public func save(_ snapshot: PropertySnapshot) -> PropertyModel {
-//        let composite: PropertyFetchDescriptor = .getByCompositeKey(snapshot)
-//        let result: PropertyModel? = self.fetchModel(composite)
-//        if let result: PropertyModel = result {
-//            return result
-//        } else {
-//            let property: PropertyModel = .init(snapshot)
-//            self.insert(property)
-//            self.store()
-//            return property
-//        }
-//    }
+    @discardableResult
+    public func save(_ snapshot: PropertySnapshot) -> PropertyModel {
+        let composite: PropertyFetchDescriptor = .getByCompositeKey(snapshot)
+        let result: PropertyModel? = self.fetchModel(composite)
+        if let result: PropertyModel = result {
+            return result
+        } else {
+            let property: PropertyModel = .fromSnapshot(snapshot)
+            self.add(property)
+            return property
+        }
+    }
     
 }
 
 private extension ModelContext {
+    
+    func add(_ model: any PersistentModel) -> Void {
+        self.insert(model)
+        self.store()
+    }
     
     func fetchModel(_ desc: GameFetchDescriptor) -> GameModel? {
         fetchModels(desc).first
     }
     
     func fetchModels(_ desc: GameFetchDescriptor) -> [GameModel] {
+        do {
+            return try self.fetch(desc)
+        } catch {
+            print("error: \(error)")
+            return .init()
+        }
+    }
+    
+    func fetchModel(_ desc: PropertyFetchDescriptor) -> PropertyModel? {
+        fetchModels(desc).first
+    }
+    
+    func fetchModels(_ desc: PropertyFetchDescriptor) -> [PropertyModel] {
         do {
             return try self.fetch(desc)
         } catch {

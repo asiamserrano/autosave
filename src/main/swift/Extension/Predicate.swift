@@ -78,11 +78,61 @@ public typealias PropertyPredicate = Predicate<PropertyModel>
 
 extension PropertyPredicate {
     
+    public static func getByCompositeKey(_ type_id: String, _ value_canon: String) -> PropertyPredicate {
+        #Predicate {
+            $0.type_id == type_id && $0.value_canon == value_canon
+        }
+    }
+    
     public static func getByUUID(_ uuid: UUID) -> PropertyPredicate {
         #Predicate {
             $0.uuid == uuid
         }
     }
+    
+    public static func getByType(_ type_id: String) -> PropertyPredicate {
+        #Predicate {
+            $0.type_id == type_id
+        }
+    }
+    
+//    public static func getByPlatform(_ type: PlatformEnum, _ platform: PlatformBuilder) -> PropertyPredicate {
+//        let type_id: String = type.propertyEnum.id
+//        switch type {
+//        case .system:
+//            let systemBuilder: SystemBuilder = platform.system
+//            let systemEnum: SystemEnum = systemBuilder.systemEnum
+//            let systemId: String = systemEnum.id
+//            return #Predicate {
+//                $0.type_id == type_id && $0.value_canon.starts(with: systemId)
+//            }
+//        case .format:
+//            let formatBuilder: FormatBuilder = platform.format
+//            let formatEnum: FormatEnum = formatBuilder.formatEnum
+//            let formatId: String = formatEnum.id
+//            return #Predicate {
+//                $0.type_id == type_id && $0.value_trim.starts(with: formatId)
+//            }
+//        }
+//    }
+    
+    
+    
+//    public static func getByPlatform(_ platform: PlatformEnum) -> PropertyPredicate {
+//        let type_id: String = platform.propertyEnum.id
+//        switch platform {
+//        case .system(let system):
+//            let system_id: String = system.id
+//            return #Predicate {
+//                $0.type_id == type_id && $0.value_canon.starts(with: system_id)
+//            }
+//        case .format(let format):
+//            let format_id: String = format.id
+//            return #Predicate {
+//                $0.type_id == type_id && $0.value_trim.starts(with: format_id)
+//            }
+//        }
+//    }
     
     
 }

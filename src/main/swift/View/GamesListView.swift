@@ -87,30 +87,3 @@ fileprivate struct SearchView: View {
     }
     
 }
-
-
-fileprivate struct ModelsView<T: View>: View {
-    
-    typealias ViewFunc = () -> T
-    
-    let models: [GameModel]
-    let message: String
-    let content: ViewFunc
-    
-    init(_ models: [GameModel], _ message: String, @ViewBuilder content: @escaping ViewFunc) {
-        self.models = models
-        self.message = message
-        self.content = content
-    }
-    
-    var body: some View {
-        if models.isEmpty {
-            VStack {
-                Text(message)
-            }
-        } else {
-            content()
-        }
-    }
-    
-}

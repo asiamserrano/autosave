@@ -27,4 +27,8 @@ public enum ModeEnum: Enumerable {
         }
     }
     
+    var propertyEnum: PropertyEnum {
+        .mode
+    }
+    
 }

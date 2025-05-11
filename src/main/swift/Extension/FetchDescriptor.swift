@@ -43,6 +43,13 @@ public typealias PropertyFetchDescriptor = FetchDescriptor<PropertyModel>
 
 public extension PropertyFetchDescriptor {
     
+    static func getByCompositeKey(_ snapshot: PropertySnapshot) -> Self {
+        let type_id: String = snapshot.type_id
+        let value_canon: String = snapshot.value_canon
+        let predicate: PropertyPredicate = .getByCompositeKey(type_id, value_canon)
+        return .init(predicate: predicate, sortBy: .defaultValue)
+    }
+    
     static func getByUUID(_ snapshot: PropertySnapshot) -> Self {
         let uuid: UUID = snapshot.uuid
         let predicate: PropertyPredicate = .getByUUID(uuid)

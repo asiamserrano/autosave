@@ -20,3 +20,17 @@ public extension GameSortDescriptor {
     }
     
 }
+
+public typealias PropertySortDescriptor = SortDescriptor<PropertyModel>
+
+public extension PropertySortDescriptor {
+    
+    static func type(_ order: SortOrder) -> Self {
+        .init(\.type_id, order: order)
+    }
+    
+    static func value(_ order: SortOrder) -> Self {
+        .init(\.value_canon, order: order)
+    }
+    
+}

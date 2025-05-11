@@ -15,6 +15,16 @@ public struct PropertySnapshot {
 //        return .init(.init(), type, string)
 //    }
     
+    public static func random(_ type: PropertyEnum) -> Self {
+        let property: PropertyBuilder = .random(type)
+        let string: StringBuilder = property.stringBuilder
+        return .init(.init(), type, string)
+    }
+    
+    public static var random: Self {
+        .random(.random)
+    }
+    
     public static func fromModel(_ model: PropertyModel) -> Self {
         let uuid: UUID = model.uuid
         let type: PropertyEnum = .init(model.type_id)
