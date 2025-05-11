@@ -37,11 +37,11 @@ extension ModelContext {
     }
     
     @discardableResult
-    func save(_ builder: GameBuilder) -> GameResult {
+    func save(_ original: GameSnapshot, _ builder: GameBuilder) -> GameResult {
         let current: GameSnapshot = builder.snapshot
         let composite: GameFetchDescriptor = .getByCompositeKey(current)
         let new: GameModel? = self.fetchModel(composite)
-        let uuid: GameFetchDescriptor = .getByUUID(builder)
+        let uuid: GameFetchDescriptor = .getByUUID(original)
         if let old: GameModel = self.fetchModel(uuid) {
             if let new: GameModel = new, old.uuid != new.uuid {
                 return .init(new.snapshot, false, .edit)
@@ -60,6 +60,34 @@ extension ModelContext {
             }
         }
     }
+    
+    @discardableResult
+    func save(_ current: GameSnapshot) -> GameResult {
+        let composite: GameFetchDescriptor = .getByCompositeKey(current)
+        let new: GameModel? = self.fetchModel(composite)
+        if let new: GameModel = new {
+            return .init(new.snapshot, false, .add)
+        } else {
+            let game: GameModel = .fromSnapshot(current)
+            self.add(game)
+            return .init(current, true, .add)
+        }
+    }
+    
+    // TODO: implement the saving of a property
+//    @discardableResult
+//    public func save(_ snapshot: PropertySnapshot) -> PropertyModel {
+//        let composite: PropertyFetchDescriptor = .getByCompositeKey(snapshot)
+//        let result: PropertyModel? = self.fetchModel(composite)
+//        if let result: PropertyModel = result {
+//            return result
+//        } else {
+//            let property: PropertyModel = .init(snapshot)
+//            self.insert(property)
+//            self.store()
+//            return property
+//        }
+//    }
     
 }
 

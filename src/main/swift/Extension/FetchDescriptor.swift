@@ -19,8 +19,8 @@ public extension GameFetchDescriptor {
         return .init(predicate: predicate, sortBy: .defaultValue)
     }
     
-    static func getByUUID(_ builder: GameBuilder) -> Self {
-        let uuid: UUID = builder.uuid
+    static func getByUUID(_ snapshot: GameSnapshot) -> Self {
+        let uuid: UUID = snapshot.uuid
         let predicate: GamePredicate = .getByUUID(uuid)
         return .init(predicate: predicate, sortBy: .defaultValue)
     }
@@ -36,5 +36,17 @@ public extension GameFetchDescriptor {
 //        let predicate: GamePredicate = .getByUUIDs(uuids)
 //        return .init(predicate: predicate, sortBy: .defaultValue)
 //    }
+    
+}
+
+public typealias PropertyFetchDescriptor = FetchDescriptor<PropertyModel>
+
+public extension PropertyFetchDescriptor {
+    
+    static func getByUUID(_ snapshot: PropertySnapshot) -> Self {
+        let uuid: UUID = snapshot.uuid
+        let predicate: PropertyPredicate = .getByUUID(uuid)
+        return .init(predicate: predicate, sortBy: .defaultValue)
+    }
     
 }
