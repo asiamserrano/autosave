@@ -10,7 +10,7 @@ import SwiftData
 
 extension ModelContext {
     
-    public func remove(_ model: any PersistentModel) -> Void {
+    public func remove(_ model: Persistor) -> Void {
         self.delete(model)
         self.store()
     }
@@ -85,11 +85,6 @@ extension ModelContext {
 
 private extension ModelContext {
     
-    func add(_ model: any PersistentModel) -> Void {
-        self.insert(model)
-        self.store()
-    }
-    
     func fetchModel(_ desc: GameFetchDescriptor) -> GameModel? {
         fetchModels(desc).first
     }
@@ -114,6 +109,11 @@ private extension ModelContext {
             print("error: \(error)")
             return .init()
         }
+    }
+    
+    func add(_ model: Persistor) -> Void {
+        self.insert(model)
+        self.store()
     }
     
     func store() {

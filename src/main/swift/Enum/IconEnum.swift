@@ -32,7 +32,7 @@ public enum IconEnum: Enumerable {
     case photo_circle_fill
     
     public var rawValue: String {
-        self.id.replacingOccurrences(of: "_", with: ".")
+        self.description.replacingOccurrences(of: "_", with: ".")
     }
     
 }

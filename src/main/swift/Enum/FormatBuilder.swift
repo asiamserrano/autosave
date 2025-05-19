@@ -7,9 +7,9 @@
 
 import Foundation
 
-public enum FormatBuilder: Enumerable {
+public enum FormatBuilder: Encapsulable {
     
-    public static var allCases: [Self] {
+    public static var allCases: Cases {
       FormatEnum.allCases.flatMap { category in
         switch category {
           case .digital:
@@ -20,40 +20,29 @@ public enum FormatBuilder: Enumerable {
       }
     }
     
-    public enum DigitalEnum: Enumerable {
-        case steam, origin, psn, xbox, nintendo, free
-    }
-    
-    public enum PhysicalEnum: Enumerable {
-        case disc, cartridge, card
-    }
-    
     case digital(DigitalEnum)
     case physical(PhysicalEnum)
     
-    public var formatEnum: FormatEnum {
-        switch self {
-        case .digital:  return .digital
-        case .physical: return .physical
-        }
-    }
-    
-    private var format: any Enumerable {
+    public var enumeror: Enumeror {
         switch self {
         case .digital(let digitalEnum): return digitalEnum
         case .physical(let physicalEnum): return physicalEnum
         }
     }
+
+}
+
+extension FormatBuilder {
     
-    public var id: String {
-        "\(self.formatEnum.id)_\(self.format.id)"
+    public enum PhysicalEnum: Enumerable {
+        case disc, cartridge, card
     }
     
-    public var rawValue: String {
-        switch self {
-        case .physical(let p): return p.rawValue
-        case .digital(let d):
-            switch d {
+    public enum DigitalEnum: Enumerable {
+        case steam, origin, psn, xbox, nintendo, free
+        
+        public var rawValue: String {
+            switch self {
             case .psn:      return "PlayStation Network"
             case .xbox:     return "Xbox Live"
             case .nintendo: return "Nintendo eShop"
@@ -63,4 +52,5 @@ public enum FormatBuilder: Enumerable {
             }
         }
     }
+    
 }

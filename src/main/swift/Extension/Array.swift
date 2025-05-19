@@ -21,28 +21,20 @@ public extension Array {
 extension Array where Element == any PersistentModel.Type {
     
     public static var defaultValue: Self {
-        [
-            GameModel.self, PropertyModel.self
-        ]
+        .init(GameModel.self, PropertyModel.self)
     }
     
 }
 
 extension Array where Element == GameSortDescriptor {
-    
-    private static func byRelease(_ sort: SortOrder) -> Self {
-        .init(arrayLiteral: .release(sort), .title(.forward))
-    }
-    
-    private static func byTitle(_ sort: SortOrder) -> Self {
-        .init(arrayLiteral: .title(sort), .release(.forward))
-    }
-    
+
     public static func defaultValue(_ sort: GameSort) -> Self {
         let order: SortOrder = sort.order
         switch sort.type {
-        case .release: return .byRelease(order)
-        case .title: return .byTitle(order)
+        case .release:
+            return .init(.release(order), .title(.forward))
+        case .title:
+            return .init(.title(order), .release(.forward))
         }
     }
     
@@ -51,7 +43,7 @@ extension Array where Element == GameSortDescriptor {
 extension Array where Element == PropertySortDescriptor {
     
     public static var defaultValue: Self {
-        .init(arrayLiteral: .type(.forward), .value(.forward))
+        .init(.type(.forward), .value(.forward))
     }
     
 }

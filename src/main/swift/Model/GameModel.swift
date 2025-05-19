@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-public class GameModel {
+public class GameModel: Persistable {
     
     public static func fromSnapshot(_ snapshot: GameSnapshot) -> GameModel {
         let uuid: UUID = snapshot.uuid

@@ -8,7 +8,7 @@
 import Foundation
 
 public enum SystemEnum: Enumerable {
-    case playstation, nintendo, xbox, os, mq3
+    case playstation, nintendo, xbox, os//, mq3
     
     public var rawValue: String {
         switch self {
@@ -16,7 +16,7 @@ public enum SystemEnum: Enumerable {
         case .nintendo: return "Nintendo"
         case .xbox: return "Xbox"
         case .os: return "Operating System"
-        case .mq3: return "Meta Quest 3"
+//        case .mq3: return "Meta Quest 3"
         }
     }
     

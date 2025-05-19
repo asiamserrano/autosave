@@ -7,13 +7,36 @@
 
 import Foundation
 
-public enum PlatformEnum: Enumerable {
+
+public enum PlatformEnum: Encapsulable {
     
-    case system
-    case format
+    public static var allCases: Cases {
+        TypeEnum.allCases.flatMap { category in
+          switch category {
+            case .system:
+              return SystemEnum.cases.map(Self.system)
+            case .format:
+              return FormatEnum.cases.map(Self.format)
+          }
+        }
+    }
     
-    var propertyEnum: PropertyEnum {
-        .platform
+    case system(SystemEnum)
+    case format(FormatEnum)
+    
+    public var enumeror: Enumeror {
+        switch self {
+        case .system(let s): return s
+        case .format(let f): return f
+        }
+    }
+
+}
+
+extension PlatformEnum {
+    
+    public enum TypeEnum: Enumerable {
+        case system, format
     }
     
 }

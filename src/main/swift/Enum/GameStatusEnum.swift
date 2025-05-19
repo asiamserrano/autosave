@@ -11,23 +11,23 @@ public enum GameStatusEnum: Enumerable {
     case library, wishlist
 }
 
-public extension GameStatusEnum {
+extension GameStatusEnum {
     
-    static func fromBool(_ bool: Bool) -> Self {
+    public static func fromBool(_ bool: Bool) -> Self {
         switch bool {
         case true: return .library
         case false: return .wishlist
         }
     }
     
-    var bool: Bool {
+    public var bool: Bool {
         switch self {
         case .library: return true
         case .wishlist: return false
         }
     }
     
-    var icon: IconEnum {
+    public var icon: IconEnum {
         switch self {
         case .wishlist: return .list_star
         case .library: return .gamecontroller

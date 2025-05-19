@@ -24,10 +24,6 @@ public enum ConstantEnum: Enumerable {
     case platform
     case games
     
-}
-
-extension ConstantEnum {
-    
     public var rawValue: String {
         self.id.replacingOccurrences(of: "_", with: " ").capitalized
     }

@@ -81,8 +81,8 @@ fileprivate struct ContentView: View {
         
         let container: ModelContainer = .preview
         
-        container.mainContext.autosaveEnabled = false
-        container.mainContext.undoManager = .init()
+//        container.mainContext.autosaveEnabled = false
+//        container.mainContext.undoManager = .init()
         
         for _ in 0..<20 {
             let game: GameSnapshot = .random

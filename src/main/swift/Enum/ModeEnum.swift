@@ -19,16 +19,20 @@ public enum ModeEnum: Enumerable {
         }
     }
     
-    var icon: IconEnum {
+}
+
+extension ModeEnum {
+    
+    public var propertyEnum: PropertyEnum {
+        .mode
+    }
+    
+    public var icon: IconEnum {
         switch self {
         case .single: return .person_fill
         case .two: return .person_2_fill
         case .multi: return .person_3_fill
         }
-    }
-    
-    var propertyEnum: PropertyEnum {
-        .mode
     }
     
 }

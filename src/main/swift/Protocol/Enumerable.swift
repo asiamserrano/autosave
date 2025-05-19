@@ -7,7 +7,12 @@
 
 import Foundation
 
+public typealias Enumeror = any Enumerable
+
 public protocol Enumerable: Identifiable, Hashable, Comparable, Equatable, CaseIterable, Iterable {
+    
+    typealias Cases = [Self]
+    
     var id: String { get }
     var rawValue: String { get }
 }
@@ -26,7 +31,7 @@ public extension Enumerable {
         Self.cases.first!
     }
     
-    static var cases: [Self] {
+    static var cases: Cases {
         Self.allCases.map { $0 }
     }
     
@@ -50,15 +55,23 @@ public extension Enumerable {
     }
     
     init(_ string: String) {
-        if let found: Self = Self.cases.first(where: { $0.id == string || $0.rawValue == string }) {
+        if let found: Self = Self.cases.first(where: {
+            $0.id == string || $0.rawValue == string || $0.description == string
+        }) {
             self = found
         } else {
             fatalError("Unable to parse key: \(string)")
         }
     }
     
-    init(_ enumerable: any Enumerable) {
-        self.init(enumerable.id)
+    init(_ enumeror: Enumeror) {
+        if let found: Self = Self.cases.first(where: {
+            $0.id == enumeror.id || $0.rawValue == enumeror.rawValue || $0.description == enumeror.description
+        }) {
+            self = found
+        } else {
+            fatalError("Unable to parse enumeror: \(enumeror)")
+        }
     }
      
 }

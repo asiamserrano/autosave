@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-public class PropertyModel {
+public class PropertyModel: Persistable {
     
 //    public static func fromBuilder(_ builder: PropertyBuilder) -> PropertyModel {
 //        let snapshot: PropertySnapshot = .fromBuilder(builder)

@@ -7,6 +7,7 @@
 
 import Foundation
 
+// TODO: implement new PropertyGroup or PropertyElement enum 
 public enum PropertyEnum: Enumerable {
     case series
     case developer

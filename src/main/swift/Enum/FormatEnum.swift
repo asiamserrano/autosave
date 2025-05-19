@@ -9,6 +9,9 @@ import Foundation
 
 public enum FormatEnum: Enumerable {
     case digital, physical
+}
+
+extension FormatEnum {
     
     public var icon: IconEnum {
         switch self {
@@ -16,5 +19,5 @@ public enum FormatEnum: Enumerable {
         case .physical: return .opticaldisc_fill
         }
     }
+    
 }
-

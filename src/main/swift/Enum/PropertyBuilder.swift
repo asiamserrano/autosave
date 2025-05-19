@@ -7,7 +7,16 @@
 
 import Foundation
 
+// TODO: change this to a 1:1 property builder
 public enum PropertyBuilder {
+    
+    case input(InputBuilder)
+    case mode(ModeEnum)
+    case platform(PlatformBuilder)
+    
+}
+
+extension PropertyBuilder {
     
     public static func random(_ type: PropertyEnum) -> Self {
         switch type {
@@ -56,10 +65,6 @@ public enum PropertyBuilder {
         }
     }
     
-    case input(InputBuilder)
-    case mode(ModeEnum)
-    case platform(PlatformBuilder)
-        
     public var type: PropertyEnum {
         switch self {
         case .input(let inputBuilder):
@@ -78,20 +83,4 @@ public enum PropertyBuilder {
         .fromPropertyBuilder(self)
     }
     
-//    public var stringBuilder: StringBuilder {
-//        switch self {
-//        case .input(let inputBuilder):
-//            let key: String = inputBuilder.canon
-//            let value: String = inputBuilder.trim
-//            return .init(key, value)
-//        case .mode(let modeEnum):
-//            let key: String = modeEnum.id
-//            let value: String = modeEnum.rawValue
-//            return .init(key, value)
-//        case .platform(PlatformBuilder):
-//            let key: String = systemBuilder.id
-//            let value: String = formatBuilder.id
-//            return .init(key, value)
-//        }
-//    }
 }
