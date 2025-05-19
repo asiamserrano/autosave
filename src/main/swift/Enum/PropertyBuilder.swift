@@ -7,7 +7,6 @@
 
 import Foundation
 
-// TODO: change this to a 1:1 property builder
 public enum PropertyBuilder {
     
     case input(InputBuilder)
@@ -18,19 +17,16 @@ public enum PropertyBuilder {
 
 extension PropertyBuilder {
     
-    public static func random(_ type: PropertyEnum) -> Self {
-        switch type {
-        case .series, .developer, .publisher, .genre:
-            let input: InputEnum = .init(type)
+    public static func random(_ base: PropertyBase) -> Self {
+        switch base {
+        case .input(let input):
             let builder: InputBuilder = .init(input, .random)
             return .input(builder)
         case .mode:
             let mode: ModeEnum = .random
             return .mode(mode)
         case .platform:
-            let system: SystemBuilder = .random
-            let format: FormatBuilder = .random
-            let builder: PlatformBuilder = .init(system, format)
+            let builder: PlatformBuilder = .random
             return .platform(builder)
         }
     }
@@ -45,37 +41,20 @@ extension PropertyBuilder {
     }
     
     public static func fromSnapshot(_ snapshot: PropertySnapshot) -> Self {
-        let type: PropertyEnum = snapshot.type
+        let base: PropertyBase = snapshot.base
         let canon: String = snapshot.string.canon
         let trim: String = snapshot.string.trim
             
-        switch type {
-        case .series, .developer, .publisher, .genre:
-            let input: InputEnum = .init(type)
+        switch base {
+        case .input(let input):
             let builder: InputBuilder = .init(input, trim)
             return .input(builder)
         case .mode:
-            let mode: ModeEnum = .init(canon)
+            let mode: ModeEnum = .init(canon, .defaultValue)
             return .mode(mode)
         case .platform:
-            let system: SystemBuilder = .init(canon)
-            let format: FormatBuilder = .init(trim)
-            let builder: PlatformBuilder = .init(system, format)
+            let builder: PlatformBuilder = .init(canon, .defaultValue)
             return .platform(builder)
-        }
-    }
-    
-    public var type: PropertyEnum {
-        switch self {
-        case .input(let inputBuilder):
-            switch inputBuilder.type {
-            case .series: return .series
-            case .developer: return .developer
-            case .publisher: return .publisher
-            case .genre: return .genre
-            }
-        case .mode: return .mode
-        case .platform: return .platform
         }
     }
     

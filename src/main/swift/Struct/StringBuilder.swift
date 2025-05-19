@@ -22,13 +22,9 @@ public struct StringBuilder: Hashable {
             let value: String = inputBuilder.string.trimmed
             return .init(key, value)
         case .mode(let modeEnum):
-            let key: String = modeEnum.id
-            let value: String = modeEnum.rawValue
-            return .init(key, value)
+            return .init(modeEnum)
         case .platform(let platformBuilder):
-            let key: String = platformBuilder.system.id
-            let value: String = platformBuilder.format.id
-            return .init(key, value)
+            return .init(platformBuilder)
         }
     }
     
@@ -40,16 +36,10 @@ public struct StringBuilder: Hashable {
         self.trim = t
     }
     
-//    private init(_ string: String) {
-//        self.canon = string.canonicalized
-//        self.trim = string.trimmed
-//    }
-    
-
-    
-//    public init(_ model: PropertyModel) {
-//        self.id = model.value_canon
-//        self.display = model.value_trim
-//    }
+    private init(_ enumeror: Enumeror) {
+        let canon: String = enumeror.id
+        let trim: String = enumeror.rawValue
+        self.init(canon, trim)
+    }
     
 }

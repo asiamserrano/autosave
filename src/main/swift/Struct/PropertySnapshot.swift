@@ -15,10 +15,10 @@ public struct PropertySnapshot {
 //        return .init(.init(), type, string)
 //    }
     
-    public static func random(_ type: PropertyEnum) -> Self {
-        let property: PropertyBuilder = .random(type)
-        let string: StringBuilder = property.stringBuilder
-        return .init(.init(), type, string)
+    public static func random(_ base: PropertyBase) -> Self {
+        let builder: PropertyBuilder = .random(base)
+        let string: StringBuilder = builder.stringBuilder
+        return .init(.init(), base, string)
     }
     
     public static var random: Self {
@@ -27,23 +27,23 @@ public struct PropertySnapshot {
     
     public static func fromModel(_ model: PropertyModel) -> Self {
         let uuid: UUID = model.uuid
-        let type: PropertyEnum = .init(model.type_id)
+        let base: PropertyBase = .init(model.type_id, .defaultValue)
         let string: StringBuilder = .fromPropertyModel(model)
-        return .init(uuid, type, string)
+        return .init(uuid, base, string)
     }
  
     public let uuid: UUID
-    public let type: PropertyEnum
+    public let base: PropertyBase
     public let string: StringBuilder
     
-    private init(_ uuid: UUID, _ type: PropertyEnum, _ string: StringBuilder) {
+    private init(_ uuid: UUID, _ base: PropertyBase, _ string: StringBuilder) {
         self.uuid = uuid
-        self.type = type
+        self.base = base
         self.string = string
     }
 
     public var type_id: String {
-        self.type.id
+        self.base.id
     }
     
     public var value_canon: String {

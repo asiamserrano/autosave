@@ -77,6 +77,10 @@ fileprivate struct ContentView: View {
 
 #Preview {
     
+//    func get(_ base: PlatformBase) -> String {
+//        "\(base.)"
+//    }
+    
     let previewModelContainer: ModelContainer = {
         
         let container: ModelContainer = .preview
@@ -92,6 +96,12 @@ fileprivate struct ContentView: View {
         
         for _ in 0..<40 {
             let property: PropertySnapshot = .random
+            switch property.base {
+                // TODO: there is an issue here
+            case .platform(let platformBase):
+                print("\(property.base.rawValue) - \(property.value_trim)")
+            default: continue
+            }
             container.mainContext.save(property)
         }
         

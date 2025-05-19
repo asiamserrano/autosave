@@ -17,10 +17,17 @@ struct TestingView: View {
     
     var body: some View {
         Form {
-            Section(content: {
-                ForEach(AttributeEnum.cases, content: EnumView)
-            })
+            CasesView(PlatformBase.cases)
+            CasesView(PropertyBase.cases)
+            
         }
+    }
+    
+    @ViewBuilder
+    func CasesView(_ cases: [Enumeror]) -> some View {
+        Section(content: {
+            ForEach(cases, id:\.id, content: EnumView)
+        })
     }
     
     @ViewBuilder

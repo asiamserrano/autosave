@@ -43,7 +43,7 @@ public extension Enumerable {
         String(describing: self)
     }
     
-    var id: String { "\(self.index)_\(self.description)" }
+    var id: String { "\(self.index)_\(self.description)_\(self.className)" }
         
     var rawValue: String { self.description.capitalized }
     
@@ -51,10 +51,11 @@ public extension Enumerable {
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(self.id)
-        hasher.combine(self.className)
+        hasher.combine(self.rawValue)
+        hasher.combine(self.description)
     }
     
-    init(_ string: String) {
+    init(_ string: String, _ foo: String) {
         if let found: Self = Self.cases.first(where: {
             $0.id == string || $0.rawValue == string || $0.description == string
         }) {
