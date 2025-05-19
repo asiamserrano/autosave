@@ -55,7 +55,7 @@ public extension Enumerable {
         hasher.combine(self.description)
     }
     
-    init(_ string: String, _ foo: String) {
+    init(_ string: String) {
         if let found: Self = Self.cases.first(where: {
             $0.id == string || $0.rawValue == string || $0.description == string
         }) {

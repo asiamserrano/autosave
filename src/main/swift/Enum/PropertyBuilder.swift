@@ -50,10 +50,10 @@ extension PropertyBuilder {
             let builder: InputBuilder = .init(input, trim)
             return .input(builder)
         case .mode:
-            let mode: ModeEnum = .init(canon, .defaultValue)
+            let mode: ModeEnum = .init(canon)
             return .mode(mode)
         case .platform:
-            let builder: PlatformBuilder = .init(canon, .defaultValue)
+            let builder: PlatformBuilder = .init(canon)
             return .platform(builder)
         }
     }

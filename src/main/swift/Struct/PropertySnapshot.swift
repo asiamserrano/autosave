@@ -27,7 +27,7 @@ public struct PropertySnapshot {
     
     public static func fromModel(_ model: PropertyModel) -> Self {
         let uuid: UUID = model.uuid
-        let base: PropertyBase = .init(model.type_id, .defaultValue)
+        let base: PropertyBase = .init(model.type_id)
         let string: StringBuilder = .fromPropertyModel(model)
         return .init(uuid, base, string)
     }
