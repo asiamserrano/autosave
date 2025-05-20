@@ -34,6 +34,13 @@ public enum FormatBuilder: Encapsulable {
 
 extension FormatBuilder {
     
+    public static func random(_ format: FormatEnum) -> Self {
+        switch format {
+        case .digital: return .digital(.random)
+        case .physical: return .physical(.random)
+        }
+    }
+    
     public enum PhysicalEnum: Enumerable {
         case disc, cartridge, card
     }

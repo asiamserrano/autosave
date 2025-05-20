@@ -75,6 +75,21 @@ fileprivate struct ContentView: View {
 }
 
 
+extension PropertySnapshot {
+    
+    public var isNotFormat: Bool {
+        switch self.base {
+        case .platform(let platform):
+            switch platform {
+            case .system: return true
+            case .format: return false
+            }
+        default: return true
+        }
+    }
+    
+}
+
 #Preview {
     
 //    func get(_ base: PlatformBase) -> String {
@@ -96,13 +111,9 @@ fileprivate struct ContentView: View {
         
         for _ in 0..<40 {
             let property: PropertySnapshot = .random
-            switch property.base {
-                // TODO: there is an issue here
-            case .platform(let platformBase):
-                print("\(property.base.rawValue) - \(property.value_trim)")
-            default: continue
+            if property.isNotFormat {
+                container.mainContext.save(property)
             }
-            container.mainContext.save(property)
         }
         
         return container

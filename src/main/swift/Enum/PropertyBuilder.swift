@@ -25,8 +25,8 @@ extension PropertyBuilder {
         case .mode:
             let mode: ModeEnum = .random
             return .mode(mode)
-        case .platform:
-            let builder: PlatformBuilder = .random
+        case .platform(let platform):
+            let builder: PlatformBuilder = .random(platform)
             return .platform(builder)
         }
     }

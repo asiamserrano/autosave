@@ -37,12 +37,7 @@ public enum PlatformBase: Encapsulable {
 extension PlatformBase {
     
     public static func filter(_ platform: PlatformEnum) -> Cases {
-        Self.cases.filter {
-            switch (platform, $0) {
-            case (.system, .system), (.format, .format): return true
-            default: return false
-            }
-        }
+        Self.cases.filter { platform.equals($0) }
     }
     
 }

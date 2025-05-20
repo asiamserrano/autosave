@@ -92,7 +92,7 @@ extension PropertyPredicate {
     
     public static func getByType(_ type_id: String) -> PropertyPredicate {
         #Predicate {
-            $0.type_id == type_id
+            $0.type_id == type_id || $0.type_id.contains(type_id)
         }
     }
     

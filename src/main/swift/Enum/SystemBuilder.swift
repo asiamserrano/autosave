@@ -44,6 +44,15 @@ public enum SystemBuilder: Encapsulable {
 
 extension SystemBuilder {
     
+    public static func random(_ system: SystemEnum) -> Self {
+        switch system {
+        case .playstation: return .playstation(.random)
+        case .nintendo: return .nintendo(.random)
+        case .xbox: return .xbox(.random)
+        case .os: return .os(.random)
+        }
+    }
+    
     public enum PlayStationEnum: Enumerable {
         case ps1, ps2, ps3, ps4, ps5, psp
         
@@ -91,8 +100,8 @@ extension SystemBuilder {
         public var rawValue: String {
             switch self {
             case .xbox: return "Xbox"
-            case .x360: return "360"
-            case .one:  return "One"
+            case .x360: return "Xbox 360"
+            case .one:  return "Xbox One"
             }
         }
     }

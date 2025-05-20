@@ -33,3 +33,14 @@ public enum PlatformBuilder: Encapsulable {
     }
 
 }
+
+extension PlatformBuilder {
+    
+    public static func random(_ platform: PlatformBase) -> Self {
+        switch platform {
+        case .system(let system): return .system(.random(system))
+        case .format(let format): return .format(.random(format))
+        }
+    }
+    
+}
