@@ -17,39 +17,15 @@ struct PropertiesListView: View {
     @Query(sort: .defaultValue) var models: [PropertyModel]
     
     var body: some View {
-        
-        
-        
 //        TempView()
         RealView()
-        
-        
-//        .searchable(text: $search)
-        .toolbar {
-//            ToolbarItem(placement: .topBarTrailing, content: {
-//                NavigationLink(destination: {
-//                    GameForm(self.status)
-//                }, label: {
-//                    IconView(.plus)
-//                })
-//            })
-        }
-        
     }
     
     @ViewBuilder
     func TempView() -> some View {
         Form {
-            
-            Section {
-                ForEach(PlatformEnum.cases) {
-                    Text("\($0.rawValue)Enum")
-                }
-            }
-            
             Section {
                 ForEach(models) { model in
-    //                let snapshot: PropertySnapshot = model.snapshot
                     Text(model.type_id)
                 }
             }
@@ -62,22 +38,14 @@ struct PropertiesListView: View {
             Form {
                 Section {
                     ForEach(InputEnum.cases) { input in
-                        FilteredView(.input(input))
+                        PropertyView(.input(input))
                     }
-                    
                 }
                 
-                Section("Modes") {
-                    FilteredView(.mode)
-                }
-                
+                PropertyView(.mode)
+                                
                 ForEach(PlatformEnum.cases) { platform in
                     PlatformView(platform)
-//                    Section(platform.rawValue) {
-//                        ForEach(PlatformBase.filter(platform)) { base in
-//                            FilteredView(.platform(base))
-//                        }
-//                    }
                 }
                 
             }
@@ -90,52 +58,64 @@ fileprivate struct PlatformView: View {
     
     @Query var models: [PropertyModel]
     
-    let platform: PlatformEnum
+    let cases: PlatformBase.Cases
     let title: String
     
     init(_ platform: PlatformEnum) {
-        self.platform = platform
+        self.cases = PlatformBase.filter(platform)
         self.title = platform.rawValue.pluralize()
-        let id: String = "_\(platform.rawValue)Enum"
-        self._models = .init(filter: .getByType(id), sort: .defaultValue)
+        self._models = .init(filter: .getByType(platform.prefix_id), sort: .defaultValue)
     }
     
     var body: some View {
         ModelsView(models, content: {
             Section(title) {
-                ForEach(PlatformBase.filter(platform)) { base in
-                    FilteredView(.platform(base))
+                ForEach(cases) { base in
+                    let navigation_title: String = base.createTitle(title)
+                    PropertyView(base, navigation_title)
                 }
             }
         })
     }
-    
+
 }
 
-fileprivate struct FilteredView: View {
+fileprivate struct PropertyView: View {
     
     @Query var models: [PropertyModel]
     
     let base: PropertyBase
     let title: String
+    let text: String
     
-    init(_ base: PropertyBase) {
-        self.base = base
-        self.title = base.rawValue.pluralize()
+    public init(_ platform: PlatformBase, _ title: String) {
+        let base: PropertyBase = .platform(platform)
+        let text: String = base.rawValue
         self._models = .init(filter: .getByType(base.id), sort: .defaultValue)
+        self.base = base
+        self.title = title
+        self.text = text
     }
     
+    public init(_ base: PropertyBase) {
+        let string: String = base.rawValue.pluralize()
+        self._models = .init(filter: .getByType(base.id), sort: .defaultValue)
+        self.base = base
+        self.title = string
+        self.text = string
+    }
+        
     var body: some View {
         ModelsView(models, content: {
             switch base {
             case .mode:
-                ForEachView()
+                Section(text, content: ForEachView)
             default:
                 NavigationLink(destination: {
                     Form(content: ForEachView)
                     .navigationTitle(title)
                 }, label: {
-                    Text(title)
+                    Text(text)
                 })
             }
         })

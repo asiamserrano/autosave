@@ -27,6 +27,10 @@ public extension Enumerable {
         }
     }
     
+    static var className: String {
+        String(describing: Self.self)
+    }
+    
     static var defaultValue: Self {
         Self.cases.first!
     }
@@ -47,7 +51,7 @@ public extension Enumerable {
         
     var rawValue: String { self.description.capitalized }
     
-    var className: String { String(describing: Self.self) }
+    var className: String { Self.className }
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(self.id)

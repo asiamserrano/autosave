@@ -88,6 +88,22 @@ extension PropertySnapshot {
         }
     }
     
+    public var isNotMode: Bool {
+        switch self.base {
+        case .mode: return false
+        default: return true
+        }
+    }
+    
+    public var isNotInput: Bool {
+        switch self.base {
+        case .input: return false
+        default: return true
+        }
+    }
+    
+    public var isDefault: Bool { true }
+    
 }
 
 #Preview {
@@ -111,7 +127,8 @@ extension PropertySnapshot {
         
         for _ in 0..<40 {
             let property: PropertySnapshot = .random
-            if property.isNotFormat {
+//            container.mainContext.save(property)
+            if property.isDefault {
                 container.mainContext.save(property)
             }
         }

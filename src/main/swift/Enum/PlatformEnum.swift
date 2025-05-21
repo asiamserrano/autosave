@@ -27,11 +27,10 @@ extension PlatformEnum {
         }
     }
     
-    public var type_id: String {
+    public var prefix_id: String {
         switch self {
-        case .system: 
-        case .format:
-            <#code#>
+        case .system: return SystemEnum.className
+        case .format: return FormatEnum.className
         }
     }
     

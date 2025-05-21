@@ -40,4 +40,13 @@ extension PlatformBase {
         Self.cases.filter { platform.equals($0) }
     }
     
+    public func createTitle(_ title: String) -> String {
+        switch self {
+        case .system(.os):
+            return self.rawValue.pluralize()
+        default: 
+            return  "\(self.rawValue) \(title)"
+        }
+    }
+    
 }
