@@ -1,5 +1,5 @@
 //
-//  ModelsView.swift
+//  OptionalView.swift
 //  autosave
 //
 //  Created by Asia Serrano on 5/11/25.
@@ -8,28 +8,27 @@
 import SwiftUI
 import SwiftData
 
-struct ModelsView<T: View>: View {
+struct OptionalView<T: View>: View {
     
     typealias ViewFunc = () -> T
     
-    let isShowing: Bool
+    let count: Int
     let message: String?
     let content: ViewFunc
     
-    init(_ models: [Persistor], _ message: String?, @ViewBuilder content: @escaping ViewFunc) {
-        self.isShowing = !models.isEmpty
+    init(_ models: [Persistor], _ message: String? = nil, @ViewBuilder content: @escaping ViewFunc) {
+        let count: Int = models.count
+        self.init(count, message, content: content)
+    }
+    
+    init(_ count: Int, _ message: String? = nil, @ViewBuilder content: @escaping ViewFunc) {
+        self.count = count
         self.message = message
         self.content = content
     }
     
-    init(_ models: [Persistor], @ViewBuilder content: @escaping ViewFunc) {
-        self.isShowing = !models.isEmpty
-        self.message = nil
-        self.content = content
-    }
-    
     var body: some View {
-        if isShowing {
+        if count > 0 {
            content()
         } else {
             if let message: String = self.message {

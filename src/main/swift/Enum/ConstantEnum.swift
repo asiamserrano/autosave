@@ -25,7 +25,7 @@ public enum ConstantEnum: Enumerable {
     case games
     
     public var rawValue: String {
-        self.id.replacingOccurrences(of: "_", with: " ").capitalized
+        self.description.replacingOccurrences(of: "_", with: " ").capitalized
     }
     
 }

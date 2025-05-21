@@ -8,6 +8,6 @@
 import Foundation
 
 public enum PropertyEnum: Enumerable {
-    case mode, input, platform
+    case input, mode, platform
 }
 

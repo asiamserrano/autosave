@@ -23,7 +23,7 @@ struct GamesListView: View {
     }
     
     var body: some View {
-        ModelsView(models, "no games", content: {
+        OptionalView(models, "no games", content: {
             SearchView(status, search)
         })
         .searchable(text: $search)
@@ -54,7 +54,7 @@ fileprivate struct SearchView: View {
     }
     
     var body: some View {
-        ModelsView(models, "no results", content: {
+        OptionalView(models, "no results", content: {
             Form {
                 ForEach(models) { model in
                     NavigationLink(destination: {

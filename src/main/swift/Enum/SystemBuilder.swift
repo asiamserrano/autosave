@@ -84,12 +84,12 @@ extension SystemBuilder {
     }
     
     public enum OSEnum: Enumerable {
-        case win, mac
+        case mac, win
         
         public var rawValue: String {
             switch self {
-            case .win: return "Microsoft Windows"
             case .mac: return "Apple macOS"
+            case .win: return "Microsoft Windows"
             }
         }
     }

@@ -13,8 +13,4 @@ public extension Int {
         return String(format: "%02d", self)
     }
     
-    var isGreaterThanZero: Bool {
-        self > 0
-    }
-    
 }

@@ -14,14 +14,8 @@ public class GameBuilder: ObservableObject {
     @Published public var boxart: Data?
     
     @Published private var invalid: Set<GameSnapshot>
-        
-    
-    
-    //    @Published public var photosPickerItem: PhotosPickerItem? = nil
-    //    @Published public var imagePicker: ImagePickerEnum = .picker
-        
+  
     public let status: GameStatusEnum
-//    private let original: GameSnapshot
     
     public init(_ status: GameStatusEnum) {
         let snap: GameSnapshot = .defaultValue(status)
@@ -29,7 +23,6 @@ public class GameBuilder: ObservableObject {
         self.release = .defaultValue
         self.boxart = nil
         self.status = status
-//        self.original = snap
         self.invalid = .init(snap)
     }
     
@@ -43,7 +36,6 @@ public class GameBuilder: ObservableObject {
         self.release = snap.release
         self.boxart = snap.boxart
         self.status = snap.status
-//        self.original = snap
         self.invalid = .init(snap)
     }
     
@@ -70,9 +62,5 @@ extension GameBuilder {
         let isEmpty: Bool = self.snapshot.title_canon.isEmpty
         return isInvalid || isEmpty
     }
-    
-//    public var uuid: UUID {
-//        self.original.uuid
-//    }
 
 }

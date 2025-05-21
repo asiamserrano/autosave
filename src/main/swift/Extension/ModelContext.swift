@@ -15,16 +15,6 @@ extension ModelContext {
         self.store()
     }
     
-    public func fetchCount(_ predicate: PropertyPredicate) -> Int {
-        let desc: PropertyFetchDescriptor = .init(predicate: predicate)
-        do {
-            return try self.fetchCount(desc)
-        } catch {
-            print("cannot fetch count for \(desc) -> error: \(error)")
-            return 0
-        }
-    }
-    
 //
 //    public func fetchCount(_ status: GameStatusEnum) -> Int {
 //        let desc: GameFetchDescriptor = .getByStatus(status)
