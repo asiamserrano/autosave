@@ -56,4 +56,10 @@ public extension PropertyFetchDescriptor {
         return .init(predicate: predicate, sortBy: .defaultValue)
     }
     
+//    static func getByType(_ property: PropertyBase) -> Self {
+//        let type_id: String = property.id
+//        let predicate: PropertyPredicate = .getByType(type_id)
+//        return .init(predicate: predicate, sortBy: .defaultValue)
+//    }
+    
 }

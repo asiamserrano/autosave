@@ -36,16 +36,23 @@ public enum PlatformBase: Encapsulable {
 
 extension PlatformBase {
     
-    public static func filter(_ platform: PlatformEnum) -> Cases {
-        Self.cases.filter { platform.equals($0) }
-    }
-    
-    public func createTitle(_ title: String) -> String {
+//    public static func filter(_ platform: PlatformEnum) -> Cases {
+//        Self.cases.filter { $0.platformEnum == platform }
+//    }
+
+    public var navigationTitle: String {
         switch self {
         case .system(.os):
             return self.rawValue.pluralize()
-        default: 
-            return  "\(self.rawValue) \(title)"
+        default:
+            return  "\(self.rawValue) \(platformEnum.rawValue.pluralize())"
+        }
+    }
+    
+    public var platformEnum: PlatformEnum {
+        switch self {
+        case .system: return .system
+        case .format: return .format
         }
     }
     

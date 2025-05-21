@@ -96,6 +96,14 @@ extension PropertyPredicate {
         }
     }
     
+    public static func getByType(_ type_id: String, _ canon: String) -> PropertyPredicate {
+        switch canon.count {
+        case 0: return #Predicate { $0.type_id == type_id }
+        case 1: return #Predicate { $0.type_id == type_id && $0.value_canon.starts(with: canon) }
+        default: return #Predicate { $0.type_id == type_id && $0.value_canon.contains(canon) }
+        }
+    }
+    
 //    public static func getByPlatform(_ type: PlatformEnum, _ platform: PlatformBuilder) -> PropertyPredicate {
 //        let type_id: String = type.propertyEnum.id
 //        switch type {

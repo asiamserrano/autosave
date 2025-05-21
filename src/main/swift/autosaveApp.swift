@@ -108,28 +108,31 @@ extension PropertySnapshot {
 
 #Preview {
     
-//    func get(_ base: PlatformBase) -> String {
-//        "\(base.)"
-//    }
+    let games_max: Int = 20
+    let properties_max: Int = 50
+   
     
     let previewModelContainer: ModelContainer = {
         
         let container: ModelContainer = .preview
         
-//        container.mainContext.autosaveEnabled = false
-//        container.mainContext.undoManager = .init()
+        container.mainContext.autosaveEnabled = false
+        container.mainContext.undoManager = .init()
         
-        for _ in 0..<20 {
+        var games_count: Int = 0
+        var properties_count: Int = 0
+        
+        while games_count < games_max {
             let game: GameSnapshot = .random
-            container.mainContext.save(game)
-            
+            if container.mainContext.save(game) {
+                games_count = games_count + 1
+            }
         }
         
-        for _ in 0..<40 {
+        while properties_count < properties_max {
             let property: PropertySnapshot = .random
-//            container.mainContext.save(property)
-            if property.isDefault {
-                container.mainContext.save(property)
+            if container.mainContext.save(property) {
+                properties_count = properties_count + 1
             }
         }
         

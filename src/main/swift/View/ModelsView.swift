@@ -16,7 +16,7 @@ struct ModelsView<T: View>: View {
     let message: String?
     let content: ViewFunc
     
-    init(_ models: [Persistor], _ message: String, @ViewBuilder content: @escaping ViewFunc) {
+    init(_ models: [Persistor], _ message: String?, @ViewBuilder content: @escaping ViewFunc) {
         self.isShowing = !models.isEmpty
         self.message = message
         self.content = content

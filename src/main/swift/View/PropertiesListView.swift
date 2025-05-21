@@ -38,14 +38,29 @@ struct PropertiesListView: View {
             Form {
                 Section {
                     ForEach(InputEnum.cases) { input in
-                        PropertyView(.input(input))
+                        let predicate: PropertyPredicate = .getByType(input.id)
+                        if modelContext.fetchCount(predicate).isGreaterThanZero {
+                            InputView(input)
+                        }
                     }
                 }
+                
+//                ModeView()
                 
                 PropertyView(.mode)
                                 
                 ForEach(PlatformEnum.cases) { platform in
-                    PlatformView(platform)
+                    let predicate: PropertyPredicate = .getByType(platform.prefix_id)
+                    if modelContext.fetchCount(predicate).isGreaterThanZero {
+//                        PlatformView(platform)
+                        let title: String = platform.rawValue.pluralize()
+                        let cases: PlatformBase.Cases = PlatformBase.cases.filter { $0.platformEnum == platform }
+                        Section(title) {
+                            ForEach(cases) { base in
+                                PropertyView(.platform(base))
+                            }
+                        }
+                    }
                 }
                 
             }
@@ -54,75 +69,84 @@ struct PropertiesListView: View {
 
 }
 
-fileprivate struct PlatformView: View {
-    
-    @Query var models: [PropertyModel]
-    
-    let cases: PlatformBase.Cases
-    let title: String
-    
-    init(_ platform: PlatformEnum) {
-        self.cases = PlatformBase.filter(platform)
-        self.title = platform.rawValue.pluralize()
-        self._models = .init(filter: .getByType(platform.prefix_id), sort: .defaultValue)
-    }
-    
-    var body: some View {
-        ModelsView(models, content: {
-            Section(title) {
-                ForEach(cases) { base in
-                    let navigation_title: String = base.createTitle(title)
-                    PropertyView(base, navigation_title)
-                }
-            }
-        })
-    }
+//fileprivate struct ModeView: PropertyViewable {
+//    
+//    let predicate: PropertyPredicate
+//    let title: String
+//    
+//    init() {
+//        let base: PropertyBase = .mode
+//        self.title = base.rawValue.pluralize()
+//        self.predicate = .getByType(base.id)
+//    }
+//    
+//    var body: some View {
+//        PropertyModelsView(predicate, content: { models in
+//            Section(title, content: {
+//                ForEachView(models)
+//            })
+//        })
+//    }
+//    
+//}
 
-}
+//fileprivate struct PlatformView: PropertyViewable {
+//    
+//    let cases: PlatformBase.Cases
+//    let title: String
+//    
+//    init(_ platform: PlatformEnum) {
+//        self.title = platform.rawValue.pluralize()
+//        self.cases = PlatformBase.filter(platform)
+//    }
+//    
+//    var body: some View {
+//        Section(title) {
+//            ForEach(cases) { base in
+//                PropertyView(.platform(base))
+//            }
+//        }
+//    }
+//
+//}
 
 fileprivate struct PropertyView: View {
     
-    @Query var models: [PropertyModel]
-    
     let base: PropertyBase
+    let predicate: PropertyPredicate
     let title: String
-    let text: String
+    let message: String?
     
-    public init(_ platform: PlatformBase, _ title: String) {
-        let base: PropertyBase = .platform(platform)
-        let text: String = base.rawValue
-        self._models = .init(filter: .getByType(base.id), sort: .defaultValue)
+    init(_ base: PropertyBase, _ predicate: PropertyPredicate? = nil, _ message: String? = nil) {
         self.base = base
-        self.title = title
-        self.text = text
+        self.title = base.rawValue.pluralize()
+        self.predicate = predicate ?? .getByType(base.id)
+        self.message = message
     }
     
-    public init(_ base: PropertyBase) {
-        let string: String = base.rawValue.pluralize()
-        self._models = .init(filter: .getByType(base.id), sort: .defaultValue)
-        self.base = base
-        self.title = string
-        self.text = string
-    }
-        
     var body: some View {
-        ModelsView(models, content: {
+        PropertyModelsView(predicate, message, content: { models in
             switch base {
             case .mode:
-                Section(text, content: ForEachView)
-            default:
+                Section(title, content: {
+                    ForEachView(models)
+                })
+            case .input:
+                FormForEachView(models, title)
+            case .platform(let platformBase):
+                let navigation_title: String = platformBase.navigationTitle
                 NavigationLink(destination: {
-                    Form(content: ForEachView)
-                    .navigationTitle(title)
+                    FormForEachView(models, navigation_title)
                 }, label: {
-                    Text(text)
+                    Text(platformBase.rawValue)
                 })
             }
+            
         })
     }
     
     @ViewBuilder
-    private func ForEachView() -> some View {
+    func ForEachView(_ models: Models) -> some View {
         ForEach(models) { model in
             NavigationLink(destination: {
                 Text("TBD")
@@ -131,6 +155,95 @@ fileprivate struct PropertyView: View {
                 Text(model.value_trim)
             })
         }
+    }
+    
+    @ViewBuilder
+    func FormForEachView(_ models: Models, _ title: String) -> some View {
+        Form(content: {
+            ForEachView(models)
+        })
+        .navigationTitle(title)
+    }
+    
+}
+
+//fileprivate protocol PropertyViewable: View {}
+//
+//fileprivate extension PropertyViewable {
+//    
+////    @ViewBuilder
+////    func ForEachView(_ models: Models) -> some View {
+////        ForEach(models) { model in
+////            NavigationLink(destination: {
+////                Text("TBD")
+////                .navigationTitle("Games")
+////            }, label: {
+////                Text(model.value_trim)
+////            })
+////        }
+////    }
+////    
+////    @ViewBuilder
+////    func FormForEachView(_ models: Models, _ title: String) -> some View {
+////        Form(content: {
+////            ForEachView(models)
+////        })
+////        .navigationTitle(title)
+////    }
+////    
+//}
+
+fileprivate typealias Models = [PropertyModel]
+
+fileprivate struct PropertyModelsView<T: View>: View {
+        
+    @Query var models: Models
+    
+    typealias ViewFunc = (Models) -> T
+    
+    let content: ViewFunc
+    let message: String?
+    
+    init(_ predicate: PropertyPredicate, _ message: String? = nil, @ViewBuilder content: @escaping ViewFunc) {
+        self.content = content
+        self.message = message
+        self._models = .init(filter: predicate, sort: .defaultValue)
+    }
+    
+    var body: some View {
+        ModelsView(models, message, content: {
+            content(models)
+        })
+    }
+    
+}
+
+fileprivate struct InputView: View {
+        
+    @State var search: String = .defaultValue
+    
+    let base: PropertyBase
+    let input: InputEnum
+    let title: String
+    let message: String
+    
+    public init(_ input: InputEnum) {
+        let title: String = input.rawValue.pluralize()
+        self.base = .input(input)
+        self.input = input
+        self.title = title
+        self.message = "no \(title.lowercased())"
+    }
+    
+    var body: some View {
+        NavigationLink(destination: {
+            let predicate: PropertyPredicate = .getByType(input.id, search.canonicalized)
+            PropertyView(base, predicate, message)
+            .searchable(text: $search)
+            .navigationTitle(title)
+        }, label: {
+            Text(title)
+        })
     }
     
 }

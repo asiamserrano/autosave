@@ -14,6 +14,17 @@ extension ModelContext {
         self.delete(model)
         self.store()
     }
+    
+    public func fetchCount(_ predicate: PropertyPredicate) -> Int {
+        let desc: PropertyFetchDescriptor = .init(predicate: predicate)
+        do {
+            return try self.fetchCount(desc)
+        } catch {
+            print("cannot fetch count for \(desc) -> error: \(error)")
+            return 0
+        }
+    }
+    
 //
 //    public func fetchCount(_ status: GameStatusEnum) -> Int {
 //        let desc: GameFetchDescriptor = .getByStatus(status)
@@ -55,30 +66,52 @@ extension ModelContext {
         }
     }
     
+//    @discardableResult
+//    func save(_ current: GameSnapshot) -> GameResult {
+//        let composite: GameFetchDescriptor = .getByCompositeKey(current)
+//        let new: GameModel? = self.fetchModel(composite)
+//        if let new: GameModel = new {
+//            return .init(new.snapshot, false, .add)
+//        } else {
+//            let game: GameModel = .fromSnapshot(current)
+//            self.add(game)
+//            return .init(current, true, .add)
+//        }
+//    }
+    
+//    @discardableResult
+//    public func save(_ snapshot: PropertySnapshot) -> PropertyModel {
+//        let composite: PropertyFetchDescriptor = .getByCompositeKey(snapshot)
+//        let result: PropertyModel? = self.fetchModel(composite)
+//        if let result: PropertyModel = result {
+//            return result
+//        } else {
+//            let property: PropertyModel = .fromSnapshot(snapshot)
+//            self.add(property)
+//            return property
+//        }
+//    }
+    
     @discardableResult
-    func save(_ current: GameSnapshot) -> GameResult {
-        let composite: GameFetchDescriptor = .getByCompositeKey(current)
-        let new: GameModel? = self.fetchModel(composite)
-        if let new: GameModel = new {
-            return .init(new.snapshot, false, .add)
-        } else {
-            let game: GameModel = .fromSnapshot(current)
+    public func save(_ snapshot: GameSnapshot) -> Bool {
+        let composite: GameFetchDescriptor = .getByCompositeKey(snapshot)
+        if self.fetchModel(composite) == nil {
+            let game: GameModel = .fromSnapshot(snapshot)
             self.add(game)
-            return .init(current, true, .add)
+            return true
         }
+        return false
     }
     
     @discardableResult
-    public func save(_ snapshot: PropertySnapshot) -> PropertyModel {
+    public func save(_ snapshot: PropertySnapshot) -> Bool {
         let composite: PropertyFetchDescriptor = .getByCompositeKey(snapshot)
-        let result: PropertyModel? = self.fetchModel(composite)
-        if let result: PropertyModel = result {
-            return result
-        } else {
+        if self.fetchModel(composite) == nil {
             let property: PropertyModel = .fromSnapshot(snapshot)
             self.add(property)
-            return property
+            return true
         }
+        return false
     }
     
 }
