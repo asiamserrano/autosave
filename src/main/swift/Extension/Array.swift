@@ -16,12 +16,20 @@ public extension Array {
         self = elements
     }
     
+    var randomElement: Element {
+        if let element: Element = self.randomElement() {
+            return element
+        } else {
+            fatalError("unable to get random element for empty array: \(self)")
+        }
+    }
+    
 }
 
 extension Array where Element == any PersistentModel.Type {
     
     public static var defaultValue: Self {
-        .init(GameModel.self, PropertyModel.self)
+        .init(GameModel.self, PropertyModel.self, RelationModel.self)
     }
     
 }
@@ -47,3 +55,15 @@ extension Array where Element == PropertySortDescriptor {
     }
     
 }
+
+//extension Array where Element == RelationModel {
+//    
+//    public var keys: [UUID] {
+//        self.map(\.uuid_key)
+//    }
+//    
+//    public var values: [UUID] {
+//        self.map(\.uuid_value)
+//    }
+//    
+//}

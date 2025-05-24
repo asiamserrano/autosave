@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct GameSnapshot {
+public struct GameSnapshot: Uuidentifiable {
     
     public static func defaultValue(_ status: GameStatusEnum) -> Self {
         .init(.init(), .defaultValue, .defaultValue, status, nil)

@@ -20,7 +20,7 @@ struct OptionalView<T: View>: View {
         let count: Int = models.count
         self.init(count, message, content: content)
     }
-    
+
     init(_ count: Int, _ message: String? = nil, @ViewBuilder content: @escaping ViewFunc) {
         self.count = count
         self.message = message

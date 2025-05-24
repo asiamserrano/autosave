@@ -7,13 +7,13 @@
 
 import Foundation
 
-public struct PropertySnapshot {
+public struct PropertySnapshot: Uuidentifiable {
     
-//    public static func fromBuilder(_ builder: PropertyBuilder) -> Self {
-//        let type: PropertyEnum = builder.type
-//        let string: StringBuilder = .fromPropertyBuilder(builder)
-//        return .init(.init(), type, string)
-//    }
+    public static func fromBuilder(_ builder: PropertyBuilder, _ uuid: UUID = .init()) -> Self {
+        let base: PropertyBase = builder.base
+        let string: StringBuilder = .fromPropertyBuilder(builder)
+        return .init(uuid, base, string)
+    }
     
     public static func random(_ base: PropertyBase) -> Self {
         let builder: PropertyBuilder = .random(base)

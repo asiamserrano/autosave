@@ -106,4 +106,13 @@ extension SystemBuilder {
         }
     }
     
+    public var type: SystemEnum {
+        switch self {
+        case .playstation: return .playstation
+        case .nintendo: return .nintendo
+        case .xbox: return .xbox
+        case .os: return .os
+        }
+    }
+    
 }

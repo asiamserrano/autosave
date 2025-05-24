@@ -8,6 +8,12 @@
 import Foundation
 import SwiftData
 
+public extension FetchDescriptor {
+    
+    static var defaultValue: Self { .init() }
+    
+}
+
 public typealias GameFetchDescriptor = FetchDescriptor<GameModel>
 
 public extension GameFetchDescriptor {
@@ -31,11 +37,11 @@ public extension GameFetchDescriptor {
         return .init(predicate: predicate, sortBy: .defaultValue)
     }
     
-//    static func getByJunctions(_ junctions: [LinkModel]) -> Self {
-//        let uuids: [UUID] = junctions.compactMap(\.game_uuid)
-//        let predicate: GamePredicate = .getByUUIDs(uuids)
-//        return .init(predicate: predicate, sortBy: .defaultValue)
-//    }
+    static func getByRelations(_ relations: [RelationModel]) -> Self {
+        let uuids: [UUID] = relations.compactMap(\.uuid_key)
+        let predicate: GamePredicate = .getByUUIDs(uuids)
+        return .init(predicate: predicate, sortBy: .defaultValue)
+    }
     
 }
 
@@ -61,5 +67,19 @@ public extension PropertyFetchDescriptor {
 //        let predicate: PropertyPredicate = .getByType(type_id)
 //        return .init(predicate: predicate, sortBy: .defaultValue)
 //    }
+    
+}
+
+public typealias RelationFetchDescriptor = FetchDescriptor<RelationModel>
+
+public extension RelationFetchDescriptor {
+    
+    static func getByCompositeKey(_ snapshot: RelationSnapshot) -> Self {
+        let type: String = snapshot.type.id
+        let key: UUID = snapshot.key
+        let value: UUID = snapshot.value
+        let predicate: RelationPredicate = .getByCompositeKey(type, key, value)
+        return .init(predicate: predicate, sortBy: .defaultValue)
+    }
     
 }

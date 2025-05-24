@@ -15,16 +15,11 @@ extension ModelContext {
         self.store()
     }
     
-//
-//    public func fetchCount(_ status: GameStatusEnum) -> Int {
-//        let desc: GameFetchDescriptor = .getByStatus(status)
-//        do {
-//            return try self.fetchCount(desc)
-//        } catch {
-//            print("error: \(error)")
-//            return 0
-//        }
-//    }
+    public func fetchCount(_ predicate: PropertyPredicate?) -> Int {
+        let desc: PropertyFetchDescriptor = .init(predicate: predicate)
+        let int: Int? = try? self.fetchCount(desc)
+        return int ?? 0
+    }
 
     func move(_ game: GameModel, _ next: GameStatusEnum) -> Void {
         game.setStatus(next)
@@ -83,25 +78,36 @@ extension ModelContext {
 //    }
     
     @discardableResult
-    public func save(_ snapshot: GameSnapshot) -> Bool {
+    public func save(_ snapshot: GameSnapshot) -> GameModel? {
         let composite: GameFetchDescriptor = .getByCompositeKey(snapshot)
         if self.fetchModel(composite) == nil {
             let game: GameModel = .fromSnapshot(snapshot)
             self.add(game)
-            return true
+            return game
         }
-        return false
+        return nil
     }
     
     @discardableResult
-    public func save(_ snapshot: PropertySnapshot) -> Bool {
+    public func save(_ snapshot: PropertySnapshot) -> PropertyModel? {
         let composite: PropertyFetchDescriptor = .getByCompositeKey(snapshot)
         if self.fetchModel(composite) == nil {
             let property: PropertyModel = .fromSnapshot(snapshot)
             self.add(property)
-            return true
+            return property
         }
-        return false
+        return nil
+    }
+    
+    @discardableResult
+    public func save(_ snapshot: RelationSnapshot) -> RelationModel? {
+        let composite: RelationFetchDescriptor = .getByCompositeKey(snapshot)
+        if self.fetchModel(composite) == nil {
+            let relation: RelationModel = .fromSnapshot(snapshot)
+            self.add(relation)
+            return relation
+        }
+        return nil
     }
     
 }
@@ -126,6 +132,19 @@ private extension ModelContext {
     }
     
     func fetchModels(_ desc: PropertyFetchDescriptor) -> [PropertyModel] {
+        do {
+            return try self.fetch(desc)
+        } catch {
+            print("error: \(error)")
+            return .init()
+        }
+    }
+    
+    func fetchModel(_ desc: RelationFetchDescriptor) -> RelationModel? {
+        fetchModels(desc).first
+    }
+    
+    func fetchModels(_ desc: RelationFetchDescriptor) -> [RelationModel] {
         do {
             return try self.fetch(desc)
         } catch {

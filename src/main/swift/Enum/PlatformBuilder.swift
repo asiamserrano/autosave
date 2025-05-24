@@ -38,8 +38,23 @@ extension PlatformBuilder {
     
     public static func random(_ platform: PlatformBase) -> Self {
         switch platform {
-        case .system(let system): return .system(.random(system))
-        case .format(let format): return .format(.random(format))
+        case .system(let system):
+            let builder: SystemBuilder = .random(system)
+            return .system(builder)
+        case .format(let format):
+            let builder: FormatBuilder = .random(format)
+            return .format(builder)
+        }
+    }
+    
+    public var type: PlatformBase {
+        switch self {
+        case .system(let builder):
+            let system: SystemEnum = builder.type
+            return .system(system)
+        case .format(let builder):
+            let format: FormatEnum = builder.type
+            return .format(format)
         }
     }
     

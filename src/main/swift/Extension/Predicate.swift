@@ -50,11 +50,11 @@ extension GamePredicate {
         }
     }
     
-//    public static func getByUUIDs(_ uuids: [UUID]) -> GamePredicate {
-//        #Predicate {
-//            uuids.contains($0.uuid)
-//        }
-//    }
+    public static func getByUUIDs(_ uuids: [UUID]) -> GamePredicate {
+        #Predicate {
+            uuids.contains($0.uuid)
+        }
+    }
     
 //    public static func getByCompositeKey(_ comparator: GameSnapshot) -> GamePredicate {
 //        let title_canon: String = comparator.title_canon
@@ -74,7 +74,6 @@ extension GamePredicate {
 }
 
 public typealias PropertyPredicate = Predicate<PropertyModel>
-
 
 extension PropertyPredicate {
     
@@ -142,5 +141,25 @@ extension PropertyPredicate {
 //        }
 //    }
     
+    
+}
+
+
+public typealias RelationPredicate = Predicate<RelationModel>
+
+extension RelationPredicate {
+    
+    public static func getByCompositeKey(_ type_id: String, _ uuid_key: UUID, _ uuid_value: UUID) -> RelationPredicate {
+        #Predicate {
+            $0.type_id == type_id && $0.uuid_key == uuid_key && $0.uuid_value == uuid_value
+        }
+    }
+    
+    public static func getByProperty(_ type_id: String, _ uuid_value: UUID) -> RelationPredicate {
+//        print("type_id: \(type_id), uuid_value: \(uuid_value)")
+        return #Predicate {
+            $0.type_id == type_id && $0.uuid_value == uuid_value
+        }
+    }
     
 }

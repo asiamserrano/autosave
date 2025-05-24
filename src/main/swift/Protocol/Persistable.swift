@@ -10,9 +10,7 @@ import SwiftData
 
 public typealias Persistor = any Persistable
 
-public protocol Persistable: PersistentModel {
-    var uuid: UUID { get }
-}
+public protocol Persistable: PersistentModel, Uuidentifiable { }
 
 extension Persistable {
     

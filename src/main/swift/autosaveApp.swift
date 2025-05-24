@@ -110,7 +110,6 @@ extension PropertySnapshot {
     
     let games_max: Int = 20
     let properties_max: Int = 50
-   
     
     let previewModelContainer: ModelContainer = {
         
@@ -119,20 +118,24 @@ extension PropertySnapshot {
         container.mainContext.autosaveEnabled = false
         container.mainContext.undoManager = .init()
         
-        var games_count: Int = 0
         var properties_count: Int = 0
         
-        while games_count < games_max {
-            let game: GameSnapshot = .random
-            if container.mainContext.save(game) {
-                games_count = games_count + 1
+        var games: [GameModel] = .defaultValue
+        
+        while games.count < games_max {
+            if let model: GameModel = container.mainContext.save(.random) {
+                games.append(model)
             }
         }
-        
+                
         while properties_count < properties_max {
-            let property: PropertySnapshot = .random
-            if container.mainContext.save(property) {
+            if let property: PropertyModel = container.mainContext.save(.random) {
                 properties_count = properties_count + 1
+                for _ in 0..<Int.random(in: 1...5) {
+                    let game: GameModel = games.randomElement
+                    let relation: RelationSnapshot = .fromModels(game, property)
+                    container.mainContext.save(relation)
+                }
             }
         }
         

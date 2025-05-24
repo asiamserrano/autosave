@@ -60,4 +60,11 @@ extension FormatBuilder {
         }
     }
     
+    public var type: FormatEnum {
+        switch self {
+        case .digital: return .digital
+        case .physical: return .physical
+        }
+    }
+    
 }

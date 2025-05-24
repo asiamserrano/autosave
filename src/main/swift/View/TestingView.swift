@@ -15,12 +15,28 @@ struct TestingView: View {
         case id, description, rawValue, className
     }
     
+    //42B0A2F1-0D33-406D-B947-6D77F945396B
+    //184D0A87-55C4-41ED-8F75-D4B36FE3B0C6
+    
+    var uuid: UUID {
+        .init(uuidString: "42B0A2F1-0D33-406D-B947-6D77F945396B")!
+    }
+    
     var body: some View {
         Form {
-            CasesView(PlatformBase.cases)
-            CasesView(PropertyBase.cases)
+            Text(uuid.uuidString)
+//            Text(getUUID())
+//            CasesView(PlatformBase.cases)
+//            CasesView(PropertyBase.cases)
             
         }
+    }
+    
+    func getUUID() -> String {
+        let uuid: UUID = .init()
+        let string: String = uuid.uuidString
+        print(string)
+        return string
     }
     
     @ViewBuilder

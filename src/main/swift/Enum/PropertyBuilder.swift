@@ -58,6 +58,19 @@ extension PropertyBuilder {
         }
     }
     
+    public var base: PropertyBase {
+        switch self {
+        case .input(let input):
+            let type: InputEnum = input.type
+            return .input(type)
+        case .mode:
+            return .mode
+        case .platform(let platform):
+            let type: PlatformBase = platform.type
+            return .platform(type)
+        }
+    }
+    
     public var stringBuilder: StringBuilder {
         .fromPropertyBuilder(self)
     }

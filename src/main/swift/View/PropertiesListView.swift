@@ -60,20 +60,17 @@ struct PropertiesListView: View {
         })
     }
     
-    func fetchCount(_ id: String) -> Int {
-        let predicate: PropertyPredicate = .getByType(id)
-        return fetchCount(predicate)
-    }
-    
-    func fetchCount(_ predicate: PropertyPredicate? = nil) -> Int {
-        let desc: PropertyFetchDescriptor = .init(predicate: predicate)
-        let int: Int? = try? self.modelContext.fetchCount(desc)
-        return int ?? 0
+    func fetchCount(_ id: String = .defaultValue) -> Int {
+        let bool: Bool = id == .defaultValue
+        let predicate: PropertyPredicate? = bool ? nil : .getByType(id)
+        return self.modelContext.fetchCount(predicate)
     }
     
 }
 
 fileprivate struct PropertyView: View {
+    
+    @Environment(\.modelContext) public var modelContext
     
     @Query var models: [PropertyModel]
     
@@ -110,11 +107,12 @@ fileprivate struct PropertyView: View {
     @ViewBuilder
     func ForEachView() -> some View {
         ForEach(models) { model in
+            let label: String = model.value_trim
             NavigationLink(destination: {
-                Text("TBD")
-                    .navigationTitle("Games")
+                GamesView(model)
+                    .navigationTitle("games")
             }, label: {
-                Text(model.value_trim)
+                Text(label)
             })
         }
     }
@@ -125,4 +123,41 @@ fileprivate struct PropertyView: View {
             .navigationTitle(title)
     }
     
+}
+
+fileprivate struct GamesView: View {
+    
+    @Query var models: [RelationModel]
+    
+    init(_ property: PropertyModel, _ relation: RelationEnum = .game_to_property) {
+        let type: String = relation.id
+        let uuid: UUID = property.uuid
+        let predicate: RelationPredicate = .getByProperty(type, uuid)
+        self._models = .init(filter: predicate)
+    }
+    
+    var body: some View {
+        QueryView(models)
+    }
+    
+    private struct QueryView: View {
+        
+        @Query var models: [GameModel]
+        
+        init(_ models: [RelationModel]) {
+            let uuids: [UUID] = models.compactMap(\.uuid_key)
+            let predicate: GamePredicate = .getByUUIDs(uuids)
+            let sort: [GameSortDescriptor] = .defaultValue(.defaultValue)
+            self._models = .init(filter: predicate, sort: sort)
+        }
+        
+        var body: some View {
+            Form {
+                ForEach(models) { model in
+                    Text(model.title_trim)
+                }
+            }
+        }
+    }
+
 }
