@@ -129,8 +129,8 @@ fileprivate struct GamesView: View {
     
     @Query var models: [RelationModel]
     
-    init(_ property: PropertyModel, _ relation: RelationEnum = .game_to_property) {
-        let type: String = relation.id
+    init(_ property: PropertyModel) {
+        let type: String = property.type_id
         let uuid: UUID = property.uuid
         let predicate: RelationPredicate = .getByProperty(type, uuid)
         self._models = .init(filter: predicate)
@@ -145,7 +145,7 @@ fileprivate struct GamesView: View {
         @Query var models: [GameModel]
         
         init(_ models: [RelationModel]) {
-            let uuids: [UUID] = models.compactMap(\.uuid_key)
+            let uuids: [UUID] = models.compactMap(\.game_uuid)
             let predicate: GamePredicate = .getByUUIDs(uuids)
             let sort: [GameSortDescriptor] = .defaultValue(.defaultValue)
             self._models = .init(filter: predicate, sort: sort)

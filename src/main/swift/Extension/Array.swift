@@ -121,11 +121,31 @@ extension Array where Element == FormatBuilder {
             default:
                 return .defaultValue
             }
-        case .os(let os):
+        case .os:
             let steam: Element = .digital(.steam)
             let origin: Element = .digital(.origin)
             return .init(steam, origin, free)
         }
     }
+    
+}
+
+extension Array where Element == RelationBase {
+//    
+//    public init(_ element: Element) {
+//        
+//    }
+    
+//    public init(_ game: GameModel, _ base: RelationBase) {
+//        let snapshot: Element = .fromBase(game, base)
+//        switch base {
+//        case .property:
+//            self.init(snapshot)
+//        case .platform:
+//            let system: Element = .fromPropertySnapshot(game, snapshot.key)
+//            let format: Element = .fromPropertySnapshot(game, snapshot.value)
+//            self.init(snapshot, system, format)
+//        }
+//    }
     
 }

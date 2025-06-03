@@ -151,7 +151,10 @@ extension RelationPredicate {
     
     public static func getByCompositeKey(_ type_id: String, _ game: UUID, _ key: UUID, _ value: UUID) -> RelationPredicate {
         #Predicate {
-            $0.type_id == type_id && $0.game_uuid == game && $0.property_uuid_key == key && $0.property_uuid_value == value
+            $0.type_id                  == type_id
+            && $0.game_uuid             == game
+            && $0.property_key_uuid     == key
+            && $0.property_value_uuid   == value
         }
     }
     
@@ -159,9 +162,16 @@ extension RelationPredicate {
         .getByCompositeKey(type_id, game, property, property)
     }
     
-    public static func getByProperty(_ type_id: String, _ property: UUID) -> RelationPredicate {
+    public static func getByProperty(_ type_id: String, _ key: UUID) -> RelationPredicate {
         #Predicate {
-            $0.type_id == type_id && ($0.property_uuid_key == property || $0.property_uuid_value == property)
+            $0.type_id                  == type_id
+            && $0.property_key_uuid     == key
+        }
+    }
+    
+    public static func getByProperty(_ key: UUID) -> RelationPredicate {
+        #Predicate {
+            $0.property_key_uuid     == key
         }
     }
 

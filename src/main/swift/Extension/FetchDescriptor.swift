@@ -75,10 +75,10 @@ public typealias RelationFetchDescriptor = FetchDescriptor<RelationModel>
 public extension RelationFetchDescriptor {
     
     static func getByCompositeKey(_ snapshot: RelationSnapshot) -> Self {
-        let type: String = snapshot.type.id
-        let game: UUID = snapshot.game
-        let key: UUID = snapshot.key
-        let value: UUID = snapshot.value
+        let type: String = snapshot.type_id
+        let game: UUID = snapshot.game_uuid
+        let key: UUID = snapshot.property_key_uuid
+        let value: UUID = snapshot.property_value_uuid
         let predicate: RelationPredicate = .getByCompositeKey(type, game, key, value)
         return .init(predicate: predicate, sortBy: .defaultValue)
     }

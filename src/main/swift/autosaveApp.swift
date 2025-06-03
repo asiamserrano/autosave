@@ -128,12 +128,14 @@ extension PropertySnapshot {
             }
         }
                 
+        // TODO: update this to create properties and/or games via relation instead
         while properties_count < properties_max {
-            if let property: PropertyModel = container.mainContext.save(.random) {
+            let random: PropertySnapshot = .random
+            if let property: PropertyModel = container.mainContext.save(random) {
                 properties_count = properties_count + 1
                 for _ in 0..<Int.random(in: 1...5) {
                     let game: GameModel = games.randomElement
-                    let relation: RelationSnapshot = .fromModels(game, property)
+                    let relation: RelationSnapshot = .fromModel(game, property)
                     container.mainContext.save(relation)
                 }
             }

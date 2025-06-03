@@ -102,12 +102,18 @@ extension ModelContext {
     @discardableResult
     public func save(_ snapshot: RelationSnapshot) -> RelationModel? {
         let composite: RelationFetchDescriptor = .getByCompositeKey(snapshot)
-        if self.fetchModel(composite) == nil {
+        if let model: RelationModel = self.fetchModel(composite) {
+            let type: RelationEnum = model.type
+            if type.isIncrementable {
+                model.increment()
+                self.store()
+            }
+            return nil
+        } else {
             let relation: RelationModel = .fromSnapshot(snapshot)
             self.add(relation)
             return relation
         }
-        return nil
     }
     
 }
@@ -167,3 +173,4 @@ private extension ModelContext {
     }
     
 }
+

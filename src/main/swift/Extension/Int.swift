@@ -9,6 +9,8 @@ import Foundation
 
 public extension Int {
     
+    static var one: Self { 1 }
+    
     var leadingZero: String {
         return String(format: "%02d", self)
     }
