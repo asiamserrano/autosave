@@ -37,11 +37,11 @@ public extension GameFetchDescriptor {
         return .init(predicate: predicate, sortBy: .defaultValue)
     }
     
-    static func getByRelations(_ relations: [RelationModel]) -> Self {
-        let uuids: [UUID] = relations.compactMap(\.uuid_key)
-        let predicate: GamePredicate = .getByUUIDs(uuids)
-        return .init(predicate: predicate, sortBy: .defaultValue)
-    }
+//    static func getByRelations(_ relations: [RelationModel]) -> Self {
+//        let uuids: [UUID] = relations.compactMap(\.uuid_key)
+//        let predicate: GamePredicate = .getByUUIDs(uuids)
+//        return .init(predicate: predicate, sortBy: .defaultValue)
+//    }
     
 }
 
@@ -76,9 +76,10 @@ public extension RelationFetchDescriptor {
     
     static func getByCompositeKey(_ snapshot: RelationSnapshot) -> Self {
         let type: String = snapshot.type.id
+        let game: UUID = snapshot.game
         let key: UUID = snapshot.key
         let value: UUID = snapshot.value
-        let predicate: RelationPredicate = .getByCompositeKey(type, key, value)
+        let predicate: RelationPredicate = .getByCompositeKey(type, game, key, value)
         return .init(predicate: predicate, sortBy: .defaultValue)
     }
     

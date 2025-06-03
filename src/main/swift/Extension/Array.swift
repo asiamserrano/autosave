@@ -67,3 +67,65 @@ extension Array where Element == PropertySortDescriptor {
 //    }
 //    
 //}
+
+extension Array where Element == FormatBuilder {
+    
+    public static func getFormatBuilders(_ system: SystemBuilder) -> Self {
+        let physicalBuilder: Element = getPhysicalBuilder(system)
+        let digitalBuilders: Self = getDigitalBuilders(system)
+        return .init(physicalBuilder) + digitalBuilders
+    }
+    
+    private static func getPhysicalBuilder(_ system: SystemBuilder) -> Element {
+        switch system {
+        case .nintendo(let nintendo):
+            switch nintendo {
+            case .snes:
+                return .physical(.cartridge)
+            case .nsw, .n3ds:
+                return .physical(.card)
+            default:
+                return .physical(.disc)
+            }
+        default:
+            return .physical(.disc)
+        }
+    }
+    
+    private static func getDigitalBuilders(_ system: SystemBuilder) -> Self {
+        let free: Element = .digital(.free)
+        switch system {
+        case .playstation(let playstation):
+            switch playstation {
+            case .ps3, .ps4, .ps5:
+                let p: Element = .digital(.psn)
+                return .init(free, p)
+            case .psp:
+                return .init(free)
+            default:
+                return .defaultValue
+            }
+        case .nintendo(let nintendo):
+            switch nintendo {
+            case .nsw:
+                let n: Element = .digital(.nintendo)
+                return .init(n)
+            default:
+                return .defaultValue
+            }
+        case .xbox(let xbox):
+            switch xbox {
+            case .x360, .one:
+                let x: Element = .digital(.xbox)
+                return .init(free, x)
+            default:
+                return .defaultValue
+            }
+        case .os(let os):
+            let steam: Element = .digital(.steam)
+            let origin: Element = .digital(.origin)
+            return .init(steam, origin, free)
+        }
+    }
+    
+}

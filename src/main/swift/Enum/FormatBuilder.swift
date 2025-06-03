@@ -41,6 +41,11 @@ extension FormatBuilder {
         }
     }
     
+    public static func random(_ system: SystemBuilder) -> Self {
+        let arr: [Self] = .getFormatBuilders(system)
+        return arr.randomElement
+    }
+    
     public enum PhysicalEnum: Enumerable {
         case disc, cartridge, card
     }
@@ -66,5 +71,52 @@ extension FormatBuilder {
         case .physical: return .physical
         }
     }
+    
+    /*
+     public var physicalEnum: PhysicalEnum { .disc }
+
+     public var physicalEnum: PhysicalEnum { .disc }
+     
+     public var physicalEnum: PhysicalEnum { .disc }
+
+     public var physicalEnum: PhysicalEnum {
+         switch self {
+         case .snes: return .cartridge
+         case .nsw, .n3ds: return .card
+         default: return .disc
+         }
+     }
+     */
+    
+    
+  /*
+   
+     public var digitalEnums: [DigitalEnum] {
+         switch self {
+         case .ps3, .ps4, .ps5: return [ .free, .psn ]
+         case .psp: return [ .free ]
+         default: return []
+         }
+     }
+     
+     public var digitalEnums: [DigitalEnum] {
+         switch self {
+         case .nsw: return [ .nintendo ]
+         default: return []
+         }
+     }
+     
+     public var digitalEnums: [DigitalEnum] {
+         [ .steam, .origin, .free ]
+     }
+     
+     public var digitalEnums: [DigitalEnum] {
+         switch self {
+         case .x360, .one: return [ .free, .xbox ]
+         default: return []
+         }
+     }
+     
+     */
     
 }
