@@ -59,3 +59,17 @@ public struct PropertySnapshot: Uuidentifiable {
     }
     
 }
+
+extension PropertySnapshot: Hashable {
+    
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.hashValue == rhs.hashValue
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.type_id)
+        hasher.combine(self.value_canon)
+        hasher.combine(self.value_trim)
+    }
+    
+}

@@ -42,13 +42,13 @@ public class RelationModel: Persistable {
         return self
     }
 
-    public var type: RelationEnum {
+    public var type: RelationBase {
         .init(self.type_id)
     }
     
 }
 
-public enum RelationEnum: Encapsulable {
+public enum RelationBase: Encapsulable {
     
     public static var allCases: [Self] {
         var properties: [Self] = PropertyBase.cases.map(Self.property)
@@ -84,7 +84,7 @@ public enum RelationEnum: Encapsulable {
     
 }
 
-public enum RelationBase {
+public enum RelationBuilder {
     
     public static var random: Self {
         let property: PropertyBase = .random
@@ -93,16 +93,9 @@ public enum RelationBase {
             let snapshot: PropertySnapshot = .random(property)
             return .property(snapshot)
         case .platform:
-            let systemBuilder: SystemBuilder = .random
-            let systemPlatform: PlatformBuilder = .system(systemBuilder)
-            let systemProperty: PropertyBuilder = .platform(systemPlatform)
-            let system: PropertySnapshot = .fromBuilder(systemProperty)
-            
-            let formatBuilder: FormatBuilder = .random(systemBuilder)
-            let formatPlatform: PlatformBuilder = .format(formatBuilder)
-            let formatProperty: PropertyBuilder = .platform(formatPlatform)
-            let format: PropertySnapshot = .fromBuilder(formatProperty)
-            
+            let builder: SystemBuilder = .random
+            let system: PropertySnapshot = .fromBuilder(.platform(.system(builder)))
+            let format: PropertySnapshot = .fromBuilder(.platform(.format(.random(builder))))
             return .platform(system, format)
         }
     }
@@ -110,7 +103,7 @@ public enum RelationBase {
     case property(PropertySnapshot)
     case platform(PropertySnapshot, PropertySnapshot)
     
-    public var type: RelationEnum {
+    public var type: RelationBase {
         switch self {
         case .property(let property):
             let base: PropertyBase = property.base
@@ -138,83 +131,48 @@ public enum RelationBase {
         }
     }
     
-    public var bases: [Self] {
-        switch self {
-        case .property:
-            return .init(self)
-        case .platform:
-            let system: Self = .property(key)
-            let format: Self = .property(value)
-            return .init(self, system, format)
-        }
-    }
+//    public var array: [Self] {
+//        switch self {
+//        case .property:
+//            return .init(self)
+//        case .platform:
+//            let system: Self = .property(self.key)
+//            let format: Self = .property(self.value)
+//            return .init(self, system, format)
+//        }
+//    }
     
 }
 
 public struct RelationSnapshot {
     
-    public static func fromBase(_ g: GameModel, _ b: RelationBase) -> Self {
+    public static func fromSnapshot(_ g: GameModel, _ snapshot: PropertySnapshot) -> Self {
         let game: GameSnapshot = g.snapshot
-        let type: RelationEnum = b.type
-        let key: PropertySnapshot = b.key
-        let value: PropertySnapshot = b.value
-        return .init(type, game, key, value)
+        let builder: RelationBuilder = .property(snapshot)
+        return .init(game, builder)
+    }
+    
+    public static func fromBuilder(_ g: GameModel, _ builder: RelationBuilder) -> Self {
+        let game: GameSnapshot = g.snapshot
+        return .init(game, builder)
     }
     
     public static func fromModel(_ game: GameModel, _ property: PropertyModel) -> Self {
         let snapshot: PropertySnapshot = property.snapshot
-        let base: RelationBase = .property(snapshot)
-        return .fromBase(game, base)
+        let builder: RelationBuilder = .property(snapshot)
+        return .fromBuilder(game, builder)
     }
     
-    
-    
-//    public static func fromPropertySnapshot(_ game: GameModel, _ p: PropertySnapshot) -> Self {
-//        let builder: PropertyBuilder = p.builder
-//        let base: RelationBase = .property(builder)
-//        return .fromBase(game, base)
-//    }
-    
-//    public static func random(_ g: GameModel, _ base: RelationBase) -> [Self] {
-//        let game: GameSnapshot = g.snapshot
-//        let snapshot: Self = .init(game, base)
-//        switch base {
-//        case .property:
-//            return .init(snapshot)
-//        case .platform:
-//            let system: Self = .init(game, snapshot.key)
-//            let format: Self = .init(game, snapshot.value)
-//            return .init(snapshot, system, format)
-//        }
-//    }
-    
-    public let type: RelationEnum
     public let game: GameSnapshot
-    public let key: PropertySnapshot
-    public let value: PropertySnapshot
-    
-//    private init(_ game: GameSnapshot, _ base: RelationBase) {
-//        self.type = base.type
-//        self.game = game
-//        self.key = base.key
-//        self.value = base.value
-//    }
-//    
-//    private init(_ game: GameSnapshot, _ property: PropertySnapshot) {
-//        let builder: PropertyBuilder = property.builder
-//        let base: RelationBase = .property(builder)
-//        self.init(game, base)
-//    }
-    
-    private init( _ type: RelationEnum, _ game: GameSnapshot, _ key: PropertySnapshot, _ value: PropertySnapshot) {
-        self.type = type
+    public let builder: RelationBuilder
+
+    private init(_ game: GameSnapshot, _ builder: RelationBuilder) {
         self.game = game
-        self.key = key
-        self.value = value
+        self.builder = builder
     }
     
     public var type_id: String {
-        self.type.id
+        self.builder.type.id
     }
     
     public var game_uuid: UUID {
@@ -222,11 +180,11 @@ public struct RelationSnapshot {
     }
     
     public var property_key_uuid: UUID {
-        self.key.uuid
+        self.builder.key.uuid
     }
     
     public var property_value_uuid: UUID {
-        self.value.uuid
+        self.builder.value.uuid
     }
     
 }

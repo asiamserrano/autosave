@@ -16,27 +16,25 @@ public class GameBuilder: ObservableObject {
     @Published private var invalid: Set<GameSnapshot>
   
     public let status: GameStatusEnum
-    
-    public init(_ status: GameStatusEnum) {
-        let snap: GameSnapshot = .defaultValue(status)
-        self.title = .defaultValue
-        self.release = .defaultValue
-        self.boxart = nil
-        self.status = status
-        self.invalid = .init(snap)
-    }
-    
-    public convenience init(_ model: GameModel) {
-        let snap: GameSnapshot = model.snapshot
-        self.init(snap)
-    }
+    public let uuid: UUID
     
     public init(_ snap: GameSnapshot) {
+        self.uuid = snap.uuid
         self.title = snap.title
         self.release = snap.release
         self.boxart = snap.boxart
         self.status = snap.status
         self.invalid = .init(snap)
+    }
+    
+    public convenience init(_ status: GameStatusEnum) {
+        let snap: GameSnapshot = .defaultValue(status)
+        self.init(snap)
+    }
+    
+    public convenience init(_ model: GameModel) {
+        let snap: GameSnapshot = model.snapshot
+        self.init(snap)
     }
     
 }

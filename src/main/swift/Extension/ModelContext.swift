@@ -89,21 +89,10 @@ extension ModelContext {
     }
     
     @discardableResult
-    public func save(_ snapshot: PropertySnapshot) -> PropertyModel? {
-        let composite: PropertyFetchDescriptor = .getByCompositeKey(snapshot)
-        if self.fetchModel(composite) == nil {
-            let property: PropertyModel = .fromSnapshot(snapshot)
-            self.add(property)
-            return property
-        }
-        return nil
-    }
-    
-    @discardableResult
     public func save(_ snapshot: RelationSnapshot) -> RelationModel? {
         let composite: RelationFetchDescriptor = .getByCompositeKey(snapshot)
         if let model: RelationModel = self.fetchModel(composite) {
-            let type: RelationEnum = model.type
+            let type: RelationBase = model.type
             if type.isIncrementable {
                 model.increment()
                 self.store()
@@ -114,6 +103,47 @@ extension ModelContext {
             self.add(relation)
             return relation
         }
+    }
+    
+    //    @discardableResult
+    private func save(_ snapshot: PropertySnapshot) -> PropertyResult {
+        var inserted: Bool = true
+        let composite: PropertyFetchDescriptor = .getByCompositeKey(snapshot)
+        if let property: PropertyModel = self.fetchModel(composite) {
+            inserted = false
+        } else {
+            let property: PropertyModel = .fromSnapshot(snapshot)
+            self.add(property)
+        }
+        return .init(snapshot, inserted, .add)
+    }
+    
+    
+    // TODO: Fix this save method, the property snapshots are not staying consistent with the relations and properties models
+    public func save(_ game: GameModel, _ builder: RelationBuilder) -> Int {
+        var count: Int = 0
+        
+        func doSave(_ p: PropertySnapshot) -> Void {
+            let result: PropertyResult = save(p)
+            count += result.successful ? 1 : 0
+            let snapshot: RelationSnapshot = .fromSnapshot(game, p)
+            save(snapshot)
+        }
+        
+        switch builder {
+        case .property(let p):
+            doSave(p)
+        case .platform(let p1, let p2):
+            doSave(p1)
+            doSave(p2)
+            let snapshot: RelationSnapshot = .fromBuilder(game, builder)
+            save(snapshot)
+        }
+        
+        
+//        builder.array.map { RelationSnapshot.fromBuilder(model, $0) }.forEach { save($0) }
+//        [PropertySnapshot].init(builder).map { save($0) }.forEach { count += $0 == nil ? 0 : 1 }
+        return count
     }
     
 }

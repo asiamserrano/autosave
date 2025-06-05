@@ -70,13 +70,21 @@ public extension Enumerable {
     }
     
     init(_ enumeror: Enumeror) {
-        if let found: Self = Self.cases.first(where: {
-            $0.id == enumeror.id || $0.rawValue == enumeror.rawValue || $0.description == enumeror.description
-        }) {
+        if let found: Self = Self.convert(enumeror) {
             self = found
         } else {
             fatalError("Unable to parse enumeror: \(enumeror)")
         }
+    }
+    
+    static func contains(_ enumeror: Enumeror) -> Bool {
+        Self.convert(enumeror) != nil
+    }
+    
+    private static func convert(_ enumeror: Enumeror) -> Self? {
+        Self.cases.first(where: {
+            $0.id == enumeror.id || $0.rawValue == enumeror.rawValue || $0.description == enumeror.description
+        })
     }
      
 }

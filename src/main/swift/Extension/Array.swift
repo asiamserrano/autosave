@@ -130,22 +130,31 @@ extension Array where Element == FormatBuilder {
     
 }
 
-extension Array where Element == RelationBase {
-//    
-//    public init(_ element: Element) {
-//        
-//    }
-    
-//    public init(_ game: GameModel, _ base: RelationBase) {
-//        let snapshot: Element = .fromBase(game, base)
-//        switch base {
+//extension Array where Element == RelationBuilder {
+//
+//    public static func fromElement(_ element: Element) -> Self {
+//        switch element {
 //        case .property:
-//            self.init(snapshot)
+//            return .init(element)
 //        case .platform:
-//            let system: Element = .fromPropertySnapshot(game, snapshot.key)
-//            let format: Element = .fromPropertySnapshot(game, snapshot.value)
-//            self.init(snapshot, system, format)
+//            let system: Element = .property(element.key)
+//            let format: Element = .property(element.value)
+//            return .init(element, system, format)
 //        }
 //    }
+//    
+//}
+
+extension Array where Element == PropertySnapshot {
+
+    public init(_ builder: RelationBuilder) {
+        switch builder {
+        case .property(let p):
+            self.init(p)
+        case .platform(let p1, let p2):
+            self.init(p1, p2)
+        }
+    }
     
 }
+

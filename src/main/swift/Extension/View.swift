@@ -31,6 +31,11 @@ extension View {
     }
     
     @ViewBuilder
+    public func FormattedView(_ key: String, _ value: UUID) -> some View {
+        FormattedView(key, value.uuidString)
+    }
+    
+    @ViewBuilder
     public func CustomText(_ constant: ConstantEnum) -> some View {
         Text(constant.rawValue)
     }

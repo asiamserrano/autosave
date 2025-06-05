@@ -28,7 +28,7 @@ fileprivate struct ContentView: View {
     
     @State var status: GameStatusEnum = .defaultValue
     // TODO: change this once other TODO is completed
-    @State var menu: MenuEnum = .properties
+    @State var menu: MenuEnum = .library
     
     var body: some View {
         NavigationStack {
@@ -130,14 +130,10 @@ extension PropertySnapshot {
                 
         // TODO: update this to create properties and/or games via relation instead
         while properties_count < properties_max {
-            let random: PropertySnapshot = .random
-            if let property: PropertyModel = container.mainContext.save(random) {
-                properties_count = properties_count + 1
-                for _ in 0..<Int.random(in: 1...5) {
-                    let game: GameModel = games.randomElement
-                    let relation: RelationSnapshot = .fromModel(game, property)
-                    container.mainContext.save(relation)
-                }
+            let random: RelationBuilder = .random
+            for _ in 0..<Int.random(in: 1...5) {
+                let game: GameModel = games.randomElement
+                properties_count += container.mainContext.save(game, random)
             }
         }
         

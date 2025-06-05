@@ -89,6 +89,12 @@ extension PropertyPredicate {
         }
     }
     
+    public static func getByUUIDs(_ uuids: [UUID]) -> PropertyPredicate {
+        #Predicate {
+            uuids.contains($0.uuid)
+        }
+    }
+    
     public static func getByType(_ type_id: String) -> PropertyPredicate {
         #Predicate {
             $0.type_id == type_id || $0.type_id.contains(type_id)
@@ -158,9 +164,9 @@ extension RelationPredicate {
         }
     }
     
-    public static func getByCompositeKey(_ type_id: String, _ game: UUID, _ property: UUID) -> RelationPredicate {
-        .getByCompositeKey(type_id, game, property, property)
-    }
+//    public static func getByCompositeKey(_ type_id: String, _ game: UUID, _ property: UUID) -> RelationPredicate {
+//        .getByCompositeKey(type_id, game, property, property)
+//    }
     
     public static func getByProperty(_ type_id: String, _ key: UUID) -> RelationPredicate {
         #Predicate {
@@ -169,9 +175,9 @@ extension RelationPredicate {
         }
     }
     
-    public static func getByProperty(_ key: UUID) -> RelationPredicate {
+    public static func getByGame(_ key: UUID) -> RelationPredicate {
         #Predicate {
-            $0.property_key_uuid     == key
+            $0.game_uuid     == key
         }
     }
 

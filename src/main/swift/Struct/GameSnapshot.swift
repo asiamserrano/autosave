@@ -32,11 +32,12 @@ public struct GameSnapshot: Uuidentifiable {
     }
     
     public static func fromBuilder(_ builder: GameBuilder) -> Self {
+        let uuid: UUID = builder.uuid
         let title: String = builder.title.trimmed
         let release: Date = builder.release
         let status: GameStatusEnum = builder.status
         let boxart: Data? = builder.boxart
-        return .init(.init(), title, release, status, boxart)
+        return .init(uuid, title, release, status, boxart)
     }
     
     public let uuid: UUID
