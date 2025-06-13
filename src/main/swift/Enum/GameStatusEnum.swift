@@ -15,22 +15,28 @@ extension GameStatusEnum {
     
     public static func fromBool(_ bool: Bool) -> Self {
         switch bool {
-        case true: return .library
-        case false: return .wishlist
+        case true:
+            return .library
+        case false:
+            return .wishlist
         }
     }
     
     public var bool: Bool {
         switch self {
-        case .library: return true
-        case .wishlist: return false
+        case .library:
+            return true
+        case .wishlist:
+            return false
         }
     }
     
     public var icon: IconEnum {
         switch self {
-        case .wishlist: return .list_star
-        case .library: return .gamecontroller
+        case .wishlist:
+            return .list_star
+        case .library:
+            return .gamecontroller
         }
     }
     

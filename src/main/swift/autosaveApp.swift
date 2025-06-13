@@ -37,7 +37,8 @@ fileprivate struct ContentView: View {
                 case .library, .wishlist:
                     GamesListView(self.status)
                 case .properties:
-                    PropertiesListView()
+                    Text("TBD")
+//                    PropertiesListView()
                 }
             }
             .navigationTitle(self.menu.rawValue)
@@ -75,36 +76,36 @@ fileprivate struct ContentView: View {
 }
 
 
-extension PropertySnapshot {
-    
-    public var isNotFormat: Bool {
-        switch self.base {
-        case .platform(let platform):
-            switch platform {
-            case .system: return true
-            case .format: return false
-            }
-        default: return true
-        }
-    }
-    
-    public var isNotMode: Bool {
-        switch self.base {
-        case .mode: return false
-        default: return true
-        }
-    }
-    
-    public var isNotInput: Bool {
-        switch self.base {
-        case .input: return false
-        default: return true
-        }
-    }
-    
-    public var isDefault: Bool { true }
-    
-}
+//extension PropertySnapshot {
+//    
+//    public var isNotFormat: Bool {
+//        switch self.base {
+//        case .platform(let platform):
+//            switch platform {
+//            case .system: return true
+//            case .format: return false
+//            }
+//        default: return true
+//        }
+//    }
+//    
+//    public var isNotMode: Bool {
+//        switch self.base {
+//        case .mode: return false
+//        default: return true
+//        }
+//    }
+//    
+//    public var isNotInput: Bool {
+//        switch self.base {
+//        case .input: return false
+//        default: return true
+//        }
+//    }
+//    
+//    public var isDefault: Bool { true }
+//    
+//}
 
 #Preview {
     
@@ -125,18 +126,12 @@ extension PropertySnapshot {
         while games.count < games_max {
             if let model: GameModel = container.mainContext.save(.random) {
                 games.append(model)
+//                print("created")f
+            } else {
+//                print("not created")
             }
         }
                 
-        // TODO: update this to create properties and/or games via relation instead
-        while properties_count < properties_max {
-            let random: RelationBuilder = .random
-            for _ in 0..<Int.random(in: 1...5) {
-                let game: GameModel = games.randomElement
-                properties_count += container.mainContext.save(game, random)
-            }
-        }
-        
         return container
         
     }()

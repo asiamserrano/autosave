@@ -15,8 +15,10 @@ extension SortOrder: Iterable {
     
     public var icon: IconEnum {
         switch self {
-        case .forward: return .chevron_up
-        case .reverse: return .chevron_down
+        case .forward:
+            return .chevron_up
+        case .reverse:
+            return .chevron_down
         }
     }
     

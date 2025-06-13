@@ -13,9 +13,12 @@ public enum ModeEnum: Enumerable {
     
     public var rawValue: String {
         switch self {
-        case .single: return "Single-Player"
-        case .two: return "Two-Player"
-        case .multi: return "Multiplayer"
+        case .single: 
+            return "Single-Player"
+        case .two: 
+            return "Two-Player"
+        case .multi: 
+            return "Multiplayer"
         }
     }
     
@@ -23,15 +26,14 @@ public enum ModeEnum: Enumerable {
 
 extension ModeEnum {
     
-    public var propertyEnum: PropertyEnum {
-        .mode
-    }
-    
     public var icon: IconEnum {
         switch self {
-        case .single: return .person_fill
-        case .two: return .person_2_fill
-        case .multi: return .person_3_fill
+        case .single:
+            return .person_fill
+        case .two:
+            return .person_2_fill
+        case .multi:
+            return .person_3_fill
         }
     }
     

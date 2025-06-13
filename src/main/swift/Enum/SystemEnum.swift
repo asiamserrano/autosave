@@ -12,11 +12,16 @@ public enum SystemEnum: Enumerable {
     
     public var rawValue: String {
         switch self {
-        case .playstation: return "PlayStation"
-        case .nintendo: return "Nintendo"
-        case .xbox: return "Xbox"
-        case .os: return "Operating System"
-//        case .mq3: return "Meta Quest 3"
+        case .playstation: 
+            return "PlayStation"
+        case .nintendo: 
+            return "Nintendo"
+        case .xbox: 
+            return "Xbox"
+        case .os: 
+            return "Operating System"
+//        case .mq3:
+//            return "Meta Quest 3"
         }
     }
     

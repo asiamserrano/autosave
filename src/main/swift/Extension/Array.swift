@@ -26,13 +26,13 @@ public extension Array {
     
 }
 
-extension Array where Element == any PersistentModel.Type {
-    
-    public static var defaultValue: Self {
-        .init(GameModel.self, PropertyModel.self, RelationModel.self)
-    }
-    
-}
+//extension Array where Element == any PersistentModel.Type {
+//    
+//    public static var defaultValue: Self {
+//        .init(GameModel.self, PropertyModel.self, RelationModel.self)
+//    }
+//    
+//}
 
 extension Array where Element == GameSortDescriptor {
 
@@ -145,16 +145,16 @@ extension Array where Element == FormatBuilder {
 //    
 //}
 
-extension Array where Element == PropertySnapshot {
-
-    public init(_ builder: RelationBuilder) {
-        switch builder {
-        case .property(let p):
-            self.init(p)
-        case .platform(let p1, let p2):
-            self.init(p1, p2)
-        }
-    }
-    
-}
+//extension Array where Element == PropertySnapshot {
+//
+//    public init(_ builder: RelationBuilder) {
+//        switch builder {
+//        case .property(let p):
+//            self.init(p)
+//        case .platform(let p1, let p2):
+//            self.init(p1, p2)
+//        }
+//    }
+//    
+//}
 

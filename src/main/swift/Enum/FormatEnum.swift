@@ -15,8 +15,10 @@ extension FormatEnum {
     
     public var icon: IconEnum {
         switch self {
-        case .digital: return .arrow_down_circle_fill
-        case .physical: return .opticaldisc_fill
+        case .digital:
+            return .arrow_down_circle_fill
+        case .physical:
+            return .opticaldisc_fill
         }
     }
     

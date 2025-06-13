@@ -41,8 +41,10 @@ public extension GameSort {
         
         public var rawValue: String {
             switch self {
-            case .release: return "Release Date"
-            case .title: return "Title"
+            case .release: 
+                return "Release Date"
+            case .title: 
+                return "Title"
             }
         }
     }

@@ -23,19 +23,44 @@ struct GamesListView: View {
     }
     
     var body: some View {
-        OptionalView(models, "no games", content: {
-            SearchView(status, search)
-        })
-        .searchable(text: $search)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing, content: {
+        Form {
+            Section {
+                Text("count: \(models.count)")
+            }
+            ForEach(models) { model in
                 NavigationLink(destination: {
-                    GameForm(self.status)
+                    let builder: GameBuilder = .init(model)
+                    GameView(builder)
                 }, label: {
-                    IconView(.plus)
+                    let snapshot: GameSnapshot = model.snapshot
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(snapshot.title)
+                            .bold()
+                        HStack {
+                            HStack(spacing: 8) {
+                                IconView(.calendar, 20, 20)
+                                Text(snapshot.release.dashes)
+                                    .foregroundColor(.gray)
+                            }
+                            Spacer()
+                        }
+                    }
                 })
-            })
+            }
         }
+//        OptionalView(models, "no games", content: {
+//            SearchView(status, search)
+//        })
+//        .searchable(text: $search)
+//        .toolbar {
+//            ToolbarItem(placement: .topBarTrailing, content: {
+//                NavigationLink(destination: {
+//                    GameForm(self.status)
+//                }, label: {
+//                    IconView(.plus)
+//                })
+//            })
+//        }
         
     }
     

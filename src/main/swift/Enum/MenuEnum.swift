@@ -19,9 +19,12 @@ public extension MenuEnum {
     
     var icon: IconEnum {
         switch self {
-        case .properties: return .list_clipboard
-        case .wishlist: return .list_star
-        case .library: return .gamecontroller
+        case .properties:
+            return .list_clipboard
+        case .wishlist:
+            return .list_star
+        case .library:
+            return .gamecontroller
         }
     }
     

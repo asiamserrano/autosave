@@ -75,6 +75,11 @@ extension GamePredicate {
 
 public typealias PropertyPredicate = Predicate<PropertyModel>
 
+
+//public enum LogicOperatorEnum: Enumerable {
+//    case and, or
+//}
+
 extension PropertyPredicate {
     
     public static func getByCompositeKey(_ type_id: String, _ value_canon: String) -> PropertyPredicate {
@@ -82,6 +87,20 @@ extension PropertyPredicate {
             $0.type_id == type_id && $0.value_canon == value_canon
         }
     }
+    
+    
+//    public static func getByUUIDs(_ key: UUID, _ value: UUID, _ logic: LogicOperatorEnum) -> PropertyPredicate {
+//        switch logic {
+//        case .and:
+//            return #Predicate {
+//                $0.uuid == key && $0.uuid == value
+//            }
+//        case .or:
+//            return #Predicate {
+//                $0.uuid == key || $0.uuid == value
+//            }
+//        }
+//    }
     
     public static func getByUUID(_ uuid: UUID) -> PropertyPredicate {
         #Predicate {
@@ -151,34 +170,42 @@ extension PropertyPredicate {
 }
 
 
-public typealias RelationPredicate = Predicate<RelationModel>
-
-extension RelationPredicate {
-    
-    public static func getByCompositeKey(_ type_id: String, _ game: UUID, _ key: UUID, _ value: UUID) -> RelationPredicate {
-        #Predicate {
-            $0.type_id                  == type_id
-            && $0.game_uuid             == game
-            && $0.property_key_uuid     == key
-            && $0.property_value_uuid   == value
-        }
-    }
-    
-//    public static func getByCompositeKey(_ type_id: String, _ game: UUID, _ property: UUID) -> RelationPredicate {
-//        .getByCompositeKey(type_id, game, property, property)
+//public typealias RelationPredicate = Predicate<RelationModel>
+//
+//extension RelationPredicate {
+//    
+//    public static func getByCompositeKey(_ game: UUID, _ key: UUID, _ value: UUID) -> RelationPredicate {
+//        #Predicate {
+//            $0.game_uuid             == game
+//            && $0.property_key_uuid     == key
+//            && $0.property_value_uuid   == value
+//        }
 //    }
-    
-    public static func getByProperty(_ type_id: String, _ key: UUID) -> RelationPredicate {
-        #Predicate {
-            $0.type_id                  == type_id
-            && $0.property_key_uuid     == key
-        }
-    }
-    
-    public static func getByGame(_ key: UUID) -> RelationPredicate {
-        #Predicate {
-            $0.game_uuid     == key
-        }
-    }
-
-}
+//    
+////    public static func getByCompositeKey(_ type_id: String, _ game: UUID, _ key: UUID, _ value: UUID) -> RelationPredicate {
+////        #Predicate {
+////            $0.type_id                  == type_id
+////            && $0.game_uuid             == game
+////            && $0.property_key_uuid     == key
+////            && $0.property_value_uuid   == value
+////        }
+////    }
+//    
+////    public static func getByCompositeKey(_ type_id: String, _ game: UUID, _ property: UUID) -> RelationPredicate {
+////        .getByCompositeKey(type_id, game, property, property)
+////    }
+//    
+//    public static func getByProperty(_ uuid: UUID) -> RelationPredicate {
+//        #Predicate {
+//            $0.property_key_uuid     == uuid
+//            && $0.property_value_uuid   == uuid
+//        }
+//    }
+//    
+//    public static func getByGame(_ key: UUID) -> RelationPredicate {
+//        #Predicate {
+//            $0.game_uuid     == key
+//        }
+//    }
+//
+//}
