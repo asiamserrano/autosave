@@ -28,7 +28,7 @@ fileprivate struct ContentView: View {
     
     @State var status: GameStatusEnum = .defaultValue
     // TODO: change this once other TODO is completed
-    @State var menu: MenuEnum = .library
+    @State var menu: MenuEnum = .properties
     
     var body: some View {
         NavigationStack {
@@ -75,36 +75,36 @@ fileprivate struct ContentView: View {
 }
 
 
-extension PropertySnapshot {
-    
-    public var isNotFormat: Bool {
-        switch self.base {
-        case .platform(let platform):
-            switch platform {
-            case .system: return true
-            case .format: return false
-            }
-        default: return true
-        }
-    }
-    
-    public var isNotMode: Bool {
-        switch self.base {
-        case .mode: return false
-        default: return true
-        }
-    }
-    
-    public var isNotInput: Bool {
-        switch self.base {
-        case .input: return false
-        default: return true
-        }
-    }
-    
-    public var isDefault: Bool { true }
-    
-}
+//extension PropertySnapshot {
+//    
+//    public var isNotFormat: Bool {
+//        switch self.base {
+//        case .platform(let platform):
+//            switch platform {
+//            case .system: return true
+//            case .format: return false
+//            }
+//        default: return true
+//        }
+//    }
+//    
+//    public var isNotMode: Bool {
+//        switch self.base {
+//        case .mode: return false
+//        default: return true
+//        }
+//    }
+//    
+//    public var isNotInput: Bool {
+//        switch self.base {
+//        case .input: return false
+//        default: return true
+//        }
+//    }
+//    
+//    public var isDefault: Bool { true }
+//    
+//}
 
 #Preview {
     
@@ -118,24 +118,31 @@ extension PropertySnapshot {
         container.mainContext.autosaveEnabled = false
         container.mainContext.undoManager = .init()
         
-        var properties_count: Int = 0
+//        var properties_count: Int = 0
         
         var games: [GameModel] = .defaultValue
+        var properties: [PropertyModel] = .defaultValue
         
         while games.count < games_max {
             if let model: GameModel = container.mainContext.save(.random) {
                 games.append(model)
             }
         }
-                
-        // TODO: update this to create properties and/or games via relation instead
-        while properties_count < properties_max {
-            let random: RelationBuilder = .random
-            for _ in 0..<Int.random(in: 1...5) {
-                let game: GameModel = games.randomElement
-                properties_count += container.mainContext.save(game, random)
+            
+        while properties.count < properties_max {
+            if let model: PropertyModel = container.mainContext.save(.random) {
+                properties.append(model)
             }
         }
+                
+//        // TODO: update this to create properties and/or games via relation instead
+//        while properties_count < properties_max {
+//            let random: RelationBuilder = .random
+//            for _ in 0..<Int.random(in: 1...5) {
+//                let game: GameModel = games.randomElement
+//                properties_count += container.mainContext.save(game, random)
+//            }
+//        }
         
         return container
         

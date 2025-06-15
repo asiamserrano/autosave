@@ -19,19 +19,19 @@ public struct GameResult: Hashable, Equatable {
     
 }
 
-public struct PropertyResult: Hashable, Equatable {
-
-    public let snapshot: PropertySnapshot
-    public let successful: Bool
-    public let type: ResultEnum
-    
-    public init(_ snapshot: PropertySnapshot, _ inserted: Bool, _ type: ResultEnum) {
-        self.snapshot = snapshot
-        self.successful = inserted
-        self.type = type
-    }
-    
-}
+//public struct PropertyResult: Hashable, Equatable {
+//
+//    public let snapshot: PropertySnapshot
+//    public let successful: Bool
+//    public let type: ResultEnum
+//    
+//    public init(_ snapshot: PropertySnapshot, _ inserted: Bool, _ type: ResultEnum) {
+//        self.snapshot = snapshot
+//        self.successful = inserted
+//        self.type = type
+//    }
+//    
+//}
 
 public enum ResultEnum: Enumerable {
     case add, edit

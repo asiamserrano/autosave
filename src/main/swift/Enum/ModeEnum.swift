@@ -23,9 +23,9 @@ public enum ModeEnum: Enumerable {
 
 extension ModeEnum {
     
-    public var propertyEnum: PropertyEnum {
-        .mode
-    }
+//    public var propertyEnum: PropertyEnum {
+//        .mode
+//    }
     
     public var icon: IconEnum {
         switch self {

@@ -15,149 +15,214 @@ struct PropertiesListView: View {
     @State var search: String = .defaultValue
     
     var body: some View {
-        let count: Int = fetchCount()
-        OptionalView(count, "no properties", content: {
-            Form {
-                ForEach(PropertyEnum.cases) { property in
-                    switch property {
-                    case .input:
-                        Section {
-                            ForEach(InputEnum.cases) { input in
-                                let count: Int = fetchCount(input.id)
-                                OptionalView(count, content: {
-                                    let title: String = input.rawValue.pluralize()
-                                    NavigationLink(destination: {
-                                        let predicate: PropertyPredicate = .getByType(input.id, search.canonicalized)
-                                        let base: PropertyBase = .input(input)
-                                        PropertyView(base, predicate)
-                                            .searchable(text: $search)
-                                            .navigationTitle(title)
-                                    }, label: {
-                                        Text(title)
-                                    })
-                                })
-                            }
-                        }
-                    case .mode:
-                        PropertyView(.mode)
-                    case .platform:
-                        ForEach(PlatformEnum.cases) { platform in
-                            let count: Int = fetchCount(platform.prefix_id)
-                            OptionalView(count, content: {
-                                let title: String = platform.rawValue.pluralize()
-                                let cases: PlatformBase.Cases = PlatformBase.cases.filter { $0.platformEnum == platform }
-                                Section(title) {
-                                    ForEach(cases) {
-                                        let base: PropertyBase = .platform($0)
-                                        PropertyView(base)
-                                    }
-                                }
-                            })
-                        }
-                    }
-                }
-            }
-        })
-    }
-    
-    func fetchCount(_ id: String = .defaultValue) -> Int {
-        let bool: Bool = id == .defaultValue
-        let predicate: PropertyPredicate? = bool ? nil : .getByType(id)
-        return self.modelContext.fetchCount(predicate)
+        PropertiesView(.none, $search)
     }
     
 }
 
-fileprivate struct PropertyView: View {
+fileprivate enum PropertyEnum {
+    case category(PropertyCategory)
+    case type(PropertyType)
+    case label(PropertyLabel)
+    case none
     
+    func predicate(_ search: Binding<String>) -> PropertyPredicate {
+        switch self {
+        case .category(let category):
+            return .getByCategory(category)
+        case .type(let type):
+            return .getByType(type)
+        case .label(let label):
+            return .getByLabel(label, search)
+        case .none:
+            return .true
+        }
+    }
+    
+    var message: String? {
+        switch self {
+        case .none:
+            return "no properties"
+        case .label(.input):
+            return "no results found"
+        default:
+            return nil
+        }
+    }
+    
+}
+
+// TODO: add the delete functionality 
+fileprivate struct PropertiesView: View {
+
     @Environment(\.modelContext) public var modelContext
-    
+
     @Query var models: [PropertyModel]
     
-    let base: PropertyBase
-    let title: String
-    let message: String?
+    @Binding var search: String
     
-    init(_ base: PropertyBase, _ predicate: PropertyPredicate? = nil) {
-        self.base = base
-        self.title = base.rawValue.pluralize()
-        self.message = predicate == nil ? nil : "no \(title.lowercased())"
-        let predicate: PropertyPredicate = predicate ?? .getByType(base.id)
+    let property: PropertyEnum
+
+    init(_ property: PropertyEnum, _ search: Binding<String>) {
+        self.property = property
+        self._search = search
+        let predicate: PropertyPredicate = property.predicate(search)
         self._models = .init(filter: predicate, sort: .defaultValue)
     }
     
     var body: some View {
-        OptionalView(models, message, content: {
-            switch base {
-            case .mode:
-                Section(title, content: ForEachView)
-            case .input:
-                FormForEachView(title)
-            case .platform(let platformBase):
-                let navigation_title: String = platformBase.navigationTitle
-                NavigationLink(destination: {
-                    FormForEachView(navigation_title)
-                }, label: {
-                    Text(platformBase.rawValue)
-                })
+        switch property {
+        case .label(.input):
+            PropertyView()
+        default:
+            OptionalPropertyView(PropertyView)
+        }
+    }
+    
+    @ViewBuilder
+    func OptionalPropertyView(@ViewBuilder _ content: @escaping () -> some View) -> some View {
+        OptionalView(models, property.message, content: content)
+    }
+    
+    @ViewBuilder
+    func PropertyView() -> some View {
+        switch property {
+        case .none:
+            Form {
+                ForEach(PropertyCategory.cases) { category in
+                    PropertyView(.category(category))
+                }
             }
+            .navigationTitle("Properties")
+        case .category(let category):
+            PropertyView(category) {
+                ForEach(PropertyType.filter(category)) { type in
+                    PropertyView(.type(type))
+                }
+            }
+        case .type(let type):
+            switch type {
+            case .input(let input):
+                PropertyView(.label(.input(input)))
+            case .selected(let selected):
+                
+                Section(selected.rawValue.pluralize()) {
+                    ForEach(SelectedLabel.filter(selected)) { label in
+                        PropertyView(.label(.selected(label)))
+                    }
+                }
+            }
+        case .label(let selected):
+            switch selected {
+            case .input(let input):
+                let title: String = input.rawValue.pluralize()
+                PropertyNavigationLink(title) {
+                    OptionalPropertyView(FormModelsView)
+                    .navigationTitle(title)
+                    .searchable(text: $search)
+                }
+            case .selected(let selected):
+                switch selected {
+                case .mode:
+                    ModelsView()
+                case .system(let system):
+                    PropertyNavigationLink(system.title, system.rawValue)
+                case .format(let format):
+                    let title: String = format.rawValue
+                    let format: String = selected.type.rawValue.pluralize()
+                    PropertyNavigationLink("\(title) \(format)", title)
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    func PropertyView(_ category: PropertyCategory, @ViewBuilder _ content: @escaping () -> some View) -> some View {
+        switch category {
+        case .input:
+            Section(content: content)
+        case .selected:
+            content()
+        }
+    }
+    
+    @ViewBuilder
+    func PropertyView(_ property: PropertyEnum) -> some View {
+        PropertiesView(property, $search)
+    }
+    
+    @ViewBuilder
+    func PropertyNavigationLink(_ navigation: String, _ text: String) -> some View {
+        PropertyNavigationLink(text) {
+            FormModelsView()
+                .navigationTitle(navigation)
+        }
+    }
+    
+    @ViewBuilder
+    func PropertyNavigationLink(_ title: String, @ViewBuilder _ content: @escaping () -> some View) -> some View {
+        NavigationLink(destination: {
+            content()
+        }, label: {
+            Text(title)
         })
     }
     
     @ViewBuilder
-    func ForEachView() -> some View {
+    func FormModelsView() -> some View {
+        Form(content: ModelsView)
+    }
+    
+    @ViewBuilder
+    func ModelsView() -> some View {
         ForEach(models) { model in
             let label: String = model.value_trim
             NavigationLink(destination: {
-                GamesView(model)
+                // TODO: add back in the relationship parsing for property -> game
+//                GamesView(model)
+                Text("TBD")
                     .navigationTitle("games")
             }, label: {
                 Text(label)
             })
         }
     }
-    
-    @ViewBuilder
-    func FormForEachView(_ title: String) -> some View {
-        Form(content: ForEachView)
-            .navigationTitle(title)
-    }
-    
-}
-
-fileprivate struct GamesView: View {
-    
-    @Query var models: [RelationModel]
-    
-    init(_ property: PropertyModel) {
-        let type: String = property.type_id
-        let uuid: UUID = property.uuid
-        let predicate: RelationPredicate = .getByProperty(type, uuid)
-        self._models = .init(filter: predicate)
-    }
-    
-    var body: some View {
-        QueryView(models)
-    }
-    
-    private struct QueryView: View {
-        
-        @Query var models: [GameModel]
-        
-        init(_ models: [RelationModel]) {
-            let uuids: [UUID] = models.compactMap(\.game_uuid)
-            let predicate: GamePredicate = .getByUUIDs(uuids)
-            let sort: [GameSortDescriptor] = .defaultValue(.defaultValue)
-            self._models = .init(filter: predicate, sort: sort)
-        }
-        
-        var body: some View {
-            Form {
-                ForEach(models) { model in
-                    Text(model.title_trim)
-                }
-            }
-        }
-    }
 
 }
+
+//fileprivate struct GamesView: View {
+//
+//    @Query var models: [RelationModel]
+//
+//    init(_ property: PropertyModel) {
+//        let type: String = property.type_id
+//        let uuid: UUID = property.uuid
+//        let predicate: RelationPredicate = .getByProperty(type, uuid)
+//        self._models = .init(filter: predicate)
+//    }
+//
+//    var body: some View {
+//        QueryView(models)
+//    }
+//
+//    private struct QueryView: View {
+//
+//        @Query var models: [GameModel]
+//
+//        init(_ models: [RelationModel]) {
+//            let uuids: [UUID] = models.compactMap(\.game_uuid)
+//            let predicate: GamePredicate = .getByUUIDs(uuids)
+//            let sort: [GameSortDescriptor] = .defaultValue(.defaultValue)
+//            self._models = .init(filter: predicate, sort: sort)
+//        }
+//
+//        var body: some View {
+//            Form {
+//                ForEach(models) { model in
+//                    Text(model.title_trim)
+//                }
+//            }
+//        }
+//    }
+//
+//}

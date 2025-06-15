@@ -8,6 +8,7 @@
 import Foundation
 
 public enum SystemEnum: Enumerable {
+        
     case playstation, nintendo, xbox, os//, mq3
     
     public var rawValue: String {
@@ -17,6 +18,15 @@ public enum SystemEnum: Enumerable {
         case .xbox: return "Xbox"
         case .os: return "Operating System"
 //        case .mq3: return "Meta Quest 3"
+        }
+    }
+    
+    public var title: String {
+        switch self {
+        case .os:
+            return self.rawValue.pluralize()
+        default:
+            return "\(self.rawValue) Systems"
         }
     }
     

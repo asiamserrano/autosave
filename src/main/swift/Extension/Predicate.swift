@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftData
+import SwiftUI
 
 public typealias GamePredicate = Predicate<GameModel>
 
@@ -77,108 +78,84 @@ public typealias PropertyPredicate = Predicate<PropertyModel>
 
 extension PropertyPredicate {
     
-    public static func getByCompositeKey(_ type_id: String, _ value_canon: String) -> PropertyPredicate {
+    public static func getByCompositeKey(_ type_id: String, _ category_id: String, _ label_id: String, _ value_canon: String) -> PropertyPredicate {
         #Predicate {
-            $0.type_id == type_id && $0.value_canon == value_canon
+            $0.type_id == type_id &&
+            $0.category_id == category_id &&
+            $0.label_id == label_id &&
+            $0.value_canon == value_canon
         }
     }
     
-    public static func getByUUID(_ uuid: UUID) -> PropertyPredicate {
-        #Predicate {
-            $0.uuid == uuid
+    public static func getByType(_ enumeror: Enumeror) -> PropertyPredicate {
+        let type_id: String = enumeror.id
+        return #Predicate {
+            $0.type_id == type_id
         }
     }
     
-    public static func getByUUIDs(_ uuids: [UUID]) -> PropertyPredicate {
-        #Predicate {
-            uuids.contains($0.uuid)
+    public static func getByCategory(_ enumeror: Enumeror) -> PropertyPredicate {
+        let category_id: String = enumeror.id
+        return #Predicate {
+            $0.category_id == category_id
         }
     }
     
-    public static func getByType(_ type_id: String) -> PropertyPredicate {
-        #Predicate {
-            $0.type_id == type_id || $0.type_id.contains(type_id)
+    public static func getByLabel(_ enumeror: Enumeror) -> PropertyPredicate {
+        let label_id: String = enumeror.id
+        return #Predicate {
+            $0.label_id == label_id
         }
     }
     
-    public static func getByType(_ type_id: String, _ canon: String) -> PropertyPredicate {
+    public static func getByLabel(_ enumeror: Enumeror, _ search: Binding<String>) -> PropertyPredicate {
+        let label_id: String = enumeror.id
+        let canon = search.wrappedValue.canonicalized
         switch canon.count {
-        case 0: return #Predicate { $0.type_id == type_id }
-        case 1: return #Predicate { $0.type_id == type_id && $0.value_canon.starts(with: canon) }
-        default: return #Predicate { $0.type_id == type_id && $0.value_canon.contains(canon) }
+        case 0:
+            return getByLabel(enumeror)
+        case 1:
+            return #Predicate {
+                $0.label_id == label_id && $0.value_canon.starts(with: canon)
+            }
+        default:
+            return #Predicate {
+                $0.label_id == label_id && $0.value_canon.contains(canon)
+            }
         }
     }
-    
-//    public static func getByPlatform(_ type: PlatformEnum, _ platform: PlatformBuilder) -> PropertyPredicate {
-//        let type_id: String = type.propertyEnum.id
-//        switch type {
-//        case .system:
-//            let systemBuilder: SystemBuilder = platform.system
-//            let systemEnum: SystemEnum = systemBuilder.systemEnum
-//            let systemId: String = systemEnum.id
-//            return #Predicate {
-//                $0.type_id == type_id && $0.value_canon.starts(with: systemId)
-//            }
-//        case .format:
-//            let formatBuilder: FormatBuilder = platform.format
-//            let formatEnum: FormatEnum = formatBuilder.formatEnum
-//            let formatId: String = formatEnum.id
-//            return #Predicate {
-//                $0.type_id == type_id && $0.value_trim.starts(with: formatId)
-//            }
-//        }
-//    }
-    
-    
-    
-//    public static func getByPlatform(_ platform: PlatformEnum) -> PropertyPredicate {
-//        let type_id: String = platform.propertyEnum.id
-//        switch platform {
-//        case .system(let system):
-//            let system_id: String = system.id
-//            return #Predicate {
-//                $0.type_id == type_id && $0.value_canon.starts(with: system_id)
-//            }
-//        case .format(let format):
-//            let format_id: String = format.id
-//            return #Predicate {
-//                $0.type_id == type_id && $0.value_trim.starts(with: format_id)
-//            }
-//        }
-//    }
-    
     
 }
 
 
-public typealias RelationPredicate = Predicate<RelationModel>
-
-extension RelationPredicate {
-    
-    public static func getByCompositeKey(_ type_id: String, _ game: UUID, _ key: UUID, _ value: UUID) -> RelationPredicate {
-        #Predicate {
-            $0.type_id                  == type_id
-            && $0.game_uuid             == game
-            && $0.property_key_uuid     == key
-            && $0.property_value_uuid   == value
-        }
-    }
-    
-//    public static func getByCompositeKey(_ type_id: String, _ game: UUID, _ property: UUID) -> RelationPredicate {
-//        .getByCompositeKey(type_id, game, property, property)
+//public typealias RelationPredicate = Predicate<RelationModel>
+//
+//extension RelationPredicate {
+//    
+//    public static func getByCompositeKey(_ type_id: String, _ game: UUID, _ key: UUID, _ value: UUID) -> RelationPredicate {
+//        #Predicate {
+//            $0.type_id                  == type_id
+//            && $0.game_uuid             == game
+//            && $0.property_key_uuid     == key
+//            && $0.property_value_uuid   == value
+//        }
 //    }
-    
-    public static func getByProperty(_ type_id: String, _ key: UUID) -> RelationPredicate {
-        #Predicate {
-            $0.type_id                  == type_id
-            && $0.property_key_uuid     == key
-        }
-    }
-    
-    public static func getByGame(_ key: UUID) -> RelationPredicate {
-        #Predicate {
-            $0.game_uuid     == key
-        }
-    }
-
-}
+//    
+////    public static func getByCompositeKey(_ type_id: String, _ game: UUID, _ property: UUID) -> RelationPredicate {
+////        .getByCompositeKey(type_id, game, property, property)
+////    }
+//    
+//    public static func getByProperty(_ type_id: String, _ key: UUID) -> RelationPredicate {
+//        #Predicate {
+//            $0.type_id                  == type_id
+//            && $0.property_key_uuid     == key
+//        }
+//    }
+//    
+//    public static func getByGame(_ key: UUID) -> RelationPredicate {
+//        #Predicate {
+//            $0.game_uuid     == key
+//        }
+//    }
+//
+//}

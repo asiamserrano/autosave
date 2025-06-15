@@ -25,12 +25,20 @@ public typealias PropertySortDescriptor = SortDescriptor<PropertyModel>
 
 public extension PropertySortDescriptor {
     
-    static func type(_ order: SortOrder) -> Self {
-        .init(\.type_id, order: order)
+    static var category: Self {
+        .init(\.category_id, order: .forward)
     }
     
-    static func value(_ order: SortOrder) -> Self {
-        .init(\.value_canon, order: order)
+    static var type: Self {
+        .init(\.type_id, order: .forward)
+    }
+    
+    static var label: Self {
+        .init(\.label_id, order: .forward)
+    }
+    
+    static var value: Self {
+        .init(\.value_canon, order: .forward)
     }
     
 }

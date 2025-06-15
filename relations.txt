@@ -1,0 +1,43 @@
+For example, I have a many to many relationship between my "Game" and "Property" models
+
+I do not want to use the Relationship annotations for swift data models for a few reasons. I will have instead a 3rd model that will track these relationships -> "Relation" model. Also, I have a specific relation called 'platform' which shows the relation between two properties ( a system property and a format property specifically).
+
+I need to be able to get the distinct games associated with a property.
+I need to be able to get the platforms and non system/format properties for a game.
+
+Example:
+_________
+Games
+_________
+Game1
+Game2
+Game3 
+
+_________
+Property
+_________
+Genre1
+Genre2
+Genre3
+System1
+System2
+System3
+Format1
+Format2
+
+_________
+Relations
+_________
+
+Platform2 = System1 + Format1
+Platform2 = System2 + Format1
+Platform3 = System2 + Format2
+Platform4 = System3 + Format1
+
+Relation1 = Game1 + Genre1
+Relation2 = Game1 + Genre2
+Relation3 = Game1 + Platform2
+Relation4 = Game1 + System1
+
+
+
