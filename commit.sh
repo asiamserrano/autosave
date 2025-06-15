@@ -5,7 +5,7 @@ git add \*.swift
 
 # add specific non-swift files 
 git add .gitignore
-git add Assets.xcassets/
+#git add Assets.xcassets/
 git add autosave.xcodeproj/
 git add README.md 
 git add commit.sh
