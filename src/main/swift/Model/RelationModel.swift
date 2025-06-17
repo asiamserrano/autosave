@@ -1,12 +1,38 @@
-////
-////  RelationModel.swift
-////  autosave
-////
-////  Created by Asia Serrano on 5/21/25.
-////
 //
-//import Foundation
-//import SwiftData
+//  RelationModel.swift
+//  autosave
+//
+//  Created by Asia Serrano on 5/21/25.
+//
+
+import Foundation
+import SwiftData
+
+
+// TODO: continue here with Relation model revamp
+@Model
+public class RelationModel: Persistable {
+    
+    public var uuid: UUID
+    public var key_model_uuid: UUID
+    public var value_model_uuid: UUID
+    public var type_id: String
+    
+    public init(_ uuid: UUID = .init()) {
+        self.uuid = uuid
+        self.key_model_uuid = uuid
+        self.value_model_uuid = uuid
+        self.type_id = .defaultValue
+    }
+}
+
+enum RelationType: Enumerable {
+    case gameProperty      // game ↔︎ property (simple)
+    case gamePlatform      // game ↔︎ platform (compound)
+    case platformDefinition // platform = system + format
+}
+
+
 //
 //@Model
 //public class RelationModel: Persistable {
