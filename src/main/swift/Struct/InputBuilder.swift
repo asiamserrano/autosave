@@ -9,6 +9,14 @@ import Foundation
 
 public struct InputBuilder {
     
+    public static func random(_ input: InputEnum) -> Self {
+        .init(input, .random)
+    }
+    
+    public static var random: Self {
+        .random(.random)
+    }
+    
     let type: InputEnum
     let string: String
     

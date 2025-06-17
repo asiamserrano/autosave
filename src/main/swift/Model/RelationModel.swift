@@ -24,12 +24,13 @@ public class RelationModel: Persistable {
         self.value_model_uuid = uuid
         self.type_id = .defaultValue
     }
+    
 }
 
 enum RelationType: Enumerable {
-    case gameProperty      // game ↔︎ property (simple)
-    case gamePlatform      // game ↔︎ platform (compound)
-    case platformDefinition // platform = system + format
+    case property   // game ↔︎ property (simple)
+    case platform   // game ↔︎ platform (compound)
+    case relation   // system ↔︎ format (platform)
 }
 
 

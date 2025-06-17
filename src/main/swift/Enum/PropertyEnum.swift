@@ -227,24 +227,26 @@ public enum PropertyBuilder {
         case .input:
             let input: InputEnum = .init(model.type_id)
             let value: String = model.value_trim
-            return .input(input, value)
+            let builder: InputBuilder = .init(input, value)
+            return .input(builder)
         case .selected:
-            let selected: SelectedBuilder = .init(model.value_canon)
-            return .selected(selected)
+            let builder: SelectedBuilder = .init(model.value_canon)
+            return .selected(builder)
         }
     }
         
     public static func random(_ label: PropertyLabel) -> Self {
         switch label {
         case .input(let input):
-            return .input(input, .random)
+            let builder: InputBuilder = .random(input)
+            return .input(builder)
         case .selected(let selected):
             let builder: SelectedBuilder = .random(selected)
             return .selected(builder)
         }
     }
     
-    case input(InputEnum, String)
+    case input(InputBuilder)
     case selected(SelectedBuilder)
     
     public var category: PropertyCategory {
@@ -258,8 +260,8 @@ public enum PropertyBuilder {
     
     public var type: PropertyType {
         switch self {
-        case .input(let i, _):
-            return .input(i)
+        case .input(let i):
+            return .input(i.type)
         case .selected(let s):
             return .selected(s)
         }
@@ -267,8 +269,8 @@ public enum PropertyBuilder {
     
     public var label: PropertyLabel {
         switch self {
-        case .input(let i, _):
-            return .input(i)
+        case .input(let i):
+            return .input(i.type)
         case .selected(let s):
             return .selected(s)
         }
@@ -276,8 +278,8 @@ public enum PropertyBuilder {
     
     public var value: StringBuilder {
         switch self {
-        case .input(_, let s):
-            return .string(s)
+        case .input(let i):
+            return .string(i.string)
         case .selected(let s):
             return .enumeror(s)
         }
@@ -327,59 +329,69 @@ public struct PropertySnapshot: Uuidentifiable {
     
 }
 
-//extension PropertyBuilder: Comparable {
-//    
-//    public static func < (lhs: Self, rhs: Self) -> Bool {
-//        
-//    }
-//    
-//}
 
+public enum TagEnum: Enumerable {
+    case input, mode, platform
+}
 
+public struct PlatformBuilder {
+    
+    public static var random: Self {
+        let system: SystemBuilder = .random
+        let format: FormatBuilder = .random(system)
+        return .init(system, format)
+    }
+    
+    public let system: SystemBuilder
+    public let format: FormatBuilder
+    
+    public init(_ system: SystemBuilder, _ format: FormatBuilder) {
+        self.system = system
+        self.format = format
+    }
+    
+}
 
-//public enum PropertyValueEnum: Enumerable {
-//    case string(String)
-//    case mode(ModeEnum)
-//    case
-//}
-
-
-//public enum B {
-//    case series
-//    case developer
-//    case publisher
-//    case genre
-//    case mode
-//    case format
-//    case system
-//}
-//
-//public enum subB {
-//    case series
-//    case developer
-//    case publisher
-//    case genre
-//    case mode
-//    case format
-//    case system
-//}
-
-//public enum C {
-//    case series
-//    case developer
-//    case publisher
-//    case genre
-//    case mode
-//    case digital
-//    case physical
-//    case playstation
-//    case nintendo
-//    case xbox
-//    case os
-//}
-
-
-
-
-//case playstation, nintendo, xbox, os//, mq3
-//
+public enum TagBuilder {
+    
+    public static func random(_ tag: TagEnum) -> Self {
+        switch tag {
+        case .input:
+            return .input(.random)
+        case .mode:
+            return .mode(.random)
+        case .platform:
+            return .platform(.random)
+        }
+    }
+    
+    case input(InputBuilder)
+    case mode(ModeEnum)
+    case platform(PlatformBuilder)
+    
+    public var key: PropertyBuilder {
+        switch self {
+        case .input(let i):
+            return .input(i)
+        case .mode(let m):
+            let builder: SelectedBuilder = .mode(m)
+            return .selected(builder)
+        case .platform(let p):
+            let system: SystemBuilder = p.system
+            let builder: SelectedBuilder = .system(system)
+            return .selected(builder)
+        }
+    }
+    
+    public var value: PropertyBuilder {
+        switch self {
+        case .platform(let p):
+            let format: FormatBuilder = p.format
+            let builder: SelectedBuilder = .format(format)
+            return .selected(builder)
+        default:
+            return self.key
+        }
+    }
+    
+}
