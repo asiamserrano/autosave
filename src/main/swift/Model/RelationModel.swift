@@ -13,26 +13,88 @@ import SwiftData
 @Model
 public class RelationModel: Persistable {
     
-    public var uuid: UUID
-    public var key_model_uuid: UUID
-    public var value_model_uuid: UUID
-    public var type_id: String
+    public static func fromSnapshot(_ snapshot: RelationSnapshot) -> RelationModel {
+        let relation: RelationModel = .init()
+        relation.uuid = snapshot.uuid
+        relation.type_id = snapshot.type_id
+        relation.game_uuid = snapshot.game_uuid
+        relation.key_uuid = snapshot.key_uuid
+        relation.value_uuid = snapshot.value_uuid
+        return relation
+    }
     
-    public init(_ uuid: UUID = .init()) {
+    public private(set) var uuid: UUID
+    public private(set) var type_id: String
+    public private(set) var game_uuid: UUID
+    public private(set) var key_uuid: UUID
+    public private(set) var value_uuid: UUID
+    
+    
+    private init(_ uuid: UUID = .init()) {
         self.uuid = uuid
-        self.key_model_uuid = uuid
-        self.value_model_uuid = uuid
+        self.game_uuid = uuid
+        self.key_uuid = uuid
+        self.value_uuid = uuid
         self.type_id = .defaultValue
     }
     
 }
 
-enum RelationType: Enumerable {
+// TODO: add a second enum to track type of the property for easier filtering in GameView --> search for "BABY_LOVE"
+public enum RelationType: Enumerable {
     case property   // game ↔︎ property (simple)
-    case platform   // game ↔︎ platform (compound)
-    case relation   // system ↔︎ format (platform)
+    case tag
+//    case platform   // game ↔︎ platform (compound)
+//    case relation   // system ↔︎ format (platform)
 }
 
+//public enum RelationBuilder {
+//    case property(GameBuilder, PropertyBuilder)
+//    case platform(GameBuilder, PlatformBuilder)
+//    case relation(SystemBuilder, FormatBuilder)
+//}
+
+
+public struct RelationSnapshot: Uuidentifiable {
+    
+    public static func build(_ game: GameModel, _ property: PropertyModel) -> Self {
+        let tag: TagSnapshot = .fromModel(property)
+        return .init(.property, game, tag)
+    }
+    
+    public static func build(_ game: GameModel, _ tag: TagSnapshot) -> Self {
+        .init(.tag, game, tag)
+    }
+    
+    public let uuid: UUID
+    public let game: Uuidentifor
+    public let tag: TagSnapshot
+    public let type: RelationType
+    
+    public init(_ type: RelationType, _ game: Uuidentifor, _ tag: TagSnapshot) {
+        self.uuid = .init()
+        self.type = type
+        self.game = game
+        self.tag = tag
+    }
+    
+    public var game_uuid: UUID {
+        self.game.uuid
+    }
+    
+    public var key_uuid: UUID {
+        self.tag.key.uuid
+    }
+    
+    public var value_uuid: UUID {
+        self.tag.value.uuid
+    }
+    
+    public var type_id: String {
+        self.type.id
+    }
+    
+}
 
 //
 //@Model

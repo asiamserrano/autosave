@@ -28,7 +28,7 @@ fileprivate struct ContentView: View {
     
     @State var status: GameStatusEnum = .defaultValue
     // TODO: change this once other TODO is completed
-    @State var menu: MenuEnum = .properties
+    @State var menu: MenuEnum = .library
     
     var body: some View {
         NavigationStack {
@@ -118,10 +118,10 @@ fileprivate struct ContentView: View {
         container.mainContext.autosaveEnabled = false
         container.mainContext.undoManager = .init()
         
-//        var properties_count: Int = 0
+        var properties_count: Int = 0
         
         var games: [GameModel] = .defaultValue
-        var properties: [PropertyModel] = .defaultValue
+//        var properties: [PropertyModel] = .defaultValue
         
         while games.count < games_max {
             if let model: GameModel = container.mainContext.save(.random) {
@@ -129,10 +129,9 @@ fileprivate struct ContentView: View {
             }
         }
             
-        while properties.count < properties_max {
-            if let model: PropertyModel = container.mainContext.save(.random) {
-                properties.append(model)
-            }
+        while properties_count < properties_max {
+            let game: GameModel = games.randomElement
+            properties_count += container.mainContext.save(game, .random)
         }
                 
 //        // TODO: update this to create properties and/or games via relation instead

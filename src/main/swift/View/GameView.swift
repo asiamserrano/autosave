@@ -8,6 +8,14 @@
 import SwiftUI
 import SwiftData
 
+extension UUID {
+    
+    public var short: String {
+        self.uuidString.components(separatedBy: "-")[4]
+    }
+    
+}
+
 struct GameView: View {
     
     @Environment(\.modelContext) private var modelContext
@@ -24,7 +32,7 @@ struct GameView: View {
                 FormattedView(.title, self.builder.title)
                 FormattedView(.release_date, self.builder.release.long)
             }
-//            PropertiesView(self.builder)
+            PropertiesView(self.builder)
         }
         .toolbar {
             
@@ -41,73 +49,121 @@ struct GameView: View {
     
 }
 
-//fileprivate struct PropertiesView: View {
-//    
-//    @Query var models: [RelationModel]
-//    
-//    init(_ builder: GameBuilder) {
-//        let uuid: UUID = builder.uuid
-//        let predicate: RelationPredicate = .getByGame(uuid)
-//        self._models = .init(filter: predicate)
-//    }
-//    
-//    var relations: [RelationBase] {
-//        RelationBase.cases.filter { !PlatformBase.contains($0) }
-//    }
-//    
-//    var body: some View {
-//        Section {
-//            ForEach(models) { model in
-//                let key: UUID = model.property_key_uuid
-//                let value: UUID = model.property_value_uuid
-////                let uuids: [UUID] = key == value ? .init(key) : .init(key, value)
-//                
-//                let type: RelationBase = .init(model.type_id)
-//                LeadingVStack {
-//                    if key == value {
-////                        Text("key: \(key.uuidString)")
-//                        QueryView(key, type)
-//                    } else {
-//                        Text("key: \(key.uuidString)")
-//                        Text("value: \(value.uuidString)")
-//                    }
-//                }
-//                
-//                
-//                
-////                QueryView(uuids)
-//                
-//                
-////                let type: RelationBase = .init(model.type_id)
-////                
-////                
-////                
-////                if relations.contains(type) {
-////                    VStack(alignment: .leading) {
-////                        let key: UUID = model.property_key_uuid
-////                        switch type {
-////                        case .platform:
-//////                            Text("Platform")
-////                            QueryView(key)
-////                            QueryView(model.property_value_uuid)
-////                        default:
-////                            QueryView(key)
-////                        }
-//////                        FormattedView("type", type.rawValue)
-//////                        let key: UUID = model.property_key_uuid
-//////                        let value: UUID = model.property_value_uuid
-//////                        if key == value {
-//////                            FormattedView("property", key)
-//////                        } else {
-//////                            FormattedView("system", key)
-//////                            FormattedView("format", value)
-//////                        }
-////                    }
-////                }
+fileprivate struct PropertiesView: View {
+    
+    @Query var models: [RelationModel]
+    
+    init(_ builder: GameBuilder) {
+        let predicate: RelationPredicate = .getByGame(builder)
+        self._models = .init(filter: predicate)
+    }
+    
+    
+    
+    var body: some View {
+        QueryView(models)
+    }
+    
+    private enum UUIDEnum: Identifiable, Hashable {
+        case single(UUID)
+        case pair(UUID, UUID)
+        
+        public var id: String {
+            switch self {
+            case .single(let u):
+                return getID(u)
+            case .pair(let u1, let u2):
+                return getID(u1, u2)
+            }
+        }
+        
+        private func getID(_ u1: UUID, _ u2: UUID? = nil) -> String {
+            let u1: String = u1.uuidString
+            let u2: String = u2?.uuidString ?? u1
+            return "\(u1)||\(u2)"
+        }
+        
+    }
+
+    private struct QueryView: View {
+
+        @Query var models: [PropertyModel]
+        
+        let uuids: [UUIDEnum]
+        let relations: [RelationModel]
+
+        init(_ models: [RelationModel]) {
+            
+            self.uuids = models.map { model in
+                let key: UUID = model.key_uuid
+                let value: UUID = model.value_uuid
+                if key == value {
+                    return .single(key)
+                } else {
+                    return .pair(key, value)
+                }
+            }
+            
+            self.relations = models
+            let predicate: PropertyPredicate = .getByRelations(models)
+            let sort: [PropertySortDescriptor] = .defaultValue
+            self._models = .init(filter: predicate, sort: sort)
+        }
+    
+        var body: some View {
+//            Section {
+//                FormattedView("relation models", relations.count.description)
+//                FormattedView("relation property uuids", relations.property_uuids.count.description)
 //            }
-//        }
-//    }
-//    
+//            
+//            Section("properties") {
+//                ForEach(models) { model in
+//                    Text(model.uuid.short)
+//                }
+//            }
+//            
+//            Section("relations") {
+//                ForEach(relations) { relation in
+//                    DisclosureGroup(relation.uuid.short, content: {
+//                        FormattedView("key", relation.key_uuid.short)
+//                        FormattedView("value", relation.value_uuid.short)
+//                    })
+//                }
+//            }
+            
+            Section {
+                ForEach(uuids, content: UUIDView)
+            }
+        }
+        
+        @ViewBuilder
+        public func UUIDView(_ uuid: UUIDEnum) -> some View {
+            switch uuid {
+            case .single(let u):
+                PropertyView(getProperty(u))
+            case .pair(let u1, let u2):
+                PropertyView(getProperty(u1), getProperty(u2))
+            }
+        }
+        
+        private func getProperty(_ uuid: UUID) -> PropertyModel? {
+            self.models.first(where: { $0.uuid == uuid })
+        }
+        
+        @ViewBuilder
+        public func PropertyView(_ prop1: PropertyModel?, _ prop2: PropertyModel? = nil) -> some View {
+            if let prop1: PropertyModel = prop1 {
+                if let prop2: PropertyModel = prop2 {
+                    FormattedView(prop1.value_trim, prop2.value_trim)
+                } else {
+                    let label: PropertyLabel = .init(prop1.label_id)
+                    FormattedView(label.rawValue, prop1.value_trim)
+                }
+            }
+        }
+        
+    }
+    
 //    private struct QueryView: View {
 //        
 //        @Query var models: [PropertyModel]
@@ -149,5 +205,5 @@ struct GameView: View {
 ////            }
 //        }
 //    }
-//    
-//}
+    
+}

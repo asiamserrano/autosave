@@ -26,10 +26,19 @@ public extension Array {
     
 }
 
+public extension Array where Element: Hashable {
+    
+    var deduped: Self {
+        let set: Set<Element> = .init(self)
+        return set.map(\.self)
+    }
+    
+}
+
 extension Array where Element == any PersistentModel.Type {
     
     public static var defaultValue: Self {
-        .init(GameModel.self, PropertyModel.self)//, RelationModel.self)
+        .init(GameModel.self, PropertyModel.self, RelationModel.self)
     }
     
 }
@@ -130,20 +139,13 @@ extension Array where Element == FormatBuilder {
     
 }
 
-//extension Array where Element == RelationBuilder {
-//
-//    public static func fromElement(_ element: Element) -> Self {
-//        switch element {
-//        case .property:
-//            return .init(element)
-//        case .platform:
-//            let system: Element = .property(element.key)
-//            let format: Element = .property(element.value)
-//            return .init(element, system, format)
-//        }
-//    }
-//    
-//}
+extension Array where Element == RelationModel {
+
+    public var property_uuids: [UUID] {
+        self.flatMap { [$0.key_uuid, $0.value_uuid] }.deduped
+    }
+    
+}
 
 //extension Array where Element == Property {
 //

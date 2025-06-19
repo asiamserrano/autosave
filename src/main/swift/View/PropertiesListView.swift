@@ -20,6 +20,7 @@ struct PropertiesListView: View {
     
 }
 
+// TODO: see if you can consolidate this with the idea in RelationModel --> search for "BABY_LOVE"
 fileprivate enum PropertyEnum {
     case category(PropertyCategory)
     case type(PropertyType)
@@ -179,8 +180,7 @@ fileprivate struct PropertiesView: View {
             let label: String = model.value_trim
             NavigationLink(destination: {
                 // TODO: add back in the relationship parsing for property -> game
-//                GamesView(model)
-                Text("TBD")
+                GamesView(model)
                     .navigationTitle("games")
             }, label: {
                 Text(label)
@@ -190,39 +190,37 @@ fileprivate struct PropertiesView: View {
 
 }
 
-//fileprivate struct GamesView: View {
-//
-//    @Query var models: [RelationModel]
-//
-//    init(_ property: PropertyModel) {
-//        let type: String = property.type_id
-//        let uuid: UUID = property.uuid
-//        let predicate: RelationPredicate = .getByProperty(type, uuid)
-//        self._models = .init(filter: predicate)
-//    }
-//
-//    var body: some View {
-//        QueryView(models)
-//    }
-//
-//    private struct QueryView: View {
-//
-//        @Query var models: [GameModel]
-//
-//        init(_ models: [RelationModel]) {
-//            let uuids: [UUID] = models.compactMap(\.game_uuid)
-//            let predicate: GamePredicate = .getByUUIDs(uuids)
-//            let sort: [GameSortDescriptor] = .defaultValue(.defaultValue)
-//            self._models = .init(filter: predicate, sort: sort)
-//        }
-//
-//        var body: some View {
-//            Form {
-//                ForEach(models) { model in
-//                    Text(model.title_trim)
-//                }
-//            }
-//        }
-//    }
-//
-//}
+fileprivate struct GamesView: View {
+
+    @Query var models: [RelationModel]
+
+    init(_ property: PropertyModel) {
+        let predicate: RelationPredicate = .getByProperty(property)
+        self._models = .init(filter: predicate)
+    }
+
+    var body: some View {
+        QueryView(models)
+    }
+
+    private struct QueryView: View {
+
+        @Query var models: [GameModel]
+
+        init(_ models: [RelationModel]) {
+            let predicate: GamePredicate = .getByRelations(models)
+            let sort: [GameSortDescriptor] = .defaultValue(.defaultValue)
+            self._models = .init(filter: predicate, sort: sort)
+        }
+
+        var body: some View {
+            Form {
+                ForEach(models) { model in
+                    Text(model.title_trim)
+                }
+            }
+        }
+        
+    }
+
+}

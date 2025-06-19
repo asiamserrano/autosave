@@ -88,34 +88,61 @@ extension ModelContext {
         return nil
     }
     
-    @discardableResult
-    public func save(_ snapshot: PropertySnapshot) -> PropertyModel? {
-        let composite: PropertyFetchDescriptor = .getByCompositeKey(snapshot)
-        if self.fetchModel(composite) == nil {
+    
+    private func save(_ snapshot: PropertySnapshot) -> (PropertyModel, Int) {
+        if let existing: PropertyModel = self.fetchModel(snapshot) {
+            return (existing, 0)
+        } else {
             let property: PropertyModel = .fromSnapshot(snapshot)
             self.add(property)
-            return property
+            return (property, 1)
         }
-        return nil
     }
     
+    private func save(_ type: RelationType, _ game: GameModel, _ tag: TagSnapshot) -> Void {
+        let snapshot: RelationSnapshot = .init(type, game, tag)
+        if self.fetchModel(snapshot) == nil {
+            let relation: RelationModel = .fromSnapshot(snapshot)
+            self.add(relation)
+        }
+    }
+    
+    @discardableResult
+    public func save(_ game: GameModel, _ builder: TagBuilder) -> Int {
+        let property: PropertySnapshot = builder.key
+        switch builder {
+        case .platform:
+            let res1: (PropertyModel, Int) = save(property)
+            let res2: (PropertyModel, Int) = save(builder.value)
+            let key: PropertyModel = res1.0
+            let value: PropertyModel = res2.0
+            save(.tag, game, .fromModel(key, value))
+            save(.property, game, .fromModel(key))
+            save(.property, game, .fromModel(value))
+            return res1.1 + res2.1
+        default:
+            let result: (PropertyModel, Int) = save(property)
+            let snapshot: TagSnapshot = .fromModel(result.0)
+            save(.tag, game, snapshot)
+            save(.property, game, snapshot)
+            return result.1
+        }
+    }
+    
+    
+    
 //    @discardableResult
-//    public func save(_ snapshot: RelationSnapshot) -> RelationModel? {
-//        let composite: RelationFetchDescriptor = .getByCompositeKey(snapshot)
-//        if let model: RelationModel = self.fetchModel(composite) {
-//            let type: RelationBase = model.type
-//            if type.isIncrementable {
-//                model.increment()
-//                self.store()
-//            }
-//            return nil
-//        } else {
+//    public func save(_ game: GameModel, _ property: PropertySnapshot) -> Int {
+//        let result: (PropertyModel, Int) = save(property)
+//        let snapshot: RelationSnapshot = .build(game, result.0)
+//        if self.fetchModel(snapshot) == nil {
 //            let relation: RelationModel = .fromSnapshot(snapshot)
 //            self.add(relation)
-//            return relation
 //        }
+//        
+//        return result.1
 //    }
-//
+
 //    @discardableResult
 //    private func save(_ snapshot: PropertySnapshot) -> Int {
 //        let composite: PropertyFetchDescriptor = .getByCompositeKey(snapshot)
@@ -173,8 +200,13 @@ private extension ModelContext {
         }
     }
     
-    func fetchModel(_ desc: PropertyFetchDescriptor) -> PropertyModel? {
-        fetchModels(desc).first
+//    func fetchModel(_ desc: PropertyFetchDescriptor) -> PropertyModel? {
+//        fetchModels(desc).first
+//    }
+    
+    func fetchModel(_ snapshot: PropertySnapshot) -> PropertyModel? {
+        let composite: PropertyFetchDescriptor = .getByCompositeKey(snapshot)
+        return fetchModels(composite).first
     }
     
     func fetchModels(_ desc: PropertyFetchDescriptor) -> [PropertyModel] {
@@ -185,19 +217,24 @@ private extension ModelContext {
             return .init()
         }
     }
-//    
+    
 //    func fetchModel(_ desc: RelationFetchDescriptor) -> RelationModel? {
 //        fetchModels(desc).first
 //    }
 //    
-//    func fetchModels(_ desc: RelationFetchDescriptor) -> [RelationModel] {
-//        do {
-//            return try self.fetch(desc)
-//        } catch {
-//            print("error: \(error)")
-//            return .init()
-//        }
-//    }
+    func fetchModel(_ snapshot: RelationSnapshot) -> RelationModel? {
+        let composite: RelationFetchDescriptor = .getByCompositeKey(snapshot)
+        return fetchModels(composite).first
+    }
+    
+    func fetchModels(_ desc: RelationFetchDescriptor) -> [RelationModel] {
+        do {
+            return try self.fetch(desc)
+        } catch {
+            print("error: \(error)")
+            return .init()
+        }
+    }
     
     func add(_ model: Persistor) -> Void {
         self.insert(model)
