@@ -20,7 +20,6 @@ struct PropertiesListView: View {
     
 }
 
-// TODO: see if you can consolidate this with the idea in RelationModel --> search for "BABY_LOVE"
 fileprivate enum PropertyEnum {
     case category(PropertyCategory)
     case type(PropertyType)
@@ -88,13 +87,6 @@ fileprivate struct PropertiesView: View {
     @ViewBuilder
     func PropertyView() -> some View {
         switch property {
-        case .none:
-            Form {
-                ForEach(PropertyCategory.cases) { category in
-                    PropertyView(.category(category))
-                }
-            }
-            .navigationTitle("Properties")
         case .category(let category):
             PropertyView(category) {
                 ForEach(PropertyType.filter(category)) { type in
@@ -134,6 +126,13 @@ fileprivate struct PropertiesView: View {
                     PropertyNavigationLink("\(title) \(format)", title)
                 }
             }
+        default:
+            Form {
+                ForEach(PropertyCategory.cases) { category in
+                    PropertyView(.category(category))
+                }
+            }
+            .navigationTitle("Properties")
         }
     }
     
@@ -179,7 +178,6 @@ fileprivate struct PropertiesView: View {
         ForEach(models) { model in
             let label: String = model.value_trim
             NavigationLink(destination: {
-                // TODO: add back in the relationship parsing for property -> game
                 GamesView(model)
                     .navigationTitle("games")
             }, label: {

@@ -75,8 +75,8 @@ public enum SelectedLabel: Encapsulable {
     }
     
     public static var allCases: Cases {
-        SelectedType.allCases.flatMap { category in
-            switch category {
+        SelectedType.allCases.flatMap { type in
+            switch type {
             case .mode:
                 return Cases.init(.mode)
             case .format:
@@ -127,6 +127,10 @@ public enum SelectedLabel: Encapsulable {
     }
   
 }
+
+
+
+
 
 public enum PropertyCategory: Enumerable {
     case input, selected
@@ -276,6 +280,20 @@ public enum PropertyBuilder {
         }
     }
     
+    public var tag: TagType {
+        switch self {
+        case .input(let i):
+            return .input(i.type)
+        case .selected(let s):
+            switch s {
+            case .mode:
+                return .mode
+            default:
+                return .platform
+            }
+        }
+    }
+    
     public var value: StringBuilder {
         switch self {
         case .input(let i):
@@ -330,11 +348,18 @@ public struct PropertySnapshot: Uuidentifiable {
     public var value_trim: String {
         self.builder.value.trim
     }
-    
+
 }
 
-
-public struct PlatformBuilder {
+public struct PlatformBuilder: Identifiable, Hashable, Enumerable {
+    
+    public static var allCases: [Self] {
+        SystemBuilder.cases.flatMap { system in
+            system.formatBuilders.map { format in
+                return .init(system, format)
+            }
+        }
+    }
     
     public static var random: Self {
         let system: SystemBuilder = .random
@@ -349,5 +374,10 @@ public struct PlatformBuilder {
         self.system = system
         self.format = format
     }
+    
+//    public var id: Int {
+//        self.hashValue
+//    }
+    
     
 }

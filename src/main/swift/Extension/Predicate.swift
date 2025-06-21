@@ -141,32 +141,34 @@ public typealias RelationPredicate = Predicate<RelationModel>
 extension RelationPredicate {
     
     public static func getByCompositeKey(_ snapshot: RelationSnapshot) -> RelationPredicate {
+        let category_id: String = snapshot.category_id
         let type_id: String = snapshot.type_id
         let game_uuid: UUID = snapshot.game_uuid
         let key_uuid: UUID = snapshot.key_uuid
         let value_uuid: UUID = snapshot.value_uuid
         return #Predicate {
-            $0.type_id  == type_id
+            $0.category_id == category_id
+            && $0.type_id  == type_id
             && $0.game_uuid == game_uuid
             && $0.key_uuid   == key_uuid
             && $0.value_uuid == value_uuid
         }
     }
     
-    public static func getByProperty(_ property: PropertyModel, _ type: RelationType = .property) -> RelationPredicate {
-        let type_id: String = type.id
+    public static func getByProperty(_ property: PropertyModel, _ category: RelationCategory = .property) -> RelationPredicate {
+        let category_id: String = category.id
         let key: UUID = property.uuid
         return #Predicate {
-            $0.type_id  == type_id
+            $0.category_id  == category_id
             && $0.key_uuid == key
         }
     }
     
-    public static func getByGame(_ game: GameBuilder, _ type: RelationType = .tag) -> RelationPredicate {
-        let type_id: String = type.id
+    public static func getByGame(_ game: GameBuilder, _ category: RelationCategory = .tag) -> RelationPredicate {
+        let category_id: String = category.id
         let game: UUID = game.uuid
         return #Predicate {
-            $0.type_id  == type_id
+            $0.category_id  == category_id
             && $0.game_uuid == game
         }
     }

@@ -7,15 +7,47 @@
 
 import Foundation
 
-public enum TagEnum: Enumerable {
+public enum TagCategory: Enumerable {
     case input, mode, platform
+}
+
+public enum TagType: Encapsulable {
+    
+    public static var allCases: Cases {
+        TagCategory.allCases.flatMap { type in
+            switch type {
+            case .input:
+                return InputEnum.cases.map(Self.input)
+            case .mode:
+                return Cases.init(.mode)
+            case .platform:
+                return Cases.init(.platform)
+            }
+        }
+    }
+    
+    case input(InputEnum)
+    case mode
+    case platform
+    
+    public var enumeror: Enumeror {
+        switch self {
+        case .input(let i):
+            return i
+        case .mode:
+            return TagCategory.mode
+        case .platform:
+            return TagCategory.platform
+        }
+    }
+    
 }
 
 public enum TagBuilder {
     
     public static var random: Self {
-        let tag: TagEnum = .random
-        switch tag {
+        let category: TagCategory = .random
+        switch category {
         case .input:
             return .input(.random)
         case .mode:
@@ -58,27 +90,11 @@ public enum TagBuilder {
         }
     }
     
-//    public var type: TagEnum {
-//        switch self {
-//        case .input:
-//            return .input
-//        case .mode:
-//            return .mode
-//        case .platform:
-//            return .platform
-//        }
-//    }
     
 }
 
 public struct TagSnapshot {
-    
-//    public static func fromBuilder(_ builder: TagBuilder) -> Self {
-//        let key: PropertySnapshot = builder.key
-//        let value: PropertySnapshot = builder.value
-//        return .init(key, value)
-//    }
-        
+
     public static func fromModel(_ key: PropertyModel, _ value: PropertyModel? = nil) -> Self {
         let key: PropertySnapshot = key.snapshot
         let value: PropertySnapshot = value?.snapshot ?? key
@@ -91,6 +107,17 @@ public struct TagSnapshot {
     private init(_ key: PropertySnapshot, _ value: PropertySnapshot) {
         self.key = key
         self.value = value
+    }
+    
+    public func getLabel(_ category: RelationCategory) -> RelationType {
+        switch category {
+        case .property:
+            let type: PropertyType = self.key.builder.type
+            return .property(type)
+        case .tag:
+            let tag: TagType = self.key.builder.tag
+            return .tag(tag)
+        }
     }
     
 }

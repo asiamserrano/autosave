@@ -16,6 +16,7 @@ public class RelationModel: Persistable {
     public static func fromSnapshot(_ snapshot: RelationSnapshot) -> RelationModel {
         let relation: RelationModel = .init()
         relation.uuid = snapshot.uuid
+        relation.category_id = snapshot.category_id
         relation.type_id = snapshot.type_id
         relation.game_uuid = snapshot.game_uuid
         relation.key_uuid = snapshot.key_uuid
@@ -23,7 +24,10 @@ public class RelationModel: Persistable {
         return relation
     }
     
+    
+    
     public private(set) var uuid: UUID
+    public private(set) var category_id: String
     public private(set) var type_id: String
     public private(set) var game_uuid: UUID
     public private(set) var key_uuid: UUID
@@ -35,45 +39,64 @@ public class RelationModel: Persistable {
         self.game_uuid = uuid
         self.key_uuid = uuid
         self.value_uuid = uuid
+        self.category_id = .defaultValue
         self.type_id = .defaultValue
     }
     
 }
 
-// TODO: add a second enum to track type of the property for easier filtering in GameView --> search for "BABY_LOVE"
-public enum RelationType: Enumerable {
-    case property   // game ↔︎ property (simple)
+public enum RelationCategory: Enumerable {
+    case property
     case tag
-//    case platform   // game ↔︎ platform (compound)
-//    case relation   // system ↔︎ format (platform)
 }
 
-//public enum RelationBuilder {
-//    case property(GameBuilder, PropertyBuilder)
-//    case platform(GameBuilder, PlatformBuilder)
-//    case relation(SystemBuilder, FormatBuilder)
-//}
+public enum RelationType: Encapsulable {
+    
+    public static var allCases: Cases {
+        RelationCategory.allCases.flatMap { type in
+            switch type {
+            case .property:
+                return PropertyType.cases.map(Self.property)
+            case .tag:
+                return TagType.cases.map(Self.tag)
+            }
+        }
+    }
+    
+    case property(PropertyType)
+    case tag(TagType)
+    
+    public var enumeror: Enumeror {
+        switch self {
+        case .property(let p):
+            return p
+        case .tag(let t):
+            return t
+        }
+    }
+    
+    public var category: RelationCategory {
+        switch self {
+        case .property:
+            return .property
+        case .tag:
+            return .tag
+        }
+    }
+    
+}
 
 
 public struct RelationSnapshot: Uuidentifiable {
     
-    public static func build(_ game: GameModel, _ property: PropertyModel) -> Self {
-        let tag: TagSnapshot = .fromModel(property)
-        return .init(.property, game, tag)
-    }
-    
-    public static func build(_ game: GameModel, _ tag: TagSnapshot) -> Self {
-        .init(.tag, game, tag)
-    }
-    
     public let uuid: UUID
     public let game: Uuidentifor
     public let tag: TagSnapshot
-    public let type: RelationType
+    public let category: RelationCategory
     
-    public init(_ type: RelationType, _ game: Uuidentifor, _ tag: TagSnapshot) {
+    public init(_ category: RelationCategory, _ game: Uuidentifor, _ tag: TagSnapshot) {
         self.uuid = .init()
-        self.type = type
+        self.category = category
         self.game = game
         self.tag = tag
     }
@@ -88,6 +111,14 @@ public struct RelationSnapshot: Uuidentifiable {
     
     public var value_uuid: UUID {
         self.tag.value.uuid
+    }
+    
+    public var category_id: String {
+        self.category.id
+    }
+    
+    public var type: RelationType {
+        self.tag.getLabel(self.category)
     }
     
     public var type_id: String {

@@ -42,8 +42,7 @@ extension FormatBuilder {
     }
     
     public static func random(_ system: SystemBuilder) -> Self {
-        let arr: [Self] = .getFormatBuilders(system)
-        return arr.randomElement
+        system.formatBuilders.randomElement
     }
     
     public enum PhysicalEnum: Enumerable {

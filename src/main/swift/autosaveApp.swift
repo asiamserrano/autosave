@@ -30,6 +30,7 @@ fileprivate struct ContentView: View {
     // TODO: change this once other TODO is completed
     @State var menu: MenuEnum = .library
     
+    
     var body: some View {
         NavigationStack {
             Group {
@@ -117,31 +118,19 @@ fileprivate struct ContentView: View {
         
         container.mainContext.autosaveEnabled = false
         container.mainContext.undoManager = .init()
-        
-        var properties_count: Int = 0
-        
+                
         var games: [GameModel] = .defaultValue
-//        var properties: [PropertyModel] = .defaultValue
         
-        while games.count < games_max {
+        while container.mainContext.fetchCount(.game(games_max)) {
             if let model: GameModel = container.mainContext.save(.random) {
                 games.append(model)
             }
         }
-            
-        while properties_count < properties_max {
+        
+        while container.mainContext.fetchCount(.property(properties_max)) {
             let game: GameModel = games.randomElement
-            properties_count += container.mainContext.save(game, .random)
+            container.mainContext.save(game, .random)
         }
-                
-//        // TODO: update this to create properties and/or games via relation instead
-//        while properties_count < properties_max {
-//            let random: RelationBuilder = .random
-//            for _ in 0..<Int.random(in: 1...5) {
-//                let game: GameModel = games.randomElement
-//                properties_count += container.mainContext.save(game, random)
-//            }
-//        }
         
         return container
         

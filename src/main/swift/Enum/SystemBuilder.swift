@@ -115,4 +115,61 @@ extension SystemBuilder {
         }
     }
     
+    public var formatBuilders: [FormatBuilder] {
+        
+        var physicalBuilder: FormatBuilder {
+            switch self {
+            case .nintendo(let nintendo):
+                switch nintendo {
+                case .snes:
+                    return .physical(.cartridge)
+                case .nsw, .n3ds:
+                    return .physical(.card)
+                default:
+                    return .physical(.disc)
+                }
+            default:
+                return .physical(.disc)
+            }
+        }
+        
+        var digitalBuilders: [FormatBuilder] {
+            let free: FormatBuilder = .digital(.free)
+            switch self {
+            case .playstation(let playstation):
+                switch playstation {
+                case .ps3, .ps4, .ps5:
+                    let p: FormatBuilder = .digital(.psn)
+                    return .init(free, p)
+                case .psp:
+                    return .init(free)
+                default:
+                    return .defaultValue
+                }
+            case .nintendo(let nintendo):
+                switch nintendo {
+                case .nsw:
+                    let n: FormatBuilder = .digital(.nintendo)
+                    return .init(n)
+                default:
+                    return .defaultValue
+                }
+            case .xbox(let xbox):
+                switch xbox {
+                case .x360, .one:
+                    let x: FormatBuilder = .digital(.xbox)
+                    return .init(free, x)
+                default:
+                    return .defaultValue
+                }
+            case .os:
+                let steam: FormatBuilder = .digital(.steam)
+                let origin: FormatBuilder = .digital(.origin)
+                return .init(steam, origin, free)
+            }
+        }
+        
+        return .init(physicalBuilder) + digitalBuilders
+    }
+    
 }

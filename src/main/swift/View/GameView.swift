@@ -8,14 +8,6 @@
 import SwiftUI
 import SwiftData
 
-extension UUID {
-    
-    public var short: String {
-        self.uuidString.components(separatedBy: "-")[4]
-    }
-    
-}
-
 struct GameView: View {
     
     @Environment(\.modelContext) private var modelContext
@@ -61,108 +53,155 @@ fileprivate struct PropertiesView: View {
     
     
     var body: some View {
-        QueryView(models)
-    }
-    
-    private enum UUIDEnum: Identifiable, Hashable {
-        case single(UUID)
-        case pair(UUID, UUID)
-        
-        public var id: String {
-            switch self {
-            case .single(let u):
-                return getID(u)
-            case .pair(let u1, let u2):
-                return getID(u1, u2)
-            }
-        }
-        
-        private func getID(_ u1: UUID, _ u2: UUID? = nil) -> String {
-            let u1: String = u1.uuidString
-            let u2: String = u2?.uuidString ?? u1
-            return "\(u1)||\(u2)"
-        }
-        
+        RelationView(models)
     }
 
-    private struct QueryView: View {
+    private struct RelationView: View {
 
-        @Query var models: [PropertyModel]
+        @Query var properties: [PropertyModel]
         
-        let uuids: [UUIDEnum]
         let relations: [RelationModel]
 
         init(_ models: [RelationModel]) {
-            
-            self.uuids = models.map { model in
-                let key: UUID = model.key_uuid
-                let value: UUID = model.value_uuid
-                if key == value {
-                    return .single(key)
-                } else {
-                    return .pair(key, value)
-                }
-            }
-            
             self.relations = models
             let predicate: PropertyPredicate = .getByRelations(models)
             let sort: [PropertySortDescriptor] = .defaultValue
-            self._models = .init(filter: predicate, sort: sort)
+            self._properties = .init(filter: predicate, sort: sort)
         }
-    
-        var body: some View {
-//            Section {
-//                FormattedView("relation models", relations.count.description)
-//                FormattedView("relation property uuids", relations.property_uuids.count.description)
-//            }
-//            
-//            Section("properties") {
-//                ForEach(models) { model in
-//                    Text(model.uuid.short)
-//                }
-//            }
-//            
-//            Section("relations") {
-//                ForEach(relations) { relation in
-//                    DisclosureGroup(relation.uuid.short, content: {
-//                        FormattedView("key", relation.key_uuid.short)
-//                        FormattedView("value", relation.value_uuid.short)
-//                    })
-//                }
-//            }
+        
+        var snapshots: [TagSnapshot] {
             
-            Section {
-                ForEach(uuids, content: UUIDView)
+            func getProperty(_ uuid: UUID) -> PropertyModel? {
+                self.properties.first(where: { $0.uuid == uuid })
+            }
+            
+            return self.relations.compactMap { relation in
+                let type: RelationType = .init(relation.type_id)
+                if let  key: PropertyModel = getProperty(relation.key_uuid) {
+                    switch type {
+                    case .tag(.platform):
+                        if let value: PropertyModel = getProperty(relation.value_uuid) {
+                            return .fromModel(key, value)
+                        }
+                    default:
+                        return .fromModel(key)
+                    }
+                }
+                return nil
             }
         }
         
-        @ViewBuilder
-        public func UUIDView(_ uuid: UUIDEnum) -> some View {
-            switch uuid {
-            case .single(let u):
-                PropertyView(getProperty(u))
-            case .pair(let u1, let u2):
-                PropertyView(getProperty(u1), getProperty(u2))
-            }
-        }
-        
-        private func getProperty(_ uuid: UUID) -> PropertyModel? {
-            self.models.first(where: { $0.uuid == uuid })
-        }
-        
-        @ViewBuilder
-        public func PropertyView(_ prop1: PropertyModel?, _ prop2: PropertyModel? = nil) -> some View {
-            if let prop1: PropertyModel = prop1 {
-                if let prop2: PropertyModel = prop2 {
-                    FormattedView(prop1.value_trim, prop2.value_trim)
-                } else {
-                    let label: PropertyLabel = .init(prop1.label_id)
-                    FormattedView(label.rawValue, prop1.value_trim)
+        var body: some View {
+            ForEach(TagType.cases) { type in
+                let items: [TagSnapshot] = self.snapshots.filter { $0.key.builder.tag == type }
+                if !items.isEmpty {
+                    let count: Int = items.count
+                    Section(type.rawValue) {
+                        ForEach(0..<count, id:\.self) { index in
+                            let snapshot: TagSnapshot = items[index]
+                            let key: String = snapshot.key.builder.value.trim
+                            switch type {
+                            case .platform:
+                                let value: String = snapshot.value.builder.value.trim
+                                FormattedView(key, value)
+                            default:
+                                Text(key)
+                            }
+                        }
+                    }
                 }
             }
         }
         
     }
+    
+//    private struct QueryView: View {
+//
+//        @Query var models: [PropertyModel]
+//        
+////        let uuids: [UUIDEnum]
+//        let relations: [RelationSnapshot]
+//
+//        init(_ models: [RelationModel]) {
+//            
+//            self.relations = models.map { model in
+//                let key: UUID = model.key_uuid
+//                let value: UUID = model.value_uuid
+//                if key == value {
+//                    return .single(key)
+//                } else {
+//                    return .pair(key, value)
+//                }
+//            }
+//            
+//            self.relations = models
+//            let predicate: PropertyPredicate = .getByRelations(models)
+//            let sort: [PropertySortDescriptor] = .defaultValue
+//            self._models = .init(filter: predicate, sort: sort)
+//        }
+//    
+//        var body: some View {
+//            
+//            ForEach(TagType.cases) { type in
+//                Section(type.rawValue) {
+//                    let filtered: [RelationModel] = relations.filter { $0.label_id == type.id }
+//                    ForEach(filtered) { f in
+//                        
+//                    }
+//                }
+//            }
+//            
+////            Section {
+////                FormattedView("property models", models.count.description)
+////                FormattedView("relation models", relations.count.description)
+////                FormattedView("relation property uuids", relations.property_uuids.count.description)
+////            }
+////            
+////            Section("properties") {
+////                ForEach(models) { model in
+////                    Text(model.uuid.short)
+////                }
+////            }
+////            
+////            Section("relations") {
+////                ForEach(relations) { relation in
+////                    DisclosureGroup(relation.uuid.short, content: {
+////                        FormattedView("key", relation.key_uuid.short)
+////                        FormattedView("value", relation.value_uuid.short)
+////                    })
+////                }
+////            }
+//            
+//        }
+//        
+////        @ViewBuilder
+////        public func UUIDView(_ uuid: UUIDEnum) -> some View {
+////            switch uuid {
+////            case .single(let u):
+////                PropertyView(getProperty(u))
+////            case .pair(let u1, let u2):
+////                PropertyView(getProperty(u1), getProperty(u2))
+////            }
+////        }
+////        
+////        private func getProperty(_ uuid: UUID) -> PropertyModel? {
+////            self.models.first(where: { $0.uuid == uuid })
+////        }
+////        
+////        @ViewBuilder
+////        public func PropertyView(_ prop1: PropertyModel?, _ prop2: PropertyModel? = nil) -> some View {
+////            if let prop1: PropertyModel = prop1 {
+////                if let prop2: PropertyModel = prop2 {
+////                    FormattedView(prop1.value_trim, prop2.value_trim)
+////                } else {
+////                    let label: PropertyLabel = .init(prop1.label_id)
+////                    FormattedView(label.rawValue, prop1.value_trim)
+////                }
+////            }
+////        }
+//        
+//    }
+    
     
 //    private struct QueryView: View {
 //        
