@@ -108,19 +108,25 @@ fileprivate struct PropertiesView: View {
                     }
                 case .platform:
                     // TODO: implement sorting for system to formats
-                    SectionForEach(relations) { index in
-                        let relation: RelationModel = relations[index]
-                        if let key: PropertyModel = getProperty(relation.key_uuid),
-                            let value: PropertyModel = getProperty(relation.value_uuid) {
-                            FormattedView(key.value_trim, value.value_trim)
+                    let builders: [PlatformBuilder] = .init(relations, properties)
+                    OptionalView(builders) {
+                        let map: [SystemBuilder: [FormatBuilder]] = .init(builders)
+                        let systems: [SystemBuilder] = map.systems
+                        SectionForEach(systems) { index in
+                            let system: SystemBuilder = systems[index]
+                            let formats: [FormatBuilder] = map.getOrDefault(system)
+                            PlatformLabel(system, formats)
                         }
                     }
+                    
+//                    if let systems: [SystemBuilder] = map.systems.optional {
+//                        SectionForEach(systems) { index in
+//                            let system: SystemBuilder = systems[index]
+//                            PlatformLabel(system, map[system])
+//                        }
+//                    }
                 }
             }
-        }
-  
-        func getProperty(_ uuid: UUID) -> PropertyModel? {
-            self.properties.first(where: { $0.uuid == uuid })
         }
         
         @ViewBuilder
@@ -130,6 +136,67 @@ fileprivate struct PropertiesView: View {
             }
         }
         
+        @ViewBuilder
+        func PlatformLabel(_ system: SystemBuilder, _ formats: [FormatBuilder]) -> some View {
+            OptionalView(formats) {
+                ZStack {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(system.rawValue)
+                                .bold()
+                            FormatsView(formats)
+                        }
+                        Spacer()
+                    }
+                    HStack {
+                        Spacer()
+                        IconView(.chevron_right, .blue)
+                    }
+//                    .show(self.isEditing)
+                }
+            }
+        }
+        
+//        @ViewBuilder
+//        func FormatsView(_ group: [FormatBuilder]) -> some View {
+//            OptionalArrayView(group.keys) { keys in
+//                HStack(alignment: .center) {
+//                    ForEach(keys) { key in
+//                        OptionalArrayView(group.filter(key)) { formats in
+//                            HStack {
+//                                IconView(key.icon, 16)
+//                                Text(formats.joined)
+//                                    .font(.system(size: 14))
+//                                    .foregroundColor(.gray)
+//                                    .italic()
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+        
+        @ViewBuilder
+        func FormatsView(_ group: [FormatBuilder]) -> some View {
+            OptionalArrayView(group.keys, .elements({ keys in
+                HStack(alignment: .center) {
+                    ForEach(keys) { key in
+                        OptionalArrayView(group.filter(key), .elements({ formats in
+                            HStack {
+                                IconView(key.icon, 16)
+                                Text(formats.joined)
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.gray)
+                                    .italic()
+                            }
+                        }))
+                    }
+                }
+            }))
+        }
+        
     }
+    
+    
     
 }

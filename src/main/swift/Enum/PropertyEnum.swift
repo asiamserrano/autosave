@@ -353,6 +353,22 @@ public struct PropertySnapshot: Uuidentifiable {
 
 public struct PlatformBuilder: Identifiable, Hashable, Enumerable {
     
+    public static func fromTag(_ key: PropertyModel, _ value: PropertyModel) -> Self? {
+        let s: PropertyBuilder = .fromModel(key)
+        let f: PropertyBuilder = .fromModel(value)
+        switch (s, f) {
+        case (.selected(let sys), .selected(let form)):
+            switch (sys, form) {
+            case (.system(let system), .format(let format)):
+                return .init(system, format)
+            default:
+                return nil
+            }
+        default:
+            return nil
+        }
+    }
+    
     public static var allCases: [Self] {
         SystemBuilder.cases.flatMap { system in
             system.formatBuilders.map { format in

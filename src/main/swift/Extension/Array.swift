@@ -155,3 +155,56 @@ extension Array where Element == RelationModel {
 //    
 //}
 
+extension Array where Element == FormatBuilder {
+    
+    public var keys: [FormatEnum] {
+        self.map { $0.type }.deduped
+    }
+    
+    public func filter(_ type: FormatEnum) -> Self {
+        self.filter { $0.type == type }.deduped
+    }
+    
+    public var joined: String {
+        self.map { $0.rawValue }.joined(separator: ", ")
+    }
+    
+}
+
+extension Array where Element == PlatformBuilder {
+    
+    public init(_ relations: [RelationModel], _ properties: [PropertyModel]) {
+        self = relations.compactMap { relation in
+            if let key: PropertyModel = properties.get(relation.key_uuid),
+               let value: PropertyModel = properties.get(relation.value_uuid) {
+                return .fromTag(key, value)
+            }
+            return nil
+        }
+    }
+    
+    public var systems: [SystemBuilder] {
+        self.map { $0.system }.deduped.sorted()
+    }
+    
+    public func filter(_ system: SystemBuilder) -> [FormatBuilder] {
+        self.filter { $0.system == system }.map { $0.format }.deduped
+    }
+    
+}
+
+//extension Array where Element == RelationModel {
+//    
+//    public func getPlatformBuilders(_ properties: [PropertyModel]) -> [PlatformBuilder] {
+//
+//    }
+//    
+//}
+
+extension Array where Element == PropertyModel {
+    
+    public func get(_ uuid: UUID) -> Element? {
+        self.first(where: { $0.uuid == uuid })
+    }
+    
+}
