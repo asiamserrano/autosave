@@ -7,10 +7,12 @@
 
 import Foundation
 
+
 // TODO: finish this implementation
 public class TagsBuilder: ObservableObject {
     
-    // TODO: ****NOTE***** @Published only works on primative types (ie: observable object variable in another observable object will only update view if the entire variable is assigned --> self.observableObject = self.observableObject.update()) 
+    
+    // TODO: ****NOTE***** @Published only works on primative types (ie: observable object variable in another observable object will only update view if the entire variable is assigned --> self.observableObject = self.observableObject.update())
     
     @Published public private(set) var inputs: [InputEnum: [String]]
     @Published public private(set) var modes: [ModeEnum: Bool]
@@ -22,9 +24,13 @@ public class TagsBuilder: ObservableObject {
         self.platforms = .init()
     }
     
-    public convenience init(_ builders: [TagBuilder]) {
+    private convenience init(_ builders: [TagBuilder]) {
         self.init()
         builders.forEach(self.insert)
+    }
+    
+    public convenience init(_ snapshot: TagsSnapshot) {
+        self.init(snapshot.sorted)
     }
     
     public var snapshot: TagsSnapshot {
