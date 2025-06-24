@@ -50,7 +50,7 @@ fileprivate struct SearchView: View {
     init(_ status: GameStatusEnum, _ search: String) {
         let bool: Bool = status.bool
         let canon = search.canonicalized
-        self._models = .init(filter: .getForList(bool, canon), sort: .defaultValue(.defaultValue))
+        self._models = .init(filter: .getForList(bool, canon), sort: .defaultValue)
     }
     
     var body: some View {

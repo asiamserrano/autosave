@@ -13,11 +13,11 @@ public protocol Iterable {
 
 extension Iterable where Self: Equatable {
     
-    var index: Int {
+    public var index: Int {
         Self.cases.firstIndex(of: self) ?? -1
     }
 
-    var next: Self {
+    public var toggle: Self {
         let value: Int = index + 1
         let next: Int = value == Self.cases.count ? 0 : value
         return Self.cases[next]

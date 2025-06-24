@@ -213,7 +213,19 @@ public enum PropertyLabel: Encapsulable {
     
 }
 
-public enum PropertyBuilder {
+public enum PropertyBuilder: Hashable, Comparable {
+    
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+    
+    public static func < (lhs: Self, rhs: Self) -> Bool {
+        if lhs.label == rhs.label {
+            return lhs.value < rhs.value
+        } else {
+            return lhs.label < rhs.label
+        }
+    }
     
     /*
      | Field      | Role                                                                                                      |
@@ -303,6 +315,11 @@ public enum PropertyBuilder {
         }
     }
     
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.label)
+        hasher.combine(self.value)
+    }
+    
 }
 
 public struct PropertySnapshot: Uuidentifiable {
@@ -353,7 +370,7 @@ public struct PropertySnapshot: Uuidentifiable {
 
 public struct PlatformBuilder: Identifiable, Hashable, Enumerable {
     
-    public static func fromTag(_ key: PropertyModel, _ value: PropertyModel) -> Self? {
+    public static func fromModels(_ key: PropertyModel, _ value: PropertyModel) -> Self? {
         let s: PropertyBuilder = .fromModel(key)
         let f: PropertyBuilder = .fromModel(value)
         switch (s, f) {

@@ -6,12 +6,18 @@
 //
 
 import Foundation
+import SwiftUI
+import PhotosUI
 
 public class GameBuilder: ObservableObject {
     
     @Published public var title: String
     @Published public var release: Date
     @Published public var boxart: Data?
+    
+//    @Published public var editMode: EditMode
+//    @Published public var photosPickerItem: PhotosPickerItem? = nil
+//    @Published public var imagePicker: ImagePickerEnum = .picker
     
     @Published private var invalid: Set<GameSnapshot>
   

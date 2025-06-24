@@ -33,6 +33,10 @@ public extension Array where Element: Hashable {
         return set.map(\.self)
     }
     
+    func remove(_ element: Element) -> Self {
+        self.filter { $0 != element }
+    }
+    
 }
 
 extension Array where Element == any PersistentModel.Type {
@@ -45,14 +49,17 @@ extension Array where Element == any PersistentModel.Type {
 
 extension Array where Element == GameSortDescriptor {
 
-    public static func defaultValue(_ sort: GameSort) -> Self {
-        let order: SortOrder = sort.order
-        switch sort.type {
-        case .release:
-            return .init(.release(order), .title(.forward))
-        case .title:
-            return .init(.title(order), .release(.forward))
-        }
+//    public static func defaultValue(_ sort: GameSortEnum) -> Self {
+//        let key: Element = sort.descriptor
+//        let value: Element = sort.toggleSort.descriptor
+//        return .init(key, value)
+//    }
+    
+    public static var defaultValue: Self {
+        let sort: GameSortEnum = .defaultValue
+        let key: Element = sort.descriptor
+        let value: Element = sort.toggleSort.descriptor
+        return .init(key, value)
     }
     
 }
@@ -65,95 +72,20 @@ extension Array where Element == PropertySortDescriptor {
     
 }
 
-//extension Array where Element == RelationModel {
-//    
-//    public var keys: [UUID] {
-//        self.map(\.uuid_key)
-//    }
-//    
-//    public var values: [UUID] {
-//        self.map(\.uuid_value)
-//    }
-//    
-//}
-
-//
-//extension Array where Element == FormatBuilder {
-//    
-//    public static func getPhysicalBuilder(_ system: SystemBuilder) -> Element {
-//        switch system {
-//        case .nintendo(let nintendo):
-//            switch nintendo {
-//            case .snes:
-//                return .physical(.cartridge)
-//            case .nsw, .n3ds:
-//                return .physical(.card)
-//            default:
-//                return .physical(.disc)
-//            }
-//        default:
-//            return .physical(.disc)
-//        }
-//    }
-//    
-//    public static func getDigitalBuilders(_ system: SystemBuilder) -> Self {
-//        let free: Element = .digital(.free)
-//        switch system {
-//        case .playstation(let playstation):
-//            switch playstation {
-//            case .ps3, .ps4, .ps5:
-//                let p: Element = .digital(.psn)
-//                return .init(free, p)
-//            case .psp:
-//                return .init(free)
-//            default:
-//                return .defaultValue
-//            }
-//        case .nintendo(let nintendo):
-//            switch nintendo {
-//            case .nsw:
-//                let n: Element = .digital(.nintendo)
-//                return .init(n)
-//            default:
-//                return .defaultValue
-//            }
-//        case .xbox(let xbox):
-//            switch xbox {
-//            case .x360, .one:
-//                let x: Element = .digital(.xbox)
-//                return .init(free, x)
-//            default:
-//                return .defaultValue
-//            }
-//        case .os:
-//            let steam: Element = .digital(.steam)
-//            let origin: Element = .digital(.origin)
-//            return .init(steam, origin, free)
-//        }
-//    }
-//    
-//}
-
 extension Array where Element == RelationModel {
 
     public var property_uuids: [UUID] {
         self.flatMap { [$0.key_uuid, $0.value_uuid] }.deduped
     }
     
+    public func filter(_ category: TagCategory) -> Self {
+        return self.filter { element in
+            let tag: TagType = .init(element.type_id)
+            return tag.category == category
+        }
+    }
+    
 }
-
-//extension Array where Element == Property {
-//
-//    public init(_ builder: RelationBuilder) {
-//        switch builder {
-//        case .property(let p):
-//            self.init(p)
-//        case .platform(let p1, let p2):
-//            self.init(p1, p2)
-//        }
-//    }
-//    
-//}
 
 extension Array where Element == FormatBuilder {
     
@@ -171,13 +103,56 @@ extension Array where Element == FormatBuilder {
     
 }
 
+//extension Array where Element == PropertyBuilder {
+//
+//    public init(_ relations: [RelationModel], _ properties: [PropertyModel]) {
+//        self = relations.property_uuids.compactMap { uuid in
+//            if let property: PropertyModel = properties.get(uuid) {
+//                return property.snapshot.builder
+//            } else {
+//                return nil
+//            }
+//        }
+//    }
+//    
+//}
+
+//public typealias TagBuilderList = [TagBuilder]
+
+extension Array where Element == TagBuilder {
+
+    public init(_ category: TagCategory, _ relations: [RelationModel], _ properties: [PropertyModel]) {
+        self =  relations.filter(category).compactMap { relation in
+            if let key: PropertyModel = properties.get(relation.key_uuid) {
+                let property: PropertyBuilder = .fromModel(key)
+                switch property {
+                case .input(let i):
+                    return .input(i)
+                case .selected(let s):
+                    switch s {
+                    case .mode(let m):
+                        return .mode(m)
+                    default:
+                        if let value: PropertyModel = properties.get(relation.value_uuid),
+                           let platform: PlatformBuilder = .fromModels(key, value) {
+                            return .platform(platform)
+                        }
+                    }
+                }
+            }
+            return nil
+        }
+    }
+        
+}
+
 extension Array where Element == PlatformBuilder {
-    
+
     public init(_ relations: [RelationModel], _ properties: [PropertyModel]) {
         self = relations.compactMap { relation in
             if let key: PropertyModel = properties.get(relation.key_uuid),
                let value: PropertyModel = properties.get(relation.value_uuid) {
-                return .fromTag(key, value)
+                return .fromModels(key, value)
             }
             return nil
         }
@@ -192,14 +167,6 @@ extension Array where Element == PlatformBuilder {
     }
     
 }
-
-//extension Array where Element == RelationModel {
-//    
-//    public func getPlatformBuilders(_ properties: [PropertyModel]) -> [PlatformBuilder] {
-//
-//    }
-//    
-//}
 
 extension Array where Element == PropertyModel {
     

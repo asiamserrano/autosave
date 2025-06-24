@@ -24,8 +24,6 @@ public class RelationModel: Persistable {
         return relation
     }
     
-    
-    
     public private(set) var uuid: UUID
     public private(set) var category_id: String
     public private(set) var type_id: String

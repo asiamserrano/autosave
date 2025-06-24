@@ -121,12 +121,14 @@ fileprivate struct ContentView: View {
                 
         var games: [GameModel] = .defaultValue
         
-        while container.mainContext.fetchCount(.game(games_max)) {
+        while container.mainContext.fetchCount(.game(games_max)) || games.isEmpty {
             if let model: GameModel = container.mainContext.save(.random) {
-                games.append(model)
+                if model.status_bool {
+                    games.append(model)
+                }
             }
         }
-        
+                
         while container.mainContext.fetchCount(.property(properties_max)) {
             let game: GameModel = games.randomElement
             container.mainContext.save(game, .random)

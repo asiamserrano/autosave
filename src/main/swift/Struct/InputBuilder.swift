@@ -22,15 +22,19 @@ public struct InputBuilder {
     
     public init(_ t: InputEnum, _ s: String) {
         self.type = t
-        self.string = s
+        self.string = s.trimmed
     }
     
-    public var canon: String {
-        self.string.canonicalized
+    public var stringBuilder: StringBuilder {
+        .string(self.string)
     }
     
-    public var trim: String {
-        self.string.trimmed
-    }
+//    public var canon: String {
+//        self.string.canonicalized
+//    }
+//    
+//    public var trim: String {
+//        self.string.trimmed
+//    }
     
 }

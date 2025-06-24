@@ -41,9 +41,20 @@ public enum TagType: Encapsulable {
         }
     }
     
+    public var category: TagCategory {
+        switch self {
+        case .input:
+            return .input
+        case .mode:
+            return .mode
+        case .platform:
+            return .platform
+        }
+    }
+    
 }
 
-public enum TagBuilder {
+public enum TagBuilder: Tagable {
     
     public static var random: Self {
         let category: TagCategory = .random
@@ -90,10 +101,40 @@ public enum TagBuilder {
         }
     }
     
+    public var type: TagType {
+        switch self {
+        case .input(let i):
+            return .input(i.type)
+        case .mode:
+            return .mode
+        case .platform:
+            return .platform
+        }
+    }
+    
+//    public var enumeror: Enumeror {
+//        switch self {
+//        case .platform(let p):
+//            return p.system
+//        default:
+//            return self.type
+//        }
+//    }
+//    
+//    public var stringBuilder: StringBuilder {
+//        switch self {
+//        case .input(let i):
+//            return i.stringBuilder
+//        case .mode(let m):
+//            return .enumeror(m)
+//        case .platform(let p):
+//            return .enumeror(p.format)
+//        }
+//    }
     
 }
 
-public struct TagSnapshot {
+public struct TagSnapshot: Tagable {
 
     public static func fromModel(_ key: PropertyModel, _ value: PropertyModel? = nil) -> Self {
         let key: PropertySnapshot = key.snapshot

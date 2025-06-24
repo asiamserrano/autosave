@@ -207,7 +207,7 @@ fileprivate struct GamesView: View {
 
         init(_ models: [RelationModel]) {
             let predicate: GamePredicate = .getByRelations(models)
-            let sort: [GameSortDescriptor] = .defaultValue(.defaultValue)
+            let sort: [GameSortDescriptor] = .defaultValue
             self._models = .init(filter: predicate, sort: sort)
         }
 

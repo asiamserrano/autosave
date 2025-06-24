@@ -11,13 +11,17 @@ extension SortOrder: Iterable {
     
     public static var defaultValue: Self { .forward }
     
-    public static var cases: [SortOrder] { [.forward, .reverse] }
+    public static var cases: [Self] {
+        .init(.forward, .reverse)
+    }
     
     public var icon: IconEnum {
         switch self {
-        case .forward: return .chevron_up
-        case .reverse: return .chevron_down
+        case .forward:
+            return .chevron_up
+        case .reverse:
+            return .chevron_down
         }
     }
-    
+ 
 }

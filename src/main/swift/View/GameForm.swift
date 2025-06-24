@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-struct GameForm: View {
+struct GameForm: Gameopticable {
     
     @Environment(\.modelContext) private var modelContext
         
     @Environment(\.dismiss) private var dismiss
     
-    @StateObject private var builder: GameBuilder
+    @StateObject public var builder: GameBuilder
     
     @State private var snapshot: GameSnapshot
     
@@ -31,6 +31,8 @@ struct GameForm: View {
     var body: some View {
         NavigationStack {
             Form {
+                GameImageView(true)
+                
                 Section {
                     CustomTextField(.title, $builder.title)
                 }
@@ -38,6 +40,7 @@ struct GameForm: View {
                     CustomDatePicker(.release_date, $builder.release)
                 }
             }
+            .environmentObject(self.builder)
             .navigationBarBackButtonHidden()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

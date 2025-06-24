@@ -7,7 +7,15 @@
 
 import Foundation
 
-public struct StringBuilder: Hashable {
+public struct StringBuilder: Hashable, Comparable {
+    
+    public static func < (lhs: Self, rhs: Self) -> Bool {
+        if lhs.canon == rhs.canon {
+            return lhs.trim < rhs.trim
+        } else {
+            return lhs.canon < rhs.canon
+        }
+    }
     
     public static func enumeror(_ enumeror: Enumeror) -> Self {
         let canon: String = enumeror.id

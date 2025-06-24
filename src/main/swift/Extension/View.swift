@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 extension View {
-    
+        
     @ViewBuilder
     public func FormattedView(_ key: String, _ value: String) -> some View {
         HStack {
@@ -50,4 +50,8 @@ extension View {
         Button(constant.rawValue, action: action)
     }
     
+    public var appScreenWidth: CGFloat {
+        UIScreen.main.bounds.width
+    }
+
 }
