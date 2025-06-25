@@ -19,6 +19,14 @@ extension Dictionary where Key: Comparable, Value: ExpressibleByArrayLiteral {
     
 }
 
+extension Dictionary where Key == ModeEnum, Value == Bool {
+    
+    public init() {
+        self = .init(uniqueKeysWithValues: ModeEnum.cases.map { ($0, false) })
+    }
+    
+}
+
 //extension Dictionary where Key == InputEnum, Value == [String] {
 //    
 //    public var builders: [TagBuilder] {

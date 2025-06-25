@@ -164,14 +164,23 @@ extension RelationPredicate {
         }
     }
     
-    public static func getByGame(_ game: GameBuilder, _ tag: TagType) -> RelationPredicate {
-        let type: RelationType = .tag(tag)
-        let category_id: String = type.category.id
-        let type_id: String = type.id
+//    public static func getByGame(_ game: GameBuilder, _ tag: TagType) -> RelationPredicate {
+//        let type: RelationType = .tag(tag)
+//        let category_id: String = type.category.id
+//        let type_id: String = type.id
+//        let game: UUID = game.uuid
+//        return #Predicate {
+//            $0.category_id  == category_id
+//            && $0.type_id == type_id
+//            && $0.game_uuid == game
+//        }
+//    }
+    
+    public static func getByGame(_ game: GameBuilder, _ category: RelationCategory = .tag) -> RelationPredicate {
+        let category_id: String = category.id
         let game: UUID = game.uuid
         return #Predicate {
             $0.category_id  == category_id
-            && $0.type_id == type_id
             && $0.game_uuid == game
         }
     }
