@@ -8,6 +8,27 @@
 import SwiftUI
 import SwiftData
 
+struct OptionalObjectView<Element: Any, T: View>: View {
+    
+    typealias Content = (Element) -> T
+    
+    let element: Element?
+    let content: Content
+    
+    init(_ element: Element?, @ViewBuilder content: @escaping Content) {
+        self.element = element
+        self.content = content
+    }
+
+    var body: some View {
+        if let element: Element = self.element {
+            content(element)
+        }
+    }
+    
+}
+
+
 struct OptionalView<T: View>: View {
     
     typealias ViewFunc = () -> T
@@ -64,11 +85,6 @@ struct OptionalArrayView<Element: Any, T: View>: View {
     
     let elements: [Element]
     let content: ContentEnum
-    
-//    init(_ elements: Elements, _ content: ContentEnum) {
-//        self.elements = elements
-//        self.content = content
-//    }
     
     init(_ elements: Elements, @ViewBuilder _ content: @escaping ElementContent) {
         self.elements = elements

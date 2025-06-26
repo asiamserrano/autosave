@@ -10,7 +10,7 @@ import Foundation
 // TODO: Fix this
 public struct TagsMap {
     
-    public static func fromModels(_ relations: [RelationModel], _ properties: [PropertyModel]) -> Self? {
+    public static func build(_ relations: [RelationModel], _ properties: [PropertyModel]) -> Self {
         var map: Self = .init()
         
         relations.forEach { relation in
@@ -36,7 +36,7 @@ public struct TagsMap {
             }
         }
         
-        return map.keys.isEmpty ? nil : map
+        return map
     }
     
     private var inputs: Inputs
@@ -92,7 +92,7 @@ public struct TagsMap {
     //        }
     //    }
     
-    public func get(_ category: Category) -> Element {
+    private func get(_ category: Category) -> Element {
         switch category {
         case .input:
             return .inputs(inputs)
@@ -103,38 +103,49 @@ public struct TagsMap {
         }
     }
     
-    public func get(_ key: Key) -> Values {
-        switch key {
-        case .inputs(let i):
-            let value: Inputs.Value = inputs.getOrDefault(i)
-            return .inputs(value)
-        case .modes:
-            let value: Modes.Keys = modes.filter { $1 }.keys
-            return .modes(value)
-        case .platforms(let p):
-            let value: Platforms.Value = platforms.getOrDefault(p)
-            return .platforms(value)
-        }
+    public func category(_ category: Category) -> Element? {
+        let element: Element = get(category)
+        return element.isEmpty ? nil : element
     }
+    
+//    public func get(_ key: Key) -> Values {
+//        switch key {
+//        case .inputs(let i):
+//            let value: Inputs.Value = inputs.getOrDefault(i)
+//            return .inputs(value)
+//        case .modes:
+//            let value: Modes.Keys = modes.filter { $1 }.keys
+//            return .modes(value)
+//        case .platforms(let p):
+//            let value: Platforms.Value = platforms.getOrDefault(p)
+//            return .platforms(value)
+//        }
+//    }
     
     // TODO: Fix this
 //    public func key(_ category: Category) -> [Key] {
 //        
 //    }
     
-    public var keys: [Key] {
-        [
-            self.inputs.keys.map { .inputs($0) },
-            self.modes.keys.map { .modes($0) },
-            self.platforms.keys.map { .platforms($0) }
-        ].flatMap { $0 }.sorted()
+    public var isEmpty: Bool {
+        self.inputs.isEmpty
+        && self.modes.isEmpty
+        && self.platforms.isEmpty
     }
+    
+//    public var keys: [Key] {
+//        [
+//            self.inputs.keys.map { .inputs($0) },
+//            self.modes.keys.map { .modes($0) },
+//            self.platforms.keys.map { .platforms($0) }
+//        ].flatMap { $0 }.sorted()
+//    }
     
 }
 
 extension TagsMap {
     
-    private typealias Keys = [Category: Set<Key>]
+//    private typealias Keys = [Category: Set<Key>]
     
     public typealias Builder = TagBuilder
     public typealias Category = TagCategory
@@ -143,42 +154,54 @@ extension TagsMap {
     public typealias Modes = [ModeEnum: Bool]
     public typealias Platforms = [SystemBuilder: Set<FormatBuilder>]
     
-    public enum Key: Encapsulable {
-        
-        public static var allCases: [Self] {
-            TagCategory.allCases.flatMap { type in
-                switch type {
-                case .input:
-                    return Inputs.Key.cases.map(Self.inputs)
-                case .mode:
-                    return Modes.Key.cases.map(Self.modes)
-                case .platform:
-                    return Platforms.Key.cases.map(Self.platforms)
-                }
-            }
-        }
-        
-        case inputs(Inputs.Key)
-        case modes(Modes.Key)
-        case platforms(Platforms.Key)
-        
-        public var enumeror: Enumeror {
-            switch self {
-            case .inputs(let i):
-                return i
-            case .modes(let m):
-                return m
-            case .platforms(let p):
-                return p
-            }
-        }
-        
-    }
+//    public enum Key: Encapsulable {
+//        
+//        public static var allCases: [Self] {
+//            TagCategory.allCases.flatMap { type in
+//                switch type {
+//                case .input:
+//                    return Inputs.Key.cases.map(Self.inputs)
+//                case .mode:
+//                    return Modes.Key.cases.map(Self.modes)
+//                case .platform:
+//                    return Platforms.Key.cases.map(Self.platforms)
+//                }
+//            }
+//        }
+//        
+//        case inputs(Inputs.Key)
+//        case modes(Modes.Key)
+//        case platforms(Platforms.Key)
+//        
+//        public var enumeror: Enumeror {
+//            switch self {
+//            case .inputs(let i):
+//                return i
+//            case .modes(let m):
+//                return m
+//            case .platforms(let p):
+//                return p
+//            }
+//        }
+//        
+//    }
     
     public enum Element {
         case inputs(Inputs)
         case modes(Modes)
         case platforms(Platforms)
+        
+        public var isEmpty: Bool {
+            switch self {
+            case .inputs(let inputs):
+                return inputs.isEmpty
+            case .modes(let modes):
+                return modes.isEmpty
+            case .platforms(let platforms):
+                return platforms.isEmpty
+            }
+        }
+        
     }
 
     public enum Values {

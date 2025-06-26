@@ -7,10 +7,10 @@
 
 import Foundation
 
-extension Dictionary where Key: Comparable, Value: ExpressibleByArrayLiteral {
+extension Dictionary where Key: Enumerable, Value: ExpressibleByArrayLiteral {
     
-    public var sortedKeys: [Key] {
-        self.keys.sorted()
+    public var keys: [Key] {
+        Key.cases.filter { self[$0] != nil }.sorted()
     }
     
     public func getOrDefault(_ key: Key) -> Value {
@@ -19,13 +19,43 @@ extension Dictionary where Key: Comparable, Value: ExpressibleByArrayLiteral {
     
 }
 
-extension Dictionary where Key == ModeEnum, Value == Bool {
+extension TagsMap.Modes {
     
     public init() {
         self = .init(uniqueKeysWithValues: ModeEnum.cases.map { ($0, false) })
     }
     
+    public var keys: [Key] {
+        Key.cases.filter { self[$0] ?? false }.sorted()
+    }
+    
+    public var isEmpty: Bool {
+        self.values.isEmpty || self.values.allSatisfy { $0 == false }
+    }
+    
 }
+
+extension TagsMap.Inputs {
+
+    public func string(_ key: Key) -> String? {
+        if let value: Value = self[key] {
+            if value.isNotEmpty {
+                return value.map { $0.trim }.sorted().joined(separator: "\n")
+            }
+        }
+        return nil
+    }
+    
+}
+
+extension TagsMap.Platforms {
+
+    public func array(_ key: Key) -> [Value.Element] {
+        getOrDefault(key).sorted()
+    }
+    
+}
+
 
 //extension Dictionary where Key == InputEnum, Value == [String] {
 //    

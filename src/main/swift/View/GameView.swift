@@ -71,8 +71,6 @@ fileprivate struct PropertiesView: Gameopticable {
     
     private struct PropertyView: View {
         
-        private typealias Tags = TagsMap
-        
         @Query var properties: [PropertyModel]
         
         let relations: [RelationModel]
@@ -84,27 +82,85 @@ fileprivate struct PropertiesView: Gameopticable {
         }
         
         var body: some View {
-            EmptyView()
+            TagsView(relations, properties)
         }
-        // TODO: Fix this
-//        var body: some View {
-//            if let map: Tags = .fromModels(relations, properties) {
-//                
-//                ForEach(Tags.Category.cases) { cat in
-//                    switch map.get(cat) {
-//                    case .inputs(let inputs):
-//                        
-//                    }
-//                }
-//                
-//            }
-//            
-//        }
-//        
-//        @ViewBuilder
-//        private func InputsView(_ inputs: Tags.Inputs) -> some View {
-//            ForEach(inputs.k)
-//        }
+        
+    }
+    
+    private struct TagsView: View {
+        
+        private typealias Tags = TagsMap
+        
+        let tags: TagsMap
+        
+        init(_ relations: [RelationModel], _ properties: [PropertyModel]) {
+            self.tags = .build(relations, properties)
+        }
+        
+        var body: some View {
+            OptionalView(!tags.isEmpty) {
+                ForEach(TagCategory.cases) { category in
+                    OptionalObjectView(tags.category(category)) { element in
+                        SectionWrapper(category) {
+                            switch element {
+                            case .inputs(let inputs):
+                                ForEach(inputs.keys) { key in
+                                    OptionalObjectView(inputs.string(key)) { value in
+                                        FormattedView(key.rawValue.pluralize(), value)
+                                    }
+                                }
+                            case .modes(let modes):
+                                ForEach(modes.keys) { mode in
+                                    HStack(alignment: .center, spacing: 10) {
+                                        IconView(mode.icon)
+                                        Text(mode.rawValue)
+                                    }
+                                }
+                            case .platforms(let platforms):
+                                ForEach(platforms.keys) { system in
+                                    OptionalArrayView(platforms.array(system)) { formats in
+                                        OrientationStack(.vstack) {
+                                            Text(system.rawValue)
+                                                .bold()
+                                            FormatsView(formats)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        @ViewBuilder
+        private func SectionWrapper(_ category: TagCategory, @ViewBuilder _ content: @escaping () -> some View) -> some View {
+            switch category {
+            case .input:
+                Section(content: content)
+            default:
+                Section(category.rawValue.pluralize(), content: content)
+            }
+        }
+ 
+        @ViewBuilder
+        private func FormatsView(_ group: [FormatBuilder]) -> some View {
+            OptionalArrayView(group.keys) { keys in
+                OrientationStack(.hstack) {
+                    ForEach(keys) { key in
+                        OptionalArrayView(group.filter(key)) { formats in
+                            OrientationStack(.hstack) {
+                                IconView(key.icon, 16)
+                                Text(formats.joined)
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.gray)
+                                    .italic()
+                            }
+                        }
+                    }
+                }
+            }
+        }
         
     }
 
