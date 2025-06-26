@@ -122,11 +122,6 @@ public struct TagsMap {
 //        }
 //    }
     
-    // TODO: Fix this
-//    public func key(_ category: Category) -> [Key] {
-//        
-//    }
-    
     public var isEmpty: Bool {
         self.inputs.isEmpty
         && self.modes.isEmpty
