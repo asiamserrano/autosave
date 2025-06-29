@@ -10,6 +10,12 @@ import Foundation
 // TODO: Fix this
 public struct TagsMap {
     
+    public static func build(_ tags: [TagBuilder]) -> Self {
+        var map: Self = .init()
+        tags.forEach { map.add($0) }
+        return map
+    }
+    
     public static func build(_ relations: [RelationModel], _ properties: [PropertyModel]) -> Self {
         var map: Self = .init()
         
