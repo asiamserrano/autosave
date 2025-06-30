@@ -112,26 +112,6 @@ public enum TagBuilder: Tagable {
         }
     }
     
-//    public var enumeror: Enumeror {
-//        switch self {
-//        case .platform(let p):
-//            return p.system
-//        default:
-//            return self.type
-//        }
-//    }
-//    
-//    public var stringBuilder: StringBuilder {
-//        switch self {
-//        case .input(let i):
-//            return i.stringBuilder
-//        case .mode(let m):
-//            return .enumeror(m)
-//        case .platform(let p):
-//            return .enumeror(p.format)
-//        }
-//    }
-    
 }
 
 public struct TagSnapshot: Tagable {

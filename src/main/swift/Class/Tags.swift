@@ -8,9 +8,18 @@
 import Foundation
 
 // TODO: Fix this
-public struct TagsMap {
+public struct Tags {
     
-    public static func build(_ tags: [TagBuilder]) -> Self {
+    public static var defaultValue: Self {
+        .init()
+    }
+    
+    public static var random: Self {
+//        return .defaultValue
+        return .init(.random, .random, .random)
+    }
+    
+    public static func build(_ tags: [Builder]) -> Self {
         var map: Self = .init()
         tags.forEach { map.add($0) }
         return map
@@ -55,6 +64,18 @@ public struct TagsMap {
         self.platforms = .init()
     }
     
+    private init(_ inputs: Inputs, _ modes: Modes, _ platforms: Platforms) {
+        self.inputs = inputs
+        self.modes = modes
+        self.platforms = platforms
+    }
+    
+    public func contains(_ builder: Builder) -> Bool {
+        let category: Category = builder.type.category
+        let element: Element = self.get(category)
+        return element.builders.contains(builder)
+    }
+    
     public mutating func add(_ builder: Builder) -> Void {
         switch builder {
         case .input(let i):
@@ -84,49 +105,11 @@ public struct TagsMap {
             self.platforms[key] = platforms.getOrDefault(key).delete(p.format)
         }
     }
-        
-    //    public func get(_ element: Element) -> [Entry] {
-    //        switch element {
-    //        case .inputs(let i):
-    //            let set: InputValue = inputs.getOrDefault(i)
-    //            return set.inputs(i).map { .input($0) }
-    //        case .modes:
-    //            return modes.compactMap { $1 ? .mode($0) : nil }
-    //        case .platforms(let s):
-    //            let set: PlatformValue = platforms.getOrDefault(s)
-    //            return set.platforms(s).map { .platform($0) }
-    //        }
-    //    }
-    
-    private func get(_ category: Category) -> Element {
-        switch category {
-        case .input:
-            return .inputs(inputs)
-        case .mode:
-            return .modes(modes)
-        case .platform:
-            return .platforms(platforms)
-        }
-    }
-    
+            
     public func category(_ category: Category) -> Element? {
-        let element: Element = get(category)
+        let element: Element = self.get(category)
         return element.isEmpty ? nil : element
     }
-    
-//    public func get(_ key: Key) -> Values {
-//        switch key {
-//        case .inputs(let i):
-//            let value: Inputs.Value = inputs.getOrDefault(i)
-//            return .inputs(value)
-//        case .modes:
-//            let value: Modes.Keys = modes.filter { $1 }.keys
-//            return .modes(value)
-//        case .platforms(let p):
-//            let value: Platforms.Value = platforms.getOrDefault(p)
-//            return .platforms(value)
-//        }
-//    }
     
     public var isEmpty: Bool {
         self.inputs.isEmpty
@@ -134,60 +117,35 @@ public struct TagsMap {
         && self.platforms.isEmpty
     }
     
-//    public var keys: [Key] {
-//        [
-//            self.inputs.keys.map { .inputs($0) },
-//            self.modes.keys.map { .modes($0) },
-//            self.platforms.keys.map { .platforms($0) }
-//        ].flatMap { $0 }.sorted()
-//    }
+    public var builders: [Builder] {
+        var result: [Builder] = .init()
+        Category.cases.forEach {
+            let element: Element = self.get($0)
+            result.append(contentsOf: element.builders)
+        }
+        return result
+    }
     
 }
 
-extension TagsMap {
+extension Tags: Hashable {
     
-//    private typealias Keys = [Category: Set<Key>]
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.builders)
+    }
     
-    public typealias Builder = TagBuilder
-    public typealias Category = TagCategory
+}
+
+public extension Tags {
     
-    public typealias Inputs = [InputEnum: Set<StringBuilder>]
-    public typealias Modes = [ModeEnum: Bool]
-    public typealias Platforms = [SystemBuilder: Set<FormatBuilder>]
+    typealias Builder = TagBuilder
+    typealias Category = TagCategory
     
-//    public enum Key: Encapsulable {
-//        
-//        public static var allCases: [Self] {
-//            TagCategory.allCases.flatMap { type in
-//                switch type {
-//                case .input:
-//                    return Inputs.Key.cases.map(Self.inputs)
-//                case .mode:
-//                    return Modes.Key.cases.map(Self.modes)
-//                case .platform:
-//                    return Platforms.Key.cases.map(Self.platforms)
-//                }
-//            }
-//        }
-//        
-//        case inputs(Inputs.Key)
-//        case modes(Modes.Key)
-//        case platforms(Platforms.Key)
-//        
-//        public var enumeror: Enumeror {
-//            switch self {
-//            case .inputs(let i):
-//                return i
-//            case .modes(let m):
-//                return m
-//            case .platforms(let p):
-//                return p
-//            }
-//        }
-//        
-//    }
+    typealias Inputs = [InputEnum: Set<StringBuilder>]
+    typealias Modes = [ModeEnum: Bool]
+    typealias Platforms = [SystemBuilder: Set<FormatBuilder>]
     
-    public enum Element {
+    enum Element {
         case inputs(Inputs)
         case modes(Modes)
         case platforms(Platforms)
@@ -203,111 +161,48 @@ extension TagsMap {
             }
         }
         
+        public var builders: [Builder] {
+            switch self {
+            case .inputs(let inputs):
+                var result: [Builder] = .init()
+                inputs.forEach { key, values in
+                    let tags: [Builder] = values.tags(key)
+                    result.append(contentsOf: tags)
+                }
+                return result
+            case .modes(let modes):
+                return modes.modeEnums.map(TagBuilder.mode)
+            case .platforms(let platforms):
+                var result: [Builder] = .init()
+                platforms.forEach { key, values in
+                    let tags: [Builder] = values.tags(key)
+                    result.append(contentsOf: tags)
+                }
+                return result
+            }
+        }
+        
     }
+}
 
-    public enum Values {
+private extension Tags {
+    
+    enum Values {
         case inputs(Inputs.Value)
         case modes(Modes.Keys)
         case platforms(Platforms.Value)
     }
     
-//
-//    public enum Element: Hashable, Comparable {
-//                
-//        public static func == (lhs: Self, rhs: Self) -> Bool {
-//            lhs.hashValue == rhs.hashValue
-//        }
-//        
-//        public static func < (lhs: Self, rhs: Self) -> Bool {
-//            lhs.entry < rhs.entry
-//        }
-//        
-//        case inputs(InputBuilder)
-//        case modes(ModeEnum, Bool)
-//        case platforms(PlatformBuilder)
-//        
-//        public var entry: Entry {
-//            switch self {
-//            case .inputs(let i):
-//                return .input(i)
-//            case .modes(let m, _):
-//                return .mode(m)
-//            case .platforms(let p):
-//                return .platform(p)
-//            }
-//        }
-//        
-//        public var bool: Bool {
-//            switch self {
-//            case .modes(_, let bool):
-//                return bool
-//            default:
-//                return true
-//            }
-//        }
-//        
-//        public func hash(into hasher: inout Hasher) {
-//            hasher.combine(self.entry)
-//            hasher.combine(self.bool)
-//        }
-//    }
+    func get(_ category: Category) -> Element {
+        switch category {
+        case .input:
+            return .inputs(inputs)
+        case .mode:
+            return .modes(modes)
+        case .platform:
+            return .platforms(platforms)
+        }
+    }
+
     
 }
-
-
-//public enum TagsMapElement: Hashable, Comparable {
-//    
-//    public static func < (lhs: Self, rhs: Self) -> Bool {
-//        lhs.key < rhs.key
-//    }
-//    
-//    case inputs(InputEnum, Set<StringBuilder>)
-//    case modes(ModeEnum, Bool)
-//    case platforms(SystemBuilder, Set<FormatBuilder>)
-//    
-//    public var category: TagCategory {
-//        switch self {
-//        case .inputs:
-//            return .input
-//        case .modes:
-//            return .mode
-//        case .platforms:
-//            return .platform
-//        }
-//    }
-//    
-//    public var key: TagsMapKey {
-//        switch self {
-//        case .inputs(let i, _):
-//            return .inputs(i)
-//        case .modes(let m, _):
-//            return .modes(m)
-//        case .platforms(let s, _):
-//            return .platforms(s)
-//        }
-//    }
-//    
-//    public var value: TagsMapValue {
-//        switch self {
-//        case .inputs(_, let s):
-//            return .inputs(s)
-//        case .modes(_, let b):
-//            return .modes(b)
-//        case .platforms(_, let s):
-//            return .platforms(s)
-//        }
-//    }
-//    
-//    public func hash(into hasher: inout Hasher) {
-//        hasher.combine(self.key)
-//        switch self.value {
-//        case .inputs(let set):
-//            set.sorted().forEach { hasher.combine($0) }
-//        case .modes(let bool):
-//            hasher.combine(bool)
-//        case .platforms(let set):
-//            set.sorted().forEach { hasher.combine($0) }
-//        }
-//    }
-//    
-//}

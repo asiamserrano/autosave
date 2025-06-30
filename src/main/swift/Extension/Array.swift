@@ -103,22 +103,6 @@ extension Array where Element == FormatBuilder {
     
 }
 
-//extension Array where Element == PropertyBuilder {
-//
-//    public init(_ relations: [RelationModel], _ properties: [PropertyModel]) {
-//        self = relations.property_uuids.compactMap { uuid in
-//            if let property: PropertyModel = properties.get(uuid) {
-//                return property.snapshot.builder
-//            } else {
-//                return nil
-//            }
-//        }
-//    }
-//    
-//}
-
-//public typealias TagBuilderList = [TagBuilder]
-
 extension Array where Element == TagBuilder {
 
     public init(_ category: TagCategory, _ relations: [RelationModel], _ properties: [PropertyModel]) {

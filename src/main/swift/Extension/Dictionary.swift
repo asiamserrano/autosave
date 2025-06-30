@@ -19,13 +19,17 @@ extension Dictionary where Key: Enumerable, Value: ExpressibleByArrayLiteral {
     
 }
 
-extension TagsMap.Modes {
+extension Tags.Modes {
+    
+    public static var random: Self {
+        .init(uniqueKeysWithValues: ModeEnum.cases.map { ($0, .random()) })
+    }
     
     public init() {
         self = .init(uniqueKeysWithValues: ModeEnum.cases.map { ($0, false) })
     }
     
-    public var keys: [Key] {
+    public var modeEnums: [Key] {
         Key.cases.filter { self[$0] ?? false }.sorted()
     }
     
@@ -35,7 +39,15 @@ extension TagsMap.Modes {
     
 }
 
-extension TagsMap.Inputs {
+extension Tags.Inputs {
+    
+    public static var random: Self {
+        .init(uniqueKeysWithValues: Key.cases.map { input in
+            let size: Int = .random(in: 0..<3)
+            let value: Value = .random(size)
+            return (input, value)
+        })
+    }
 
     public func string(_ key: Key) -> String? {
         if let value: Value = self[key] {
@@ -45,10 +57,24 @@ extension TagsMap.Inputs {
         }
         return nil
     }
-    
+   
 }
 
-extension TagsMap.Platforms {
+extension Tags.Platforms {
+    
+    public static var random: Self {
+        let size: Int = .random(in: 0..<2)
+        let platforms: Set<PlatformBuilder> = .init()
+        var result: Self = .init()
+        while platforms.count < size {
+            let platform: PlatformBuilder = .random
+            let key: Key = platform.system
+            var set: Value = result.getOrDefault(key)
+            set.insert(platform.format)
+            result[key] = set
+        }
+        return result
+    }
 
     public func array(_ key: Key) -> [Value.Element] {
         getOrDefault(key).sorted()
