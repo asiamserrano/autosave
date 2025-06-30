@@ -109,8 +109,8 @@ fileprivate struct ContentView: View {
 
 #Preview {
     
-    let games_max: Int = 2
-//    let properties_max: Int = 50
+    let games_max: Int = 20
+    let properties_max: Int = 50
     
     let previewModelContainer: ModelContainer = {
         
@@ -125,17 +125,14 @@ fileprivate struct ContentView: View {
             if let model: GameModel = container.mainContext.save(.random) {
                 if model.status_bool {
                     library_games.append(model)
-                    Tags.random.builders.forEach {
-                        container.mainContext.save(model, $0)
-                    }
                 }
             }
         }
                 
-//        while container.mainContext.fetchCount(.property(properties_max)) {
-//            let game: GameModel = games.randomElement
-//            container.mainContext.save(game, .random)
-//        }
+        while container.mainContext.fetchCount(.property(properties_max)) {
+            let game: GameModel = library_games.randomElement
+            container.mainContext.save(game, .random)
+        }
         
         return container
         

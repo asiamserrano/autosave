@@ -11,7 +11,7 @@ struct TestingView: View {
     
     @State var tags: Tags = .random
     
-    let game: GameSnapshot = 
+//    let game: GameSnapshot =
     
     var body: some View {
         NavigationStack {
