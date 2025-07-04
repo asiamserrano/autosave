@@ -10,33 +10,19 @@ import SwiftData
 
 extension ModelContext {
     
-    public enum FetchEnum {
-        case game(Int)
-        case property(Int)
-        case relation(Int)
-    }
-    
-    public func fetchCount(_ fetch: FetchEnum) -> Bool {
-        switch fetch {
-        case .game(let int):
+    public func fetchCount(_ model: ModelEnum) -> Int {
+        switch model {
+        case .game:
             let desc: GameFetchDescriptor = .init(predicate: .true)
-            return ((try? self.fetchCount(desc)) ?? 0) < int
-        case .property(let int):
+            return (try? self.fetchCount(desc)) ?? 0
+        case .property:
             let desc: PropertyFetchDescriptor = .init(predicate: .true)
-            return ((try? self.fetchCount(desc)) ?? 0) < int
-        case .relation(let int):
+            return (try? self.fetchCount(desc)) ?? 0
+        case .relation:
             let desc: RelationFetchDescriptor = .init(predicate: .true)
-            return ((try? self.fetchCount(desc)) ?? 0) < int
+            return (try? self.fetchCount(desc)) ?? 0
         }
     }
-    
-    
-    
-//    public func fetchCount(_ predicate: PropertyPredicate?) -> Int {
-//        let desc: PropertyFetchDescriptor = .init(predicate: predicate)
-//        let int: Int? = try? self.fetchCount(desc)
-//        return int ?? 0
-//    }
     
     public func remove(_ model: Persistor) -> Void {
         self.delete(model)
@@ -48,30 +34,32 @@ extension ModelContext {
         self.store()
     }
     
-    @discardableResult
-    func save(_ original: GameSnapshot, _ builder: GameBuilder) -> GameResult {
-        let current: GameSnapshot = builder.snapshot
-        let composite: GameFetchDescriptor = .getByCompositeKey(current)
-        let new: GameModel? = self.fetchModel(composite)
-        let uuid: GameFetchDescriptor = .getByUUID(original)
-        if let old: GameModel = self.fetchModel(uuid) {
-            if let new: GameModel = new, old.uuid != new.uuid {
-                return .init(new.snapshot, false, .edit)
-            } else {
-                old.updateFromSnapshot(current)
-                self.store()
-                return .init(current, true, .edit)
-            }
-        } else {
-            if let new: GameModel = new {
-                return .init(new.snapshot, false, .add)
-            } else {
-                let game: GameModel = .fromSnapshot(current)
-                self.add(game)
-                return .init(current, true, .add)
-            }
-        }
-    }
+    
+    
+//    @discardableResult
+//    func save(_ original: GameSnapshot, _ builder: GameBuilder) -> GameResult {
+//        let current: GameSnapshot = builder.snapshot
+//        let composite: GameFetchDescriptor = .getByCompositeKey(current)
+//        let new: GameModel? = self.fetchModel(composite)
+//        let uuid: GameFetchDescriptor = .getByUUID(original)
+//        if let old: GameModel = self.fetchModel(uuid) {
+//            if let new: GameModel = new, old.uuid != new.uuid {
+//                return .init(new.snapshot, false, .edit)
+//            } else {
+//                old.updateFromSnapshot(current)
+//                self.store()
+//                return .init(current, true, .edit)
+//            }
+//        } else {
+//            if let new: GameModel = new {
+//                return .init(new.snapshot, false, .add)
+//            } else {
+//                let game: GameModel = .fromSnapshot(current)
+//                self.add(game)
+//                return .init(current, true, .add)
+//            }
+//        }
+//    }
     
     @discardableResult
     public func save(_ snapshot: GameSnapshot) -> GameModel? {

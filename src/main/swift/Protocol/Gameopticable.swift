@@ -34,9 +34,13 @@ public extension Gameopticable {
         self.builder.boxart
     }
     
-//    var editMode: EditMode {
-//        self.builder.editMode
-//    }
+    var tags: Tags {
+        self.builder.tags
+    }
+    
+    var editMode: EditMode {
+        self.builder.editMode
+    }
     
 //    var photosPickerItem: PhotosPickerItem? {
 //        self.builder.photosPickerItem
@@ -58,9 +62,17 @@ public extension Gameopticable {
         self.boxart != nil
     }
     
-//    var isEditing: Bool {
-//        self.editMode == .active
-//    }
+    var isEditing: Bool {
+        self.editMode == .active
+    }
+    
+    var topBarTrailingButton: ConstantEnum {
+        self.isEditing ? .done : .edit
+    }
+    
+    var tagType: TagType {
+        self.builder.tagType
+    }
     
     
 //    var isBackButtonHidden: Bool { self.builder.isNew ? false : self.isEditing }
@@ -70,14 +82,20 @@ public extension Gameopticable {
         self.builder.boxart = data
     }
     
-//    func setEditMode(_ mode: EditMode) -> Void {
-//        self.builder.editMode = mode
-//    }
-//    
-//    func toggleEditMode() -> Void {
-//        let mode: EditMode = self.editMode.toggle
-//        self.setEditMode(mode)
-//    }
+    func setEditMode(_ mode: EditMode) -> Void {
+        self.builder.editMode = mode
+    }
+    
+    func toggleEditMode() -> Void {
+        let mode: EditMode = self.editMode.toggle
+        self.setEditMode(mode)
+    }
+    
+    func delete(_ builder: Tags.Builder) -> Void {
+        self.builder.tags.delete(builder)
+    }
+    
+    
     
 //    func setData(_ data: Data?, _ picker: ImagePickerEnum) -> Void {
 //        withAnimation {

@@ -15,32 +15,40 @@ public class GameBuilder: ObservableObject {
     @Published public var release: Date
     @Published public var boxart: Data?
     
-//    @Published public var editMode: EditMode
+    @Published public var tags: Tags
+    
+    @Published public var editMode: EditMode
+    
 //    @Published public var photosPickerItem: PhotosPickerItem? = nil
 //    @Published public var imagePicker: ImagePickerEnum = .picker
     
     @Published private var invalid: Set<GameSnapshot>
+    
+    @Published public var tagType: TagType = .defaultValue
   
     public let status: GameStatusEnum
     public let uuid: UUID
     
-    public init(_ snap: GameSnapshot) {
+    private init(_ snap: GameSnapshot, _ tags: Tags, _ edit: EditMode) {
         self.uuid = snap.uuid
         self.title = snap.title
         self.release = snap.release
         self.boxart = snap.boxart
         self.status = snap.status
         self.invalid = .init(snap)
+        self.tags = tags
+        self.editMode = edit
     }
     
     public convenience init(_ status: GameStatusEnum) {
         let snap: GameSnapshot = .defaultValue(status)
-        self.init(snap)
+        self.init(snap, .defaultValue, .active)
     }
     
-    public convenience init(_ model: GameModel) {
+    public convenience init(_ model: GameModel, _ relations: [RelationModel], _ properties: [PropertyModel]) {
         let snap: GameSnapshot = model.snapshot
-        self.init(snap)
+        let tags: Tags = .build(relations, properties)
+        self.init(snap, tags, .inactive)
     }
     
 }

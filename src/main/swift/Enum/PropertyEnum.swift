@@ -213,11 +213,7 @@ public enum PropertyLabel: Encapsulable {
     
 }
 
-public enum PropertyBuilder: Hashable, Comparable {
-    
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.hashValue == rhs.hashValue
-    }
+public enum PropertyBuilder: Stable, Comparable {
     
     public static func < (lhs: Self, rhs: Self) -> Bool {
         if lhs.label == rhs.label {

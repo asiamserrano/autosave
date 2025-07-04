@@ -17,44 +17,36 @@ struct autosaveApp: App {
             ContentView()
         }
         .modelContainer(for: .defaultValue, inMemory: false, isAutosaveEnabled: false, isUndoEnabled: true)
+        .environmentObject(Configuration.defaultValue)
         
     }
     
 }
 
-fileprivate struct ContentView: View {
+fileprivate struct ContentView: Configurable {
+    
+    @EnvironmentObject var configuration: Configuration
+    
+    // TODO: sorting is not working
     
     @Environment(\.modelContext) private var modelContext
-    
-    @State var status: GameStatusEnum = .defaultValue
-    // TODO: change this once other TODO is completed
-    @State var menu: MenuEnum = .library
-    
     
     var body: some View {
         NavigationStack {
             Group {
                 switch self.menu {
-                case .library, .wishlist:
-                    GamesListView(self.status)
+                case .game(let status):
+                    GamesListView(status)
                 case .properties:
                     PropertiesListView()
                 }
             }
             .navigationTitle(self.menu.rawValue)
-            .onChange(of: self.menu) {
-                switch self.menu {
-                case .library, .wishlist:
-                    self.status = .init(self.menu)
-                case .properties:
-                    break
-                }
-            }
             .toolbar {
                 
                 ToolbarItem(placement: .topBarLeading, content: {
                     Menu(content: {
-                        Picker(.defaultValue, selection: $menu, content: {
+                        Picker(.defaultValue, selection: configuration.menuBinding, content: {
                             ForEach(MenuEnum.cases) { menu in
                                 HStack {
                                     Text(menu.rawValue)
@@ -75,42 +67,9 @@ fileprivate struct ContentView: View {
     
 }
 
-
-//extension PropertySnapshot {
-//    
-//    public var isNotFormat: Bool {
-//        switch self.base {
-//        case .platform(let platform):
-//            switch platform {
-//            case .system: return true
-//            case .format: return false
-//            }
-//        default: return true
-//        }
-//    }
-//    
-//    public var isNotMode: Bool {
-//        switch self.base {
-//        case .mode: return false
-//        default: return true
-//        }
-//    }
-//    
-//    public var isNotInput: Bool {
-//        switch self.base {
-//        case .input: return false
-//        default: return true
-//        }
-//    }
-//    
-//    public var isDefault: Bool { true }
-//    
-//}
-
 #Preview {
     
     let games_max: Int = 20
-    let properties_max: Int = 50
     
     let previewModelContainer: ModelContainer = {
         
@@ -119,19 +78,18 @@ fileprivate struct ContentView: View {
         container.mainContext.autosaveEnabled = false
         container.mainContext.undoManager = .init()
                 
-        var library_games: [GameModel] = .defaultValue
+        var isLibraryEmpty: Bool = true
         
-        while container.mainContext.fetchCount(.game(games_max)) || library_games.isEmpty {
+        while container.mainContext.fetchCount(.game) < games_max || isLibraryEmpty {
             if let model: GameModel = container.mainContext.save(.random) {
                 if model.status_bool {
-                    library_games.append(model)
+                    isLibraryEmpty = false
+                    let tags: Tags = .random
+                    tags.builders.forEach { builder in
+                        container.mainContext.save(model, builder)
+                    }
                 }
             }
-        }
-                
-        while container.mainContext.fetchCount(.property(properties_max)) {
-            let game: GameModel = library_games.randomElement
-            container.mainContext.save(game, .random)
         }
         
         return container
@@ -140,4 +98,5 @@ fileprivate struct ContentView: View {
     
     return ContentView()
         .modelContainer(previewModelContainer)
+        .environmentObject(Configuration.defaultValue)
 }

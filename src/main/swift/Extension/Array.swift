@@ -8,15 +8,15 @@
 import Foundation
 import SwiftData
 
-public extension Array {
+extension Array {
     
-    static var defaultValue: Self { .init() }
+    public static var defaultValue: Self { .init() }
     
-    init(_ elements: Element...) {
+    public init(_ elements: Element...) {
         self = elements
     }
     
-    var randomElement: Element {
+    public var randomElement: Element {
         if let element: Element = self.randomElement() {
             return element
         } else {
@@ -146,8 +146,8 @@ extension Array where Element == PlatformBuilder {
         self.map { $0.system }.deduped.sorted()
     }
     
-    public func filter(_ system: SystemBuilder) -> [FormatBuilder] {
-        self.filter { $0.system == system }.map { $0.format }.deduped
+    public func filter(_ system: SystemBuilder) -> Tags.Platforms.Value {
+        .init(self.filter { $0.system == system }.map { $0.format })
     }
     
 }

@@ -7,7 +7,9 @@
 
 import Foundation
 
-extension Set {
+extension Set: Defaultable {
+    
+    public static var defaultValue: Self { .init() }
     
     public init(_ element: Element) {
         self = [element]
@@ -21,7 +23,9 @@ extension Set {
 
 extension Set where Element == StringBuilder {
     
-    public static func random(_ size: Int) -> Self {
+    public static func random(_ range: Range<Int>) -> Self {
+        let size: Int = Int.random(in: range)
+        
         var set: Self = []
         while set.count < size {
             let element: Element = .string(.random)
@@ -40,6 +44,23 @@ extension Set where Element == FormatBuilder {
     
     public func tags(_ system: SystemBuilder) -> [TagBuilder] {
         self.map { PlatformBuilder(system, $0) }.map(TagBuilder.platform)
+    }
+    
+}
+
+extension Set where Element == SystemBuilder {
+    
+    public static func random(_ range: Range<Int>) -> Self {
+        
+        let size: Int = Int.random(in: range)
+        
+        var set: Self = .init()
+        
+        while set.count < size {
+            set.insert(.random)
+        }
+        
+        return set
     }
     
 }

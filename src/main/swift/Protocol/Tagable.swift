@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol Tagable: Identifiable, Hashable, Comparable {
+public protocol Tagable: Identifiable, Stable, Comparable {
     var key: PropertySnapshot { get }
     var value: PropertySnapshot { get }
 }
@@ -20,10 +20,6 @@ extension Tagable {
         } else {
             return lhs.keyBuilder < rhs.keyBuilder
         }
-    }
-    
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.hashValue == rhs.hashValue
     }
     
     public var id: Int {

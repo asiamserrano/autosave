@@ -126,6 +126,26 @@ extension PropertyPredicate {
         }
     }
     
+    public static func getByLabel(_ enumeror: Enumeror, _ search: Binding<String>, _ strings: [String]) -> PropertyPredicate {
+        let label_id: String = enumeror.id
+        let canon = search.wrappedValue.canonicalized
+        switch canon.count {
+        case 0:
+            
+            return #Predicate {
+                $0.label_id == label_id && !strings.contains($0.value_trim)
+            }
+        case 1:
+            return #Predicate {
+                $0.label_id == label_id && $0.value_canon.starts(with: canon) && !strings.contains($0.value_trim)
+            }
+        default:
+            return #Predicate {
+                $0.label_id == label_id && $0.value_canon.contains(canon) && !strings.contains($0.value_trim)
+            }
+        }
+    }
+    
     public static func getByRelations(_ models: [RelationModel]) -> PropertyPredicate {
         let uuids: [UUID] = models.property_uuids
         return #Predicate {
@@ -176,9 +196,8 @@ extension RelationPredicate {
 //        }
 //    }
     
-    public static func getByGame(_ game: GameBuilder, _ category: RelationCategory = .tag) -> RelationPredicate {
+    public static func getByGame(_ game: UUID, _ category: RelationCategory = .tag) -> RelationPredicate {
         let category_id: String = category.id
-        let game: UUID = game.uuid
         return #Predicate {
             $0.category_id  == category_id
             && $0.game_uuid == game

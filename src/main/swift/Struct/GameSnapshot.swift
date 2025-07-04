@@ -78,11 +78,7 @@ public struct GameSnapshot: Uuidentifiable {
 
 
 
-extension GameSnapshot: Hashable {
-    
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.hashValue == rhs.hashValue
-    }
+extension GameSnapshot: Stable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(self.title_trim)

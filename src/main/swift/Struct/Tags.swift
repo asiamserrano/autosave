@@ -10,20 +10,57 @@ import Foundation
 // TODO: Fix this
 public struct Tags {
     
-    public static var defaultValue: Self {
-        .init()
-    }
-    
     public static var random: Self {
-//        return .defaultValue
-        return .init(.random, .random, .random)
-    }
-    
-    public static func build(_ tags: [Builder]) -> Self {
         var map: Self = .init()
-        tags.forEach { map.add($0) }
+        
+        var bool: Bool = false
+        
+        let range: Range<Int> = 0..<3
+        
+        Inputs.Key.cases.forEach { i in
+            let strings: Inputs.Value = .random(range)
+            strings.forEach { value in
+                let input: InputBuilder = .init(i, value.trim)
+                map.add(.input(input))
+            }
+        }
+        
+        Modes.Key.cases.forEach { mode in
+            bool = .random()
+            if bool {
+                map.add(.mode(mode))
+            }
+        }
+        
+        let systems: Set<Platforms.Key> = .random(range)
+        
+        systems.forEach { system in
+            system.formatBuilders.forEach { format in
+                bool = .random()
+                if bool {
+                    let platform: PlatformBuilder = .init(system, format)
+                    map.add(.platform(platform))
+                }
+            }
+        }
+        
         return map
     }
+    
+    public static func random(_ status: GameStatusEnum) -> Self {
+        switch status {
+        case .library:
+            return .random
+        case .wishlist:
+            return .defaultValue
+        }
+    }
+    
+//    public static func build(_ tags: [Builder]) -> Self {
+//        var map: Self = .init()
+//        tags.forEach { map.add($0) }
+//        return map
+//    }
     
     public static func build(_ relations: [RelationModel], _ properties: [PropertyModel]) -> Self {
         var map: Self = .init()
@@ -54,9 +91,11 @@ public struct Tags {
         return map
     }
     
-    private var inputs: Inputs
-    private var modes: Modes
-    private var platforms: Platforms
+    public private(set) var inputs: Inputs
+    public private(set) var modes: Modes
+    public private(set) var platforms: Platforms
+    
+    public private(set) var builders: Set<Builder> = .init()
     
     private init() {
         self.inputs = .init()
@@ -64,16 +103,15 @@ public struct Tags {
         self.platforms = .init()
     }
     
-    private init(_ inputs: Inputs, _ modes: Modes, _ platforms: Platforms) {
-        self.inputs = inputs
-        self.modes = modes
-        self.platforms = platforms
-    }
-    
     public func contains(_ builder: Builder) -> Bool {
-        let category: Category = builder.type.category
-        let element: Element = self.get(category)
-        return element.builders.contains(builder)
+        switch builder {
+        case .input(let i):
+            return self.inputs.getOrDefault(i.type).contains(i.stringBuilder)
+        case .mode(let m):
+            return self.modes.enums.contains(m)
+        case .platform(let p):
+            return self.platforms.getOrDefault(p.system).contains(p.format)
+        }
     }
     
     public mutating func add(_ builder: Builder) -> Void {
@@ -91,6 +129,8 @@ public struct Tags {
             set.insert(p.format)
             self.platforms[key] = set
         }
+        
+        self.builders.insert(builder)
     }
     
     public mutating func delete(_ builder: Builder) -> Void {
@@ -104,6 +144,8 @@ public struct Tags {
             let key: Platforms.Key = p.system
             self.platforms[key] = platforms.getOrDefault(key).delete(p.format)
         }
+        
+        self.builders.remove(builder)
     }
             
     public func category(_ category: Category) -> Element? {
@@ -111,24 +153,38 @@ public struct Tags {
         return element.isEmpty ? nil : element
     }
     
+//    public func builders(_ type: TagType) -> [Builder] {
+//        let element: Element = self.get(type.category)
+//        switch element {
+//        case .inputs(let i):
+//            let input: InputEnum = .init(type)
+//            let value: Inputs.Value = i.getOrDefault(input)
+//            return value.map { .input(.init(input, $0.trim)) }.sorted()
+//        case .modes(let m):
+//            return m.enums.map { .mode($0) }
+//        case .platforms(let p):
+//            return p.enums.flatMap { system in
+//                p.getOrDefault(system).map { format in
+//                        .platform(.init(system, format))
+//                }
+//            }
+//        }
+//    }
+    
     public var isEmpty: Bool {
         self.inputs.isEmpty
         && self.modes.isEmpty
         && self.platforms.isEmpty
     }
     
-    public var builders: [Builder] {
-        var result: [Builder] = .init()
-        Category.cases.forEach {
-            let element: Element = self.get($0)
-            result.append(contentsOf: element.builders)
-        }
-        return result
-    }
-    
 }
 
-extension Tags: Hashable {
+extension Tags: Defaultable {
+    
+    public static var defaultValue: Self { .init() }
+}
+
+extension Tags: Stable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(self.builders)
@@ -161,27 +217,6 @@ public extension Tags {
             }
         }
         
-        public var builders: [Builder] {
-            switch self {
-            case .inputs(let inputs):
-                var result: [Builder] = .init()
-                inputs.forEach { key, values in
-                    let tags: [Builder] = values.tags(key)
-                    result.append(contentsOf: tags)
-                }
-                return result
-            case .modes(let modes):
-                return modes.modeEnums.map(TagBuilder.mode)
-            case .platforms(let platforms):
-                var result: [Builder] = .init()
-                platforms.forEach { key, values in
-                    let tags: [Builder] = values.tags(key)
-                    result.append(contentsOf: tags)
-                }
-                return result
-            }
-        }
-        
     }
 }
 
@@ -203,6 +238,5 @@ private extension Tags {
             return .platforms(platforms)
         }
     }
-
     
 }

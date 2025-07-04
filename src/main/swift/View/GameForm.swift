@@ -31,7 +31,7 @@ struct GameForm: Gameopticable {
     var body: some View {
         NavigationStack {
             Form {
-                GameImageView(true)
+                GameImageView()
                 
                 Section {
                     CustomTextField(.title, $builder.title)
@@ -49,17 +49,17 @@ struct GameForm: Gameopticable {
                         dismiss()
                     }
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    CustomButton(.done) {
-                        let result: GameResult = self.modelContext.save(self.snapshot, self.builder)
-                        if result.successful {
-                            self.dismiss()
-                        } else {
-                            self.builder.fail()
-                        }
-                    }
-                    .disabled(self.builder.isDisabled)
-                }
+//                ToolbarItem(placement: .confirmationAction) {
+//                    CustomButton(.done) {
+//                        let result: GameResult = self.modelContext.save(self.snapshot, self.builder)
+//                        if result.successful {
+//                            self.dismiss()
+//                        } else {
+//                            self.builder.fail()
+//                        }
+//                    }
+//                    .disabled(self.builder.isDisabled)
+//                }
             }
         }
     }

@@ -58,20 +58,20 @@ fileprivate struct SearchView: View {
             Form {
                 ForEach(models) { model in
                     NavigationLink(destination: {
-                        let builder: GameBuilder = .init(model)
-                        GameView(builder)
+                        GameView(model)
                     }, label: {
-                        let snapshot: GameSnapshot = model.snapshot
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(snapshot.title)
-                                .bold()
-                            HStack {
-                                HStack(spacing: 8) {
-                                    IconView(.calendar, 20, 20)
-                                    Text(snapshot.release.dashes)
-                                        .foregroundColor(.gray)
+                        OptionalObjectView(model.snapshot) { snapshot in
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text(snapshot.title)
+                                    .bold()
+                                HStack {
+                                    HStack(spacing: 8) {
+                                        IconView(.calendar, 20, 20)
+                                        Text(snapshot.release.dashes)
+                                            .foregroundColor(.gray)
+                                    }
+                                    Spacer()
                                 }
-                                Spacer()
                             }
                         }
                     })

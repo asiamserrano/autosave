@@ -16,11 +16,11 @@ struct GameImageView: Gameopticable {
     @State private var photosPickerItem: PhotosPickerItem? = nil
     @State private var picker: ImagePickerEnum = .picker
     
-    let isEditing: Bool
+//    let isEditing: Bool
     
-    init(_ isEditing: Bool) {
-        self.isEditing = isEditing
-    }
+//    init(_ isEditing: Bool) {
+//        self.isEditing = isEditing
+//    }
     
     var body: some View {
         OptionalView(isLibrary) {
