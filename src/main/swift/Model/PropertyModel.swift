@@ -11,11 +11,6 @@ import SwiftData
 @Model
 public class PropertyModel: Persistable {
     
-//    public static func fromBuilder(_ builder: PropertyBuilder) -> PropertyModel {
-//        let snapshot: PropertySnapshot = .fromBuilder(builder)
-//        return .fromSnapshot(snapshot)
-//    }
-    
     public static func fromSnapshot(_ snapshot: PropertySnapshot) -> PropertyModel {
         let uuid: UUID = snapshot.uuid
         return .init(uuid: uuid).updateFromSnapshot(snapshot)
@@ -52,11 +47,3 @@ public class PropertyModel: Persistable {
     }
     
 }
-
-
-
-
-
-
-
-

@@ -14,14 +14,11 @@ public class GameBuilder: ObservableObject {
     @Published public var title: String
     @Published public var release: Date
     @Published public var boxart: Data?
-    
     @Published public var tags: Tags
     
     @Published public var editMode: EditMode
     
-//    @Published public var photosPickerItem: PhotosPickerItem? = nil
-//    @Published public var imagePicker: ImagePickerEnum = .picker
-    
+    // TODO: determine logic for if done button is disabled
     @Published private var invalid: Set<GameSnapshot>
     
     @Published public var tagType: TagType = .defaultValue

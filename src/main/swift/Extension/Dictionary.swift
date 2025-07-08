@@ -43,7 +43,7 @@ extension Tags.Inputs {
 extension Tags.Platforms {
  
     public func array(_ key: Key) -> [Value.Element] {
-        getOrDefault(key).sorted()
+        self.getOrDefault(key).sorted()
     }
 
 }

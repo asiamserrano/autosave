@@ -18,7 +18,6 @@ public class GameModel: Persistable {
     
     public private(set) var uuid: UUID
     public private(set) var added: Date
-    
     public private(set) var title_canon: String
     public private(set) var title_trim: String
     public private(set) var release_date: String
@@ -61,27 +60,3 @@ public extension GameModel {
     }
     
 }
-
-//public extension GameModel {
-//    
-//    var title: String {
-//        self.title_canon
-//    }
-//    
-//    var release: Date {
-//        .fromString(self.release_date)
-//    }
-//    
-//    var status: GameStatusEnum {
-//        .fromBool(self.status_bool)
-//    }
-//    
-//    var boxart: Data? {
-//        self.boxart_data
-//    }
-//    
-//    func equalsStatus(_ bool: Bool) -> Bool {
-//        self.status_bool == bool
-//    }
-//    
-//}

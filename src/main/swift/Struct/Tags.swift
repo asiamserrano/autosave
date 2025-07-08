@@ -56,12 +56,6 @@ public struct Tags {
         }
     }
     
-//    public static func build(_ tags: [Builder]) -> Self {
-//        var map: Self = .init()
-//        tags.forEach { map.add($0) }
-//        return map
-//    }
-    
     public static func build(_ relations: [RelationModel], _ properties: [PropertyModel]) -> Self {
         var map: Self = .init()
         
@@ -91,17 +85,10 @@ public struct Tags {
         return map
     }
     
-    public private(set) var inputs: Inputs
-    public private(set) var modes: Modes
-    public private(set) var platforms: Platforms
-    
+    public private(set) var inputs: Inputs = .init()
+    public private(set) var modes: Modes = .init()
+    public private(set) var platforms: Platforms = .init()
     public private(set) var builders: Set<Builder> = .init()
-    
-    private init() {
-        self.inputs = .init()
-        self.modes = .init()
-        self.platforms = .init()
-    }
     
     public func contains(_ builder: Builder) -> Bool {
         switch builder {
@@ -152,29 +139,13 @@ public struct Tags {
         let element: Element = self.get(category)
         return element.isEmpty ? nil : element
     }
-    
-//    public func builders(_ type: TagType) -> [Builder] {
-//        let element: Element = self.get(type.category)
-//        switch element {
-//        case .inputs(let i):
-//            let input: InputEnum = .init(type)
-//            let value: Inputs.Value = i.getOrDefault(input)
-//            return value.map { .input(.init(input, $0.trim)) }.sorted()
-//        case .modes(let m):
-//            return m.enums.map { .mode($0) }
-//        case .platforms(let p):
-//            return p.enums.flatMap { system in
-//                p.getOrDefault(system).map { format in
-//                        .platform(.init(system, format))
-//                }
-//            }
-//        }
-//    }
-    
+
     public var isEmpty: Bool {
-        self.inputs.isEmpty
-        && self.modes.isEmpty
-        && self.platforms.isEmpty
+        self.builders.isEmpty
+    }
+    
+    public var isNotEmpty: Bool {
+        self.builders.isNotEmpty
     }
     
 }
@@ -196,7 +167,6 @@ public extension Tags {
     
     typealias Builder = TagBuilder
     typealias Category = TagCategory
-    
     typealias Inputs = [InputEnum: Set<StringBuilder>]
     typealias Modes = [ModeEnum: Bool]
     typealias Platforms = [SystemBuilder: Set<FormatBuilder>]

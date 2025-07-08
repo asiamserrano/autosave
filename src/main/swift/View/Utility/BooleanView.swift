@@ -16,10 +16,10 @@ struct BooleanView<TrueContent: View, FalseContent: View>: View {
     private let trueContent: True
     private let falseContent: False
     
-    init(_ boolean: Bool, @ViewBuilder _ trueContent: @escaping True, @ViewBuilder _ falseContent: @escaping False) {
+    init(_ boolean: Bool, @ViewBuilder trueView: @escaping True, @ViewBuilder falseView: @escaping False) {
         self.boolean = boolean
-        self.trueContent = trueContent
-        self.falseContent = falseContent
+        self.trueContent = trueView
+        self.falseContent = falseView
     }
 
     var body: some View {
@@ -32,9 +32,9 @@ struct BooleanView<TrueContent: View, FalseContent: View>: View {
 }
 
 #Preview {
-    BooleanView(false, {
+    BooleanView(false, trueView: {
         Text("True View")
-    }, {
+    }, falseView: {
         Text("False View")
     })
 }

@@ -48,7 +48,7 @@
 			path = Struct;
 			sourceTree = "<group>";
 		};
-		1E639CC22DCE4EDB00E478BF /* View */ = {
+		62A13EB22E1D7C1900B9D738 /* View */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = View;
 			sourceTree = "<group>";
@@ -93,7 +93,7 @@
 				1E639CAE2DCE4ED400E478BF /* Model */,
 				1E639CB22DCE4ED700E478BF /* Protocol */,
 				1E639CB82DCE4ED900E478BF /* Struct */,
-				1E639CC22DCE4EDB00E478BF /* View */,
+				62A13EB22E1D7C1900B9D738 /* View */,
 			);
 			path = swift;
 			sourceTree = "<group>";
@@ -144,7 +144,7 @@
 				1E639CAE2DCE4ED400E478BF /* Model */,
 				1E639CB22DCE4ED700E478BF /* Protocol */,
 				1E639CB82DCE4ED900E478BF /* Struct */,
-				1E639CC22DCE4EDB00E478BF /* View */,
+				62A13EB22E1D7C1900B9D738 /* View */,
 			);
 			name = autosave;
 			packageProductDependencies = (

@@ -15,9 +15,9 @@ struct TestingView: View {
         NavigationStack {
             Form {
                 
-                BooleanView(self.bool, {
+                BooleanView(self.bool, trueView: {
                     Text("True View")
-                }, {
+                }, falseView: {
                     Text("False View")
                 })
                 

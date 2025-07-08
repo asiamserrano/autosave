@@ -57,7 +57,7 @@ struct GameView: View {
         var body: some View {
             Form {
                 GameImageView()
-                BooleanView(isEditing, EditOnView, EditOffView)
+                BooleanView(isEditing, trueView: EditOnView, falseView: EditOffView)
                 PropertiesView()
             }
             .environmentObject(self.builder)
@@ -83,7 +83,7 @@ struct GameView: View {
             }
             
             Section {
-                Picker("Property", selection: $builder.tagType) {
+                Picker(ConstantEnum.property.rawValue, selection: $builder.tagType) {
                     ForEach(TagType.cases) { tag in
                         Text(tag.rawValue)
                             .tag(tag)
@@ -111,26 +111,20 @@ fileprivate struct PropertiesView: Gameopticable {
     @EnvironmentObject public var builder: GameBuilder
     
     var body: some View {
-        OptionalView(!tags.isEmpty) {
-            BooleanView(isEditing, EditOnView, EditOffView)
-        }
-    }
-    
-    @ViewBuilder
-    private func EditOnView() -> some View {
-        OptionalObjectView(tags.category(tagType.category)) { element in
-            ElementView(element)
-        }
-    }
-    
-    @ViewBuilder
-    private func EditOffView() -> some View {
-        ForEach(TagCategory.cases) { category in
-            OptionalObjectView(tags.category(category)) { element in
-                SectionWrapper(category) {
+        OptionalView(tags.isNotEmpty) {
+            BooleanView(isEditing, trueView: {
+                OptionalObjectView(tags.category(tagType.category)) { element in
                     ElementView(element)
                 }
-            }
+            }, falseView: {
+                ForEach(TagCategory.cases) { category in
+                    OptionalObjectView(tags.category(category)) { element in
+                        SectionWrapper(category) {
+                            ElementView(element)
+                        }
+                    }
+                }
+            })
         }
     }
 
@@ -158,7 +152,7 @@ fileprivate struct ElementView: Gameopticable, Configurable {
     }
     
     var body: some View {
-        BooleanView(isEditing, EditOnView, EditOffView)
+        BooleanView(isEditing, trueView: EditOnView, falseView: EditOffView)
     }
  
     @ViewBuilder
@@ -174,8 +168,10 @@ fileprivate struct ElementView: Gameopticable, Configurable {
                         }
                         .onDelete(perform: { indexSet in
                             indexSet.forEach { index in
-                                let builder: InputBuilder = .init(input, strings[index])
-                                self.delete(.input(builder))
+                                let value: String = strings[index]
+                                let builder: InputBuilder = .init(input, value)
+                                let tag: TagBuilder = .input(builder)
+                                self.delete(tag)
                             }
                         })
                     }, header: {

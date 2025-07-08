@@ -27,8 +27,6 @@ fileprivate struct ContentView: Configurable {
     
     @EnvironmentObject var configuration: Configuration
     
-    // TODO: sorting is not working
-    
     @Environment(\.modelContext) private var modelContext
     
     var body: some View {

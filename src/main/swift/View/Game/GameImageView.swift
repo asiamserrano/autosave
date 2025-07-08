@@ -16,12 +16,6 @@ struct GameImageView: Gameopticable {
     @State private var photosPickerItem: PhotosPickerItem? = nil
     @State private var picker: ImagePickerEnum = .picker
     
-//    let isEditing: Bool
-    
-//    init(_ isEditing: Bool) {
-//        self.isEditing = isEditing
-//    }
-    
     var body: some View {
         OptionalView(isLibrary) {
             Section {
@@ -95,22 +89,22 @@ private extension GameImageView {
     func ImageView() -> some View {
         let uiimage: UIImage = UIImage(self.boxart)
         let deviceImage: Image = Image(uiimage)
-        if isBoxartEmpty {
+        
+        BooleanView(isBoxartEmpty, trueView: {
             deviceImage
                 .resizable()
                 .scaledToFit()
                 .frame(maxWidth: appScreenWidth, alignment: .center)
                 .foregroundColor(.gray)
                 .padding()
-            
-        } else {
+        }, falseView: {
             deviceImage
                 .resizable()
                 .scaledToFit()
                 .cornerRadius(10)
                 .shadow(radius: 10)
                 .padding()
-        }
+        })
     }
     
 }

@@ -17,7 +17,7 @@ public enum GameSortEnum: Enumerable {
         }
     }
     
-    public var defaultValue: Self {
+    public static var defaultValue: Self {
         .title(.defaultValue)
     }
         

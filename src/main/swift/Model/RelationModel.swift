@@ -31,7 +31,6 @@ public class RelationModel: Persistable {
     public private(set) var key_uuid: UUID
     public private(set) var value_uuid: UUID
     
-    
     private init(_ uuid: UUID = .init()) {
         self.uuid = uuid
         self.game_uuid = uuid
@@ -83,7 +82,6 @@ public enum RelationType: Encapsulable {
     }
     
 }
-
 
 public struct RelationSnapshot: Uuidentifiable {
     
