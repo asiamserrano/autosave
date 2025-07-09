@@ -13,20 +13,16 @@ struct GameView: View {
     @Query var relations: [RelationModel]
     
     let model: GameModel
-    
+
     init(_ model: GameModel) {
+        let predicate: RelationPredicate = .getByGame(model.uuid)
+        self._relations = .init(filter: predicate)
         self.model = model
     }
     
-//    init(_ model: GameModel) {
-//        let predicate: RelationPredicate = .getByGame(model.uuid)
-//        self._relations = .init(filter: predicate)
-//        self.model = model
-//    }
-//    
-//    var body: some View {
-//        QueryView(relations, model)
-//    }
+    var body: some View {
+        QueryView(relations, model)
+    }
     
     private struct QueryView: View {
         
@@ -52,20 +48,61 @@ struct GameView: View {
         
         @Environment(\.modelContext) private var modelContext
         
-        @ObservedObject var builder: GameBuilder
+        @StateObject var builder: GameBuilder
                 
         init(_ model: GameModel, _ relations: [RelationModel], _ properties: [PropertyModel]) {
-            self.builder = .init(model, relations, properties)
+            self._builder = .init(wrappedValue: .init(model, relations, properties))
         }
         
         var body: some View {
+            
+//            Form {
+//                Section {
+//                    Text(self.builder.title)
+//                    Text(self.builder.release.long)
+//                }
+//            }
+//            .navigationDestination(isPresented: $navigation, destination: {
+//                Text("navigated")
+//            })
+//            .toolbar {
+//                
+//                ToolbarItem(placement: .topBarTrailing) {
+//                    Button(action: {
+//                        self.navigation.toggle()
+//                    }, label: {
+//                        Text("Navigate")
+//                    })
+//                }
+//                
+//                ToolbarItem(placement: .topBarTrailing) {
+//                    Button(action: {
+//                        self.navigation.toggle()
+//                    }, label: {
+//                        Text("Navigate")
+//                    })
+//                }
+//                
+//            }
+            
+            
             Form {
                 GameImageView()
                 BooleanView(isEditing, trueView: EditOnView, falseView: EditOffView)
                 PropertiesView()
             }
-            .environmentObject(self.builder)
+//            .navigationDestination(isPresented: $builder.navBool) {
+//                if let nav: NavigationEnum = self.builder.navEnum {
+//                    switch nav {
+//                    case .property(let gameBuilder, let inputEnum, let array):
+//                        AddPropertyView(gameBuilder, inputEnum, array)
+//                    case .text(let string):
+//                        Text(string)
+//                    }
+//                }
+//            }
             .environment(\.editMode, $builder.editMode)
+            .environmentObject(self.builder)
             .toolbar {
                 
                 ToolbarItem(placement: .topBarTrailing, content: {
@@ -76,6 +113,25 @@ struct GameView: View {
                 
             }
         }
+        
+//        var body: some View {
+//            Form {
+//                GameImageView()
+//                BooleanView(isEditing, trueView: EditOnView, falseView: EditOffView)
+//                PropertiesView()
+//            }
+//            .environmentObject(self.builder)
+//            .environment(\.editMode, $builder.editMode)
+//            .toolbar {
+//                
+//                ToolbarItem(placement: .topBarTrailing, content: {
+//                    Button(action: self.toggleEditMode, label: {
+//                        CustomText(self.topBarTrailingButton)
+//                    })
+//                })
+//                
+//            }
+//        }
         
         @ViewBuilder
         private func EditOnView() -> some View {
@@ -144,11 +200,13 @@ fileprivate struct PropertiesView: Gameopticable {
     
 }
 
-fileprivate struct ElementView: Gameopticable, Configurable {
+fileprivate struct ElementView: Gameopticable {
     
-    @EnvironmentObject public var configuration: Configuration
     @EnvironmentObject public var builder: GameBuilder
         
+    @State var navigation: Bool = false
+    @State var nav: NavigationEnum? = .none
+    
     let element: Tags.Element
 
     init(_ element: Tags.Element) {
@@ -157,6 +215,29 @@ fileprivate struct ElementView: Gameopticable, Configurable {
     
     var body: some View {
         BooleanView(isEditing, trueView: EditOnView, falseView: EditOffView)
+            .navigationDestination(isPresented: $navigation, destination: {
+                let n: NavigationEnum = self.nav ?? .text("hello!")
+                switch n {
+                case .property(let gameBuilder, let inputEnum, let array):
+                    AddPropertyView(gameBuilder, inputEnum, array)
+//                    Form {
+//                        Section {
+//                            Text(gameBuilder.title)
+//                            Text(gameBuilder.release.long)
+//                        }
+//                        
+//                        Section {
+//                            FormattedView("Input", inputEnum.rawValue)
+//                            ForEach(array, id:\.self) { string in
+//                                Text(string)
+//                            }
+//                        }
+//                        
+//                    }
+                case .text(let string):
+                    Text(string)
+                }
+            })
     }
  
     @ViewBuilder
@@ -180,7 +261,8 @@ fileprivate struct ElementView: Gameopticable, Configurable {
                         })
                     }, header: {
                         Button(action: {
-//                            self.setNavigation(builder, input, strings)
+                            self.nav = .property(builder, input, strings)
+                            self.navigation.toggle()
                         }, label: {
                             HStack(alignment: .center, spacing: 17) {
                                 IconView(.plus_circle_fill, 22, 22, .green)
@@ -190,6 +272,7 @@ fileprivate struct ElementView: Gameopticable, Configurable {
                         })
                         .padding(.bottom, 8)
                     })
+//                    .buttonStyle(.plain)
                     .textCase(nil)
                 }
 
