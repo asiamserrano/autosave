@@ -153,6 +153,14 @@ extension PropertyPredicate {
         }
     }
     
+    public static func getByInput(_ input: InputEnum, _ search: Binding<String>) -> PropertyPredicate {
+        let label_id: String = input.id
+        let value_canon: String = search.wrappedValue.canonicalized
+        return #Predicate {
+            $0.label_id == label_id && $0.value_canon == value_canon
+        }
+    }
+    
 }
 
 

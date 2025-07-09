@@ -50,6 +50,17 @@ extension View {
         Button(constant.rawValue, action: action)
     }
     
+    @ViewBuilder
+    func CheckMarkView(_ str: StringBuilder, isVisible: Bool) -> some View {
+        HStack(alignment: .center) {
+            Text(str.trim)
+            Spacer()
+            OptionalView(isVisible, content: {
+                IconView(.checkmark)
+            })
+        }
+    }
+    
     public var appScreenWidth: CGFloat {
         UIScreen.main.bounds.width
     }

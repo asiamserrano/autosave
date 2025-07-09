@@ -29,7 +29,7 @@ public extension Configuration {
         })
     }
     
-    func setNavigation(_ nav: NavigationEnum) -> Void {
+    func setNavigation(_ nav: NavigationEnum?) -> Void {
         self.navigation = nav
     }
     

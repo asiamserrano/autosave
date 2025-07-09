@@ -7,7 +7,10 @@
 
 import SwiftUI
 
-struct TestingView: View {
+struct TestingView: Configurable {
+    
+    @EnvironmentObject
+    var configuration: Configuration
  
     @State var bool: Bool = true
     
@@ -34,6 +37,10 @@ struct TestingView: View {
 //                    })
 //                }
             }
+            .onChange(of: bool, { _, _ in
+                let nav: NavigationEnum? = bool ? .text(.random) : nil
+                self.configuration.setNavigation(nav)
+            })
             .toolbar {
                 
                 ToolbarItem(placement: .topBarTrailing, content: {
@@ -63,4 +70,5 @@ struct TestingView: View {
 
 #Preview {
     TestingView()
+        .environmentObject(Configuration.defaultValue)
 }
