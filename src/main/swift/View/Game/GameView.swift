@@ -15,14 +15,18 @@ struct GameView: View {
     let model: GameModel
     
     init(_ model: GameModel) {
-        let predicate: RelationPredicate = .getByGame(model.uuid)
-        self._relations = .init(filter: predicate)
         self.model = model
     }
     
-    var body: some View {
-        QueryView(relations, model)
-    }
+//    init(_ model: GameModel) {
+//        let predicate: RelationPredicate = .getByGame(model.uuid)
+//        self._relations = .init(filter: predicate)
+//        self.model = model
+//    }
+//    
+//    var body: some View {
+//        QueryView(relations, model)
+//    }
     
     private struct QueryView: View {
         
