@@ -10,21 +10,42 @@ import SwiftData
 
 struct GameView: View {
     
-    @Query var relations: [RelationModel]
+    private let input: Input
     
-    let model: GameModel
-
     init(_ model: GameModel) {
-        let predicate: RelationPredicate = .getByGame(model.uuid)
-        self._relations = .init(filter: predicate)
-        self.model = model
+        self.input = .model(model)
+    }
+    
+    init(_ status: GameStatusEnum) {
+        self.input = .status(status)
     }
     
     var body: some View {
-        QueryView(relations, model)
+        switch input {
+        case .model(let model):
+            QueryRelationView(model)
+        case .status(let status):
+            BuilderView(status)
+        }
     }
     
-    private struct QueryView: View {
+    private struct QueryRelationView: View {
+        @Query var relations: [RelationModel]
+        
+        let model: GameModel
+
+        init(_ model: GameModel) {
+            let predicate: RelationPredicate = .getByGame(model.uuid)
+            self._relations = .init(filter: predicate)
+            self.model = model
+        }
+        
+        var body: some View {
+            QueryPropertyView(relations, model)
+        }
+    }
+    
+    private struct QueryPropertyView: View {
         
         @Query var properties: [PropertyModel]
         
@@ -52,6 +73,10 @@ struct GameView: View {
                 
         init(_ model: GameModel, _ relations: [RelationModel], _ properties: [PropertyModel]) {
             self._builder = .init(wrappedValue: .init(model, relations, properties))
+        }
+        
+        init(_ status: GameStatusEnum) {
+            self._builder = .init(wrappedValue: .init(status))
         }
         
         var body: some View {
@@ -109,6 +134,7 @@ struct GameView: View {
                     Button(action: self.toggleEditMode, label: {
                         CustomText(self.topBarTrailingButton)
                     })
+                    .disabled(builder.isDisabled)
                 })
                 
             }
@@ -164,6 +190,11 @@ struct GameView: View {
         
     }
     
+    private enum Input {
+        case model(GameModel)
+        case status(GameStatusEnum)
+    }
+    
 }
 
 fileprivate struct PropertiesView: Gameopticable {
@@ -205,7 +236,7 @@ fileprivate struct ElementView: Gameopticable {
     @EnvironmentObject public var builder: GameBuilder
         
     @State var navigation: Bool = false
-    @State var nav: NavigationEnum? = .none
+    @State var navigationEnum: NavigationEnum? = .none
     
     let element: Tags.Element
 
@@ -216,27 +247,12 @@ fileprivate struct ElementView: Gameopticable {
     var body: some View {
         BooleanView(isEditing, trueView: EditOnView, falseView: EditOffView)
             .navigationDestination(isPresented: $navigation, destination: {
-                let n: NavigationEnum = self.nav ?? .text("hello!")
-                switch n {
-                case .property(let gameBuilder, let inputEnum, let array):
-                    AddPropertyView(gameBuilder, inputEnum, array)
-//                    Form {
-//                        Section {
-//                            Text(gameBuilder.title)
-//                            Text(gameBuilder.release.long)
-//                        }
-//                        
-//                        Section {
-//                            FormattedView("Input", inputEnum.rawValue)
-//                            ForEach(array, id:\.self) { string in
-//                                Text(string)
-//                            }
-//                        }
-//                        
-//                    }
-                case .text(let string):
-                    Text(string)
-                }
+                OptionalObjectView(self.navigationEnum, content: {
+                    switch $0 {
+                    case .property(let gameBuilder, let inputEnum, let array):
+                        AddPropertyView(gameBuilder, inputEnum, array)
+                    }
+                })
             })
     }
  
@@ -261,7 +277,7 @@ fileprivate struct ElementView: Gameopticable {
                         })
                     }, header: {
                         Button(action: {
-                            self.nav = .property(builder, input, strings)
+                            self.navigationEnum = .property(builder, input, strings)
                             self.navigation.toggle()
                         }, label: {
                             HStack(alignment: .center, spacing: 17) {
@@ -272,15 +288,39 @@ fileprivate struct ElementView: Gameopticable {
                         })
                         .padding(.bottom, 8)
                     })
-//                    .buttonStyle(.plain)
                     .textCase(nil)
                 }
 
             }
+        case .modes:
+            Section {
+                ForEach(ModeEnum.cases) { mode in
+                    HStack {
+                        IconView(mode.icon)
+                        Text(mode.rawValue)
+                        Spacer()
+                        ModeToggle(.mode(mode))
+                    }
+                }
+            }
+            // TODO: add this for platforms
         default:
             EmptyView()
         }
        
+    }
+    
+    @ViewBuilder
+    private func ModeToggle(_ mode: TagBuilder) -> some View {
+        Toggle(String.defaultValue, isOn: .init(get: {
+            self.tags.contains(mode)
+        }, set: { newValue in
+            if newValue {
+                self.builder.tags.add(mode)
+            } else {
+                self.builder.tags.delete(mode)
+            }
+        }))
     }
     
     @ViewBuilder

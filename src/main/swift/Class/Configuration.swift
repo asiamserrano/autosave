@@ -15,7 +15,6 @@ public class Configuration: ObservableObject {
     @Published public private(set) var alertEnum: AlertEnum = .none
     @Published public private(set) var gameSortEnum: GameSortEnum = .title(.forward)
     @Published public private(set) var menuEnum: MenuEnum = .game(.library)
-    @Published public private(set) var navigation: NavigationEnum? = .none
     
 }
 
@@ -27,10 +26,6 @@ public extension Configuration {
         }, set: { newValue in
             self.menuEnum = newValue
         })
-    }
-    
-    func setNavigation(_ nav: NavigationEnum?) -> Void {
-        self.navigation = nav
     }
     
 }

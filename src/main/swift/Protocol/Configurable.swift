@@ -18,13 +18,4 @@ extension Configurable {
         self.configuration.menuEnum
     }
     
-    public func setNavigation(_ builder: GameBuilder, _ input: InputEnum, _ strings: [String]) {
-        let navigation: NavigationEnum = .property(builder, input, strings)
-        self.setNavigation(navigation)
-    }
-    
-    public func setNavigation(_ nav: NavigationEnum?) {
-        self.configuration.setNavigation(nav)
-    }
-    
 }

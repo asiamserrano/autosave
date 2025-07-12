@@ -37,10 +37,7 @@ struct TestingView: Configurable {
 //                    })
 //                }
             }
-            .onChange(of: bool, { _, _ in
-                let nav: NavigationEnum? = bool ? .text(.random) : nil
-                self.configuration.setNavigation(nav)
-            })
+        
             .toolbar {
                 
                 ToolbarItem(placement: .topBarTrailing, content: {

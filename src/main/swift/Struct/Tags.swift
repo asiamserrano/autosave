@@ -188,6 +188,11 @@ public extension Tags {
         }
         
     }
+    
+    func equals(_ hash: Int) -> Bool {
+        self.hashValue == hash
+    }
+    
 }
 
 private extension Tags {

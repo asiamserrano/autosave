@@ -76,8 +76,6 @@ public struct GameSnapshot: Uuidentifiable {
 
 }
 
-
-
 extension GameSnapshot: Stable {
     
     public func hash(into hasher: inout Hasher) {

@@ -30,7 +30,7 @@ struct GamesListView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing, content: {
                 NavigationLink(destination: {
-                    GameForm(self.status)
+                    GameView(self.status)
                 }, label: {
                     IconView(.plus)
                 })
