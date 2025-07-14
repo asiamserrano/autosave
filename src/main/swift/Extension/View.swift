@@ -52,8 +52,13 @@ extension View {
     
     @ViewBuilder
     func CheckMarkView(_ str: StringBuilder, isVisible: Bool) -> some View {
+        CheckMarkView(str.trim, isVisible: isVisible)
+    }
+    
+    @ViewBuilder
+    func CheckMarkView(_ str: String, isVisible: Bool) -> some View {
         HStack(alignment: .center) {
-            Text(str.trim)
+            Text(str.trimmed)
             Spacer()
             OptionalView(isVisible, content: {
                 IconView(.checkmark)

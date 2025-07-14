@@ -10,20 +10,22 @@ import Foundation
 public enum SystemBuilder: Encapsulable {
     
     public static var allCases: Cases {
-      SystemEnum.allCases.flatMap { category in
-        switch category {
+        SystemEnum.allCases.flatMap(Self.filter)
+    }
+    
+    public static func filter(_ system: SystemEnum) -> Cases {
+        switch system {
           case .playstation:
-            return PlayStationEnum.cases.map(Self.playstation)
+            return PlayStationEnum.systems
           case .nintendo:
-            return NintendoEnum.cases.map(Self.nintendo)
+            return NintendoEnum.systems
         case .xbox:
-            return XboxEnum.cases.map(Self.xbox)
+            return XboxEnum.systems
         case .os:
-            return OSEnum.allCases.map(Self.os)
+            return OSEnum.systems
 //        case .mq3:
 //            return .init()
         }
-      }
     }
     
     case playstation(PlayStationEnum)
@@ -54,6 +56,11 @@ extension SystemBuilder {
     }
     
     public enum PlayStationEnum: Enumerable {
+        
+        public static var systems: [SystemBuilder] {
+            Self.cases.map(SystemBuilder.playstation)
+        }
+        
         case ps1, ps2, ps3, ps4, ps5, psp
         
         public var rawValue: String {
@@ -69,6 +76,11 @@ extension SystemBuilder {
     }
     
     public enum NintendoEnum: Enumerable {
+        
+        public static var systems: [SystemBuilder] {
+            Self.cases.map(SystemBuilder.nintendo)
+        }
+        
         case snes, nsw, wii, wiiu, gamecube, n3ds
         
         public var rawValue: String {
@@ -84,6 +96,11 @@ extension SystemBuilder {
     }
     
     public enum OSEnum: Enumerable {
+        
+        public static var systems: [SystemBuilder] {
+            Self.cases.map(SystemBuilder.os)
+        }
+        
         case mac, win
         
         public var rawValue: String {
@@ -95,6 +112,11 @@ extension SystemBuilder {
     }
     
     public enum XboxEnum: Enumerable {
+        
+        public static var systems: [SystemBuilder] {
+            Self.cases.map(SystemBuilder.xbox)
+        }
+        
         case xbox, x360, one
         
         public var rawValue: String {
@@ -115,61 +137,60 @@ extension SystemBuilder {
         }
     }
     
-    public var formatBuilders: [FormatBuilder] {
-        
-        var physicalBuilder: FormatBuilder {
-            switch self {
-            case .nintendo(let nintendo):
-                switch nintendo {
-                case .snes:
-                    return .physical(.cartridge)
-                case .nsw, .n3ds:
-                    return .physical(.card)
-                default:
-                    return .physical(.disc)
-                }
+    public var physicalBuilder: FormatBuilder {
+        switch self {
+        case .nintendo(let nintendo):
+            switch nintendo {
+            case .snes:
+                return .physical(.cartridge)
+            case .nsw, .n3ds:
+                return .physical(.card)
             default:
                 return .physical(.disc)
             }
+        default:
+            return .physical(.disc)
         }
-        
-        var digitalBuilders: [FormatBuilder] {
-            let free: FormatBuilder = .digital(.free)
-            switch self {
-            case .playstation(let playstation):
-                switch playstation {
-                case .ps3, .ps4, .ps5:
-                    let p: FormatBuilder = .digital(.psn)
-                    return .init(free, p)
-                case .psp:
-                    return .init(free)
-                default:
-                    return .defaultValue
-                }
-            case .nintendo(let nintendo):
-                switch nintendo {
-                case .nsw:
-                    let n: FormatBuilder = .digital(.nintendo)
-                    return .init(n)
-                default:
-                    return .defaultValue
-                }
-            case .xbox(let xbox):
-                switch xbox {
-                case .x360, .one:
-                    let x: FormatBuilder = .digital(.xbox)
-                    return .init(free, x)
-                default:
-                    return .defaultValue
-                }
-            case .os:
-                let steam: FormatBuilder = .digital(.steam)
-                let origin: FormatBuilder = .digital(.origin)
-                return .init(steam, origin, free)
+    }
+    
+    public var digitalBuilders: [FormatBuilder] {
+        let free: FormatBuilder = .digital(.free)
+        switch self {
+        case .playstation(let playstation):
+            switch playstation {
+            case .ps3, .ps4, .ps5:
+                let p: FormatBuilder = .digital(.psn)
+                return .init(free, p)
+            case .psp:
+                return .init(free)
+            default:
+                return .defaultValue
             }
+        case .nintendo(let nintendo):
+            switch nintendo {
+            case .nsw:
+                let n: FormatBuilder = .digital(.nintendo)
+                return .init(n)
+            default:
+                return .defaultValue
+            }
+        case .xbox(let xbox):
+            switch xbox {
+            case .x360, .one:
+                let x: FormatBuilder = .digital(.xbox)
+                return .init(free, x)
+            default:
+                return .defaultValue
+            }
+        case .os:
+            let steam: FormatBuilder = .digital(.steam)
+            let origin: FormatBuilder = .digital(.origin)
+            return .init(steam, origin, free)
         }
-        
-        return .init(physicalBuilder) + digitalBuilders
+    }
+    
+    public var formatBuilders: [FormatBuilder] {
+        .init(physicalBuilder) + digitalBuilders
     }
     
 }

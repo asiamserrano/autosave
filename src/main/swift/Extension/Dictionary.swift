@@ -45,5 +45,13 @@ extension Tags.Platforms {
     public func array(_ key: Key) -> [Value.Element] {
         self.getOrDefault(key).sorted()
     }
+    
+    public func get(_ key: Key?) -> Value {
+        if let key: Key = key {
+            return self.getOrDefault(key)
+        } else {
+            return .defaultValue
+        }
+    }
 
 }

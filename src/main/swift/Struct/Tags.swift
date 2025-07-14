@@ -7,7 +7,6 @@
 
 import Foundation
 
-// TODO: Fix this
 public struct Tags {
     
     public static var random: Self {
@@ -90,64 +89,6 @@ public struct Tags {
     public private(set) var platforms: Platforms = .init()
     public private(set) var builders: Set<Builder> = .init()
     
-    public func contains(_ builder: Builder) -> Bool {
-        switch builder {
-        case .input(let i):
-            return self.inputs.getOrDefault(i.type).contains(i.stringBuilder)
-        case .mode(let m):
-            return self.modes.enums.contains(m)
-        case .platform(let p):
-            return self.platforms.getOrDefault(p.system).contains(p.format)
-        }
-    }
-    
-    public mutating func add(_ builder: Builder) -> Void {
-        switch builder {
-        case .input(let i):
-            let key: Inputs.Key = i.type
-            var set: Inputs.Value = inputs.getOrDefault(key)
-            set.insert(i.stringBuilder)
-            self.inputs[key] = set
-        case .mode(let m):
-            self.modes[m] = true
-        case .platform(let p):
-            let key: Platforms.Key = p.system
-            var set: Platforms.Value = platforms.getOrDefault(key)
-            set.insert(p.format)
-            self.platforms[key] = set
-        }
-        
-        self.builders.insert(builder)
-    }
-    
-    public mutating func delete(_ builder: Builder) -> Void {
-        switch builder {
-        case .input(let i):
-            let key: Inputs.Key = i.type
-            self.inputs[key] = inputs.getOrDefault(key).delete(i.stringBuilder)
-        case .mode(let m):
-            self.modes[m] = false
-        case .platform(let p):
-            let key: Platforms.Key = p.system
-            self.platforms[key] = platforms.getOrDefault(key).delete(p.format)
-        }
-        
-        self.builders.remove(builder)
-    }
-            
-    public func category(_ category: Category) -> Element? {
-        let element: Element = self.get(category)
-        return element.isEmpty ? nil : element
-    }
-
-    public var isEmpty: Bool {
-        self.builders.isEmpty
-    }
-    
-    public var isNotEmpty: Bool {
-        self.builders.isNotEmpty
-    }
-    
 }
 
 extension Tags: Defaultable {
@@ -189,8 +130,81 @@ public extension Tags {
         
     }
     
+    mutating func set(_ element: Platforms.Element) -> Void {
+        self.platforms[element.key] = element.value
+    }
+    
+//    mutating func set(_ element: Element) -> Void {
+//        switch element {
+//        case .inputs(let inputs):
+//            self.inputs = inputs
+//        case .modes(let modes):
+//            self.modes = modes
+//        case .platforms(let platforms):
+//            self.platforms = platforms
+//        }
+//    }
+    
+    mutating func add(_ builder: Builder) -> Void {
+        switch builder {
+        case .input(let i):
+            let key: Inputs.Key = i.type
+            var set: Inputs.Value = inputs.getOrDefault(key)
+            set.insert(i.stringBuilder)
+            self.inputs[key] = set
+        case .mode(let m):
+            self.modes[m] = true
+        case .platform(let p):
+            let key: Platforms.Key = p.system
+            var set: Platforms.Value = platforms.getOrDefault(key)
+            set.insert(p.format)
+            self.platforms[key] = set
+        }
+        
+        self.builders.insert(builder)
+    }
+    
+    mutating func delete(_ builder: Builder) -> Void {
+        switch builder {
+        case .input(let i):
+            let key: Inputs.Key = i.type
+            self.inputs[key] = inputs.getOrDefault(key).delete(i.stringBuilder)
+        case .mode(let m):
+            self.modes[m] = false
+        case .platform(let p):
+            let key: Platforms.Key = p.system
+            self.platforms[key] = platforms.getOrDefault(key).delete(p.format)
+        }
+        
+        self.builders.remove(builder)
+    }
+    
     func equals(_ hash: Int) -> Bool {
         self.hashValue == hash
+    }
+    
+    func contains(_ builder: Builder) -> Bool {
+        switch builder {
+        case .input(let i):
+            return self.inputs.getOrDefault(i.type).contains(i.stringBuilder)
+        case .mode(let m):
+            return self.modes.enums.contains(m)
+        case .platform(let p):
+            return self.platforms.getOrDefault(p.system).contains(p.format)
+        }
+    }
+            
+    func category(_ category: Category) -> Element? {
+        let element: Element = self.get(category)
+        return element.isEmpty ? nil : element
+    }
+
+    var isEmpty: Bool {
+        self.builders.isEmpty
+    }
+    
+    var isNotEmpty: Bool {
+        self.builders.isNotEmpty
     }
     
 }

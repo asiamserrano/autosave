@@ -234,12 +234,12 @@ fileprivate struct PropertiesView: Gameopticable {
 fileprivate struct ElementView: Gameopticable {
     
     @EnvironmentObject public var builder: GameBuilder
-        
+    
     @State var navigation: Bool = false
     @State var navigationEnum: NavigationEnum? = .none
     
     let element: Tags.Element
-
+    
     init(_ element: Tags.Element) {
         self.element = element
     }
@@ -251,11 +251,13 @@ fileprivate struct ElementView: Gameopticable {
                     switch $0 {
                     case .property(let gameBuilder, let inputEnum, let array):
                         AddPropertyView(gameBuilder, inputEnum, array)
+                    case .platform(let gameBuilder, let system, let formats):
+                        EmptyView()
                     }
                 })
             })
     }
- 
+    
     @ViewBuilder
     private func EditOnView() -> some View {
         switch element {
@@ -290,7 +292,7 @@ fileprivate struct ElementView: Gameopticable {
                     })
                     .textCase(nil)
                 }
-
+                
             }
         case .modes:
             Section {
@@ -304,10 +306,34 @@ fileprivate struct ElementView: Gameopticable {
                 }
             }
             // TODO: add this for platforms
-        default:
-            EmptyView()
+        case .platforms(let platforms):
+            
+            OptionalArrayView(platforms.enums) { systems in
+                Section(content: {
+                    ForEach(systems) { system in
+                        OptionalArrayView(self.tags.platforms.array(system)) { formats in
+                            DisclosureGroup(
+                                content: {
+                                    //                                    PlatformView(platform)
+                                }, label: {
+                                    Button(action: {
+                                        self.navigationEnum = .platform(builder, system, formats)
+                                        self.navigation.toggle()
+                                    }, label: {
+                                        HStack(alignment: .center, spacing: 10) {
+                                            Text(system.rawValue)
+                                                .foregroundColor(.blue)
+                                            Spacer()
+                                        }
+                                    })
+                                }
+                            )
+                        }
+                    }
+                })
+            }
+        
         }
-       
     }
     
     @ViewBuilder

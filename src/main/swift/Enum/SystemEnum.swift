@@ -29,5 +29,5 @@ public enum SystemEnum: Enumerable {
             return "\(self.rawValue) Systems"
         }
     }
-    
+
 }

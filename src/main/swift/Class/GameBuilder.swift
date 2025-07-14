@@ -18,7 +18,6 @@ public class GameBuilder: ObservableObject {
     
     @Published public var editMode: EditMode
     
-    // TODO: determine logic for if done button is disabled
     @Published private var original: Snapshot
     
     @Published public var tagType: TagType = .defaultValue
@@ -83,8 +82,6 @@ private extension GameBuilder {
     var game: GameSnapshot {
         .fromBuilder(self)
     }
-    
-    
     
     struct Snapshot: Stable {
         var snapshot: GameSnapshot
