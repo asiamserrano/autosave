@@ -131,8 +131,28 @@ public extension Tags {
     }
     
     mutating func set(_ element: Platforms.Element) -> Void {
-        self.platforms[element.key] = element.value
+        let value: Platforms.Value = element.value
+        self.platforms[element.key] = value.isEmpty ? nil : value
     }
+    
+    mutating func delete(_ system: SystemBuilder) -> Void {
+        let formats: Platforms.Value = .defaultValue
+        let element: Platforms.Element = (system, formats)
+        self.set(element)
+    }
+    
+    mutating func delete(_ system: SystemBuilder, _ format: FormatEnum) -> Void {
+        let formats: Platforms.Value = self.platforms.getOrDefault(system).remove(format)
+        let element: Platforms.Element = (system, formats)
+        self.set(element)
+    }
+    
+    mutating func delete(_ system: SystemBuilder, _ format: FormatBuilder) -> Void {
+        let formats: Platforms.Value = self.platforms.getOrDefault(system).remove(format)
+        let element: Platforms.Element = (system, formats)
+        self.set(element)
+    }
+    
     
 //    mutating func set(_ element: Element) -> Void {
 //        switch element {
@@ -168,12 +188,12 @@ public extension Tags {
         switch builder {
         case .input(let i):
             let key: Inputs.Key = i.type
-            self.inputs[key] = inputs.getOrDefault(key).delete(i.stringBuilder)
+            self.inputs[key] = inputs.getOrDefault(key).filter(i.stringBuilder)
         case .mode(let m):
             self.modes[m] = false
         case .platform(let p):
             let key: Platforms.Key = p.system
-            self.platforms[key] = platforms.getOrDefault(key).delete(p.format)
+            self.platforms[key] = platforms.getOrDefault(key).filter(p.format)
         }
         
         self.builders.remove(builder)

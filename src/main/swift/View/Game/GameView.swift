@@ -33,7 +33,7 @@ struct GameView: View {
         @Query var relations: [RelationModel]
         
         let model: GameModel
-
+        
         init(_ model: GameModel) {
             let predicate: RelationPredicate = .getByGame(model.uuid)
             self._relations = .init(filter: predicate)
@@ -70,7 +70,7 @@ struct GameView: View {
         @Environment(\.modelContext) private var modelContext
         
         @StateObject var builder: GameBuilder
-                
+        
         init(_ model: GameModel, _ relations: [RelationModel], _ properties: [PropertyModel]) {
             self._builder = .init(wrappedValue: .init(model, relations, properties))
         }
@@ -81,34 +81,34 @@ struct GameView: View {
         
         var body: some View {
             
-//            Form {
-//                Section {
-//                    Text(self.builder.title)
-//                    Text(self.builder.release.long)
-//                }
-//            }
-//            .navigationDestination(isPresented: $navigation, destination: {
-//                Text("navigated")
-//            })
-//            .toolbar {
-//                
-//                ToolbarItem(placement: .topBarTrailing) {
-//                    Button(action: {
-//                        self.navigation.toggle()
-//                    }, label: {
-//                        Text("Navigate")
-//                    })
-//                }
-//                
-//                ToolbarItem(placement: .topBarTrailing) {
-//                    Button(action: {
-//                        self.navigation.toggle()
-//                    }, label: {
-//                        Text("Navigate")
-//                    })
-//                }
-//                
-//            }
+            //            Form {
+            //                Section {
+            //                    Text(self.builder.title)
+            //                    Text(self.builder.release.long)
+            //                }
+            //            }
+            //            .navigationDestination(isPresented: $navigation, destination: {
+            //                Text("navigated")
+            //            })
+            //            .toolbar {
+            //
+            //                ToolbarItem(placement: .topBarTrailing) {
+            //                    Button(action: {
+            //                        self.navigation.toggle()
+            //                    }, label: {
+            //                        Text("Navigate")
+            //                    })
+            //                }
+            //
+            //                ToolbarItem(placement: .topBarTrailing) {
+            //                    Button(action: {
+            //                        self.navigation.toggle()
+            //                    }, label: {
+            //                        Text("Navigate")
+            //                    })
+            //                }
+            //
+            //            }
             
             
             Form {
@@ -116,16 +116,6 @@ struct GameView: View {
                 BooleanView(isEditing, trueView: EditOnView, falseView: EditOffView)
                 PropertiesView()
             }
-//            .navigationDestination(isPresented: $builder.navBool) {
-//                if let nav: NavigationEnum = self.builder.navEnum {
-//                    switch nav {
-//                    case .property(let gameBuilder, let inputEnum, let array):
-//                        AddPropertyView(gameBuilder, inputEnum, array)
-//                    case .text(let string):
-//                        Text(string)
-//                    }
-//                }
-//            }
             .environment(\.editMode, $builder.editMode)
             .environmentObject(self.builder)
             .toolbar {
@@ -139,25 +129,6 @@ struct GameView: View {
                 
             }
         }
-        
-//        var body: some View {
-//            Form {
-//                GameImageView()
-//                BooleanView(isEditing, trueView: EditOnView, falseView: EditOffView)
-//                PropertiesView()
-//            }
-//            .environmentObject(self.builder)
-//            .environment(\.editMode, $builder.editMode)
-//            .toolbar {
-//                
-//                ToolbarItem(placement: .topBarTrailing, content: {
-//                    Button(action: self.toggleEditMode, label: {
-//                        CustomText(self.topBarTrailingButton)
-//                    })
-//                })
-//                
-//            }
-//        }
         
         @ViewBuilder
         private func EditOnView() -> some View {
@@ -218,7 +189,7 @@ fileprivate struct PropertiesView: Gameopticable {
             })
         }
     }
-
+    
     @ViewBuilder
     private func SectionWrapper(_ category: TagCategory, @ViewBuilder _ content: @escaping () -> some View) -> some View {
         switch category {
@@ -251,20 +222,24 @@ fileprivate struct ElementView: Gameopticable {
                     switch $0 {
                     case .property(let gameBuilder, let inputEnum, let array):
                         AddPropertyView(gameBuilder, inputEnum, array)
-                    case .platform(let gameBuilder, let system, let formats):
-                        EmptyView()
+                    case .platform(let gameBuilder, let systemBuilder):
+                        AddPlatformView(gameBuilder, systemBuilder)
                     }
                 })
             })
     }
     
+    // TODO: set the back button to 'Cancel'
     @ViewBuilder
     private func EditOnView() -> some View {
         switch element {
         case .inputs(let inputs):
             OptionalObjectView(InputEnum.convert(tagType)) { input in
                 OptionalObjectView(inputs.strings(input)) { strings in
-                    Section(content: {
+                    ButtonSection("add \(input.rawValue.lowercased())", action: {
+                        self.navigationEnum = .property(builder, input, strings)
+                        self.navigation.toggle()
+                    }, content: {
                         ForEach(strings, id:\.self) { string in
                             Text(string)
                                 .tag(string)
@@ -277,22 +252,8 @@ fileprivate struct ElementView: Gameopticable {
                                 self.delete(tag)
                             }
                         })
-                    }, header: {
-                        Button(action: {
-                            self.navigationEnum = .property(builder, input, strings)
-                            self.navigation.toggle()
-                        }, label: {
-                            HStack(alignment: .center, spacing: 17) {
-                                IconView(.plus_circle_fill, 22, 22, .green)
-                                Text("add \(input.rawValue.lowercased())")
-                            }
-                            .padding(.leading, 1)
-                        })
-                        .padding(.bottom, 8)
                     })
-                    .textCase(nil)
                 }
-                
             }
         case .modes:
             Section {
@@ -305,34 +266,64 @@ fileprivate struct ElementView: Gameopticable {
                     }
                 }
             }
-            // TODO: add this for platforms
         case .platforms(let platforms):
-            
-            OptionalArrayView(platforms.enums) { systems in
-                Section(content: {
+            // TODO: fix the 'add' button not showing if platforms is empty
+            ButtonSection("add \(self.tagType.rawValue)", platforms.unused.isEmpty, action: {
+                self.navigationEnum = .platform(builder, nil)
+                self.navigation.toggle()
+            }, content: {
+                OptionalArrayView(platforms.enums) { systems in
                     ForEach(systems) { system in
-                        OptionalArrayView(self.tags.platforms.array(system)) { formats in
-                            DisclosureGroup(
-                                content: {
-                                    //                                    PlatformView(platform)
-                                }, label: {
-                                    Button(action: {
-                                        self.navigationEnum = .platform(builder, system, formats)
-                                        self.navigation.toggle()
-                                    }, label: {
-                                        HStack(alignment: .center, spacing: 10) {
-                                            Text(system.rawValue)
-                                                .foregroundColor(.blue)
-                                            Spacer()
-                                        }
-                                    })
+                        OptionalArrayView(FormatEnum.cases) { formatEnums in
+                            DisclosureGroup(content: {
+                                ForEach(formatEnums) { formatEnum in
+                                    OptionalArrayView(platforms.array(system, formatEnum)) { formats in
+                                        DisclosureGroup(content: {
+                                            ForEach(formats) { format in
+                                                HStack(spacing: 15) {
+                                                    IconView(.arrow_right, .blue)
+                                                    Text(format.rawValue)
+                                                }
+                                            }
+                                            .onDelete(perform: { indexSet in
+                                                indexSet.forEach {
+                                                    self.builder.tags.delete(system, formats[$0])
+                                                }
+                                            })
+                                        }, label: {
+                                            HStack {
+                                                IconView(formatEnum.icon, .blue)
+                                                Text(formatEnum.rawValue)
+                                            }
+                                        })
+                                    }
                                 }
-                            )
+                                .onDelete(perform: { indexSet in
+                                    indexSet.forEach {
+                                        self.builder.tags.delete(system, formatEnums[$0])
+                                    }
+                                })
+                            }, label: {
+                                Button(action: {
+                                    self.navigationEnum = .platform(builder, system)
+                                    self.navigation.toggle()
+                                }, label: {
+                                    HStack(alignment: .center, spacing: 10) {
+                                        Text(system.rawValue)
+                                            .foregroundColor(.blue)
+                                        Spacer()
+                                    }
+                                })
+                            })
                         }
                     }
-                })
-            }
-        
+                    .onDelete(perform: { indexSet in
+                        indexSet.forEach {
+                            self.builder.tags.delete(systems[$0])
+                        }
+                    })
+                }
+            })
         }
     }
     
@@ -396,5 +387,87 @@ fileprivate struct ElementView: Gameopticable {
             }
         }
     }
-
+    
+    
+    //    @ViewBuilder
+    //    private func FormatsView(_ platform: PlatformBuilder, _ format: FormatEnum, _ mapper: FormatMapper) -> some View {
+    //        let values: [FormatBuilder] = mapper.get(format)
+    //        if values.isNotEmpty {
+    //            DisclosureGroup(
+    //                content: {
+    //                    ForEach(values, id:\.hashValue) { item in
+    //                        HStack(spacing: 15) {
+    //                            IconView("arrow.right", .blue)
+    //                            Text(item.value.display)
+    //                        }
+    //                    }
+    //                    .onDelete(perform: { indexSet in
+    //                        indexSet.forEach {
+    //                            let new: PlatformMapper = self.platforms.delete(platform, values[$0])
+    //                            self.viewer.setPlatforms(new)
+    //                        }
+    //                    })
+    //                },
+    //                label: {
+    //                    HStack {
+    //                        IconView(format.icon, .blue)
+    //                        Text(format.display)
+    //                    }
+    //                }
+    //            )
+    //        }
+    //    }
+    
+    //    @ViewBuilder
+    //    func PlatformsView() -> some View {
+    //
+    //        OptionalArrayView(self.tags.platforms.builders) { platforms in
+    //            ForEach(platforms) { platform in
+    //                Button(action: {
+    //                    self.videogame.setPlatform(platform)
+    //                }, label: {
+    //                    PlatformLabel(platform)
+    //                })
+    //            }
+    //            .onDelete(perform: { indexSet in
+    //                indexSet.forEach { index in
+    //                    let platform: PlatformBuilder = platforms[index]
+    //                    self.builder.tags.delete(.platform(platform))
+    //                }
+    //            })
+    //        }
+    //
+    //
+    //    }
+    //
+    //    @ViewBuilder
+    //    func PlatformsView(_ title: String, _ disabled: Bool) -> some View {
+    //        ButtonSection(title, disabled, action: {
+    //            self.videogame.setPlatform()
+    //        }, content: {
+    //            PlatformsView()
+    //        })
+    //    }
+    //
+    //    @ViewBuilder
+    //    func PlatformLabel(_ platform: PlatformBuilder) -> some View {
+    //        if let formats: FormatBuilders = self.videogame.get(platform).optional {
+    //            ZStack {
+    //                HStack {
+    //                    VStack(alignment: .leading) {
+    //                        Text(platform.display)
+    //                            .bold()
+    //                        FormatsView(formats)
+    //                    }
+    //                    Spacer()
+    //                }
+    //                HStack {
+    //                    Spacer()
+    //                    IconView("chevron.right", .blue)
+    //                }
+    //                .show(self.isEditing)
+    //            }
+    //        }
+    //    }
+    
 }

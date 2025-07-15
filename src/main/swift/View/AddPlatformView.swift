@@ -7,7 +7,6 @@
 
 import SwiftUI
 import SwiftData
-//import Views
 
 struct AddPlatformView: AddPlatformProtocol {
 
@@ -25,12 +24,14 @@ struct AddPlatformView: AddPlatformProtocol {
     var body: some View {
         
         Form {
-            NavigationLink(destination: {
-                SelectPlatformView()
-            }, label: {
-                FormattedView("Platform", self.display)
+            
+            BooleanView(self.isNavigationLinkDisabled, trueView: PlatformLabel, falseView: {
+                NavigationLink(destination: {
+                    SelectPlatformView()
+                        .environmentObject(self.builder)
+                        .environmentObject(self.object)
+                }, label: PlatformLabel)
             })
-            .disabled(self.allowEdit)
             
             OptionalObjectView(self.system, content: { system in
                 OptionalArrayView(system.digitalBuilders) { digitals in
@@ -57,9 +58,7 @@ struct AddPlatformView: AddPlatformProtocol {
             })
             
         }
-        .environmentObject(self.builder)
-        .environmentObject(self.object)
-        .navigationTitle(self.title)
+        .navigationTitle(self.navigationTitle)
         .toolbar {
             
             ToolbarItem(placement: .topBarTrailing) {
@@ -69,13 +68,18 @@ struct AddPlatformView: AddPlatformProtocol {
                         self.dismiss()
                     }
                 }, label: {
-                    Text("Done")
+                    CustomText(.done)
                 })
                 .disabled(self.isDoneDisabled)
             }
             
         }
     
+    }
+    
+    @ViewBuilder
+    private func PlatformLabel() -> some View {
+        SpacedLabel("Platform", self.display, self.emphasis)
     }
     
     private struct SelectPlatformView: AddPlatformProtocol {
@@ -87,15 +91,13 @@ struct AddPlatformView: AddPlatformProtocol {
         
         var body: some View {
             Form {
-                
                 ForEach(SystemEnum.cases) { systemEnum in
                     
                     OptionalArrayView(self.get(systemEnum)) { builders in
-                        
                         Section(systemEnum.rawValue) {
                             ForEach(builders, id:\.hashValue) { systemBuilder in
                                 Button(action: {
-                                    self.object.system = systemBuilder
+                                    self.object.system = self.system == systemBuilder ? nil : systemBuilder
                                     self.dismiss()
                                 }, label: {
                                     CheckMarkView(systemBuilder.rawValue, isVisible: self.system == systemBuilder)
@@ -118,13 +120,13 @@ fileprivate class AddPlatform: ObservableObject {
     @Published var formats: Set<FormatBuilder>
     
     let used: [SystemBuilder]
-    let allowEdit: Bool
-    
+    let isNavigationLinkDisabled: Bool
+
     init(_ builder: GameBuilder, _ system: SystemBuilder?) {
         self.system = system
         self.formats = builder.tags.platforms.get(system)
-        self.allowEdit = system == nil
         self.used = builder.tags.platforms.enums
+        self.isNavigationLinkDisabled = system != nil
     }
     
 }
@@ -141,7 +143,7 @@ fileprivate extension AddPlatformProtocol {
     
     func update(_ element: FormatBuilder) -> Void {
         if contains(element) {
-            self.object.formats.remove(element)
+            self.object.formats.delete(element)
         } else {
             self.object.formats.insert(element)
         }
@@ -151,13 +153,17 @@ fileprivate extension AddPlatformProtocol {
         SystemBuilder.filter(system).filter { !self.object.used.contains($0) }
     }
     
-    var allowEdit: Bool { self.object.allowEdit }
     var system: SystemBuilder? { self.object.system }
     var display: String { self.system?.rawValue ?? .defaultValue }
-    var title: String { "\(self.allowEdit ? "Edit" : "Add") Platform" }
+    var emphasis: SpacedLabel.Emphasis { self.system == nil ? .left : .right }
+    var isNavigationLinkDisabled: Bool { self.object.isNavigationLinkDisabled }
+    var navigationTitle: String { "\(self.isNavigationLinkDisabled ? "Edit" : "Add") Platform" }
 
     var isDoneDisabled: Bool {
-        self.builder.tags.platforms.get(system) == self.object.formats
+        let isUnchanged: Bool = self.tags.platforms.get(system) == self.object.formats
+        let isNull: Bool = self.system == nil
+        let isEmpty: Bool = self.object.formats.isEmpty
+        return isUnchanged || isNull || isEmpty
     }
     
     var element: Tags.Platforms.Element? {

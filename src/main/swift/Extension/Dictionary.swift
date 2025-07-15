@@ -46,6 +46,10 @@ extension Tags.Platforms {
         self.getOrDefault(key).sorted()
     }
     
+    public func array(_ key: Key, _ format: FormatEnum) -> [Value.Element] {
+        self.array(key).filter { $0.type == format }
+    }
+    
     public func get(_ key: Key?) -> Value {
         if let key: Key = key {
             return self.getOrDefault(key)
@@ -53,5 +57,20 @@ extension Tags.Platforms {
             return .defaultValue
         }
     }
+
+    
+    public var unused: [Key] {
+        Key.cases.filter { !self.enums.contains($0) }
+    }
+    
+    
+    
+//    public var builders: [PlatformBuilder] {
+//        self.enums.flatMap { system in
+//            self.getOrDefault(system).map { format in
+//                    .init(system, format)
+//            }
+//        }
+//    }
 
 }

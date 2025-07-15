@@ -30,6 +30,7 @@ public enum IconEnum: Enumerable {
     case list_star
     case gamecontroller
     case photo_circle_fill
+    case arrow_right
     
     public var rawValue: String {
         self.description.replacingOccurrences(of: "_", with: ".")

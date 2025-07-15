@@ -7,52 +7,36 @@
 
 import SwiftUI
 
-struct ButtonSection<Content: View, Destination: View>: View {
+public struct ButtonSection<Content: View>: View {
     
-    typealias ContentFunc = () -> Content
-    typealias DestinationFunc = () -> Destination
+    public typealias Action = () -> Void
     
-    let content: () -> Content
-    let destination: () -> Destination
+    let content: Content
+    let action: Action
     let text: String
+    let disabled: Bool
     
-    init(_ text: String, @ViewBuilder content: @escaping ContentFunc, @ViewBuilder destination: @escaping DestinationFunc) {
-        self.content = content
-        self.destination = destination
+    public init(_ text: String, _ disabled: Bool = false, action: @escaping Action, @ViewBuilder content: () -> Content) {
+        self.content = content()
+        self.action = action
         self.text = text
+        self.disabled = disabled
     }
     
-    var body: some View {
-//        NavigationStack {
-            Section(content: {
-                self.content()
-            }, header: {
-                
-                NavigationLink(destination: self.destination, label: {
-                    HStack(alignment: .center, spacing: 17) {
-                        IconView(.plus_circle_fill, 22, 22, .green)
-                        Text(self.text)
-                    }
-                    .padding(.leading, 1)
-                })
-                .padding(.bottom, 8)
-                
-                
-                
-//                Button(action: self.action, label: {
-//                    HStack(alignment: .center, spacing: 17) {
-//                        IconView(.plus_circle_fill, 22, 22, .green)
-//                        Text(self.text)
-//                    }
-//                    .padding(.leading, 1)
-//                })
-//                .padding(.bottom, 8)
-//                .disabled(self.disabled)
+    public var body: some View {
+        Section(content: {
+            self.content
+        }, header: {
+            Button(action: self.action, label: {
+                HStack(alignment: .center, spacing: 17) {
+                    IconView(.plus_circle_fill, 22, 22, .green)
+                    Text(self.text)
+                }
+                .padding(.leading, 1)
             })
-            .textCase(nil)
-//        }
+            .padding(.bottom, 8)
+            .disabled(self.disabled)
+        })
+        .textCase(nil)
     }
-    
-    
-    
 }

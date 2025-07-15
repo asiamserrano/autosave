@@ -15,7 +15,11 @@ extension Set: Defaultable {
         self = [element]
     }
     
-    func delete(_ element: Element) -> Self {
+    mutating func delete(_ element: Element) -> Void {
+        self = self.filter(element)
+    }
+    
+    func filter(_ element: Element) -> Self {
         self.filter { $0 != element }
     }
     
@@ -44,6 +48,14 @@ extension Set where Element == FormatBuilder {
     
     public func tags(_ system: SystemBuilder) -> [TagBuilder] {
         self.map { PlatformBuilder(system, $0) }.map(TagBuilder.platform)
+    }
+    
+    public func remove(_ format: FormatEnum) -> Self {
+        self.filter { $0.type != format }
+    }
+    
+    public func remove(_ format: FormatBuilder) -> Self {
+        self.filter { $0 != format }
     }
     
 }
