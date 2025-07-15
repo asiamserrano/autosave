@@ -9,7 +9,7 @@ git add .gitignore
 git add autosave.xcodeproj/
 git add README.md 
 git add commit.sh
-git add relations.txt
+#git add relations.txt
 
 
 # commit, push, status
