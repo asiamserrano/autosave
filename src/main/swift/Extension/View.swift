@@ -69,5 +69,9 @@ extension View {
     public var appScreenWidth: CGFloat {
         UIScreen.main.bounds.width
     }
+    
+    public func boolean_action(_ bool: Bool, TRUE: @escaping () -> Void, FALSE: @escaping () -> Void) -> Void {
+        bool ? TRUE() : FALSE()
+    }
 
 }

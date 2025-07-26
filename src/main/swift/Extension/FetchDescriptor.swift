@@ -18,7 +18,7 @@ public typealias GameFetchDescriptor = FetchDescriptor<GameModel>
 
 public extension GameFetchDescriptor {
     
-    static func getByCompositeKey(_ snapshot: GameSnapshot) -> Self {
+    static func getBySnapshot(_ snapshot: GameSnapshot) -> Self {
         let title_canon: String = snapshot.title_canon
         let release_date: String = snapshot.release_date
         let predicate: GamePredicate = .getByCompositeKey(title_canon, release_date)

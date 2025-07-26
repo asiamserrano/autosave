@@ -161,9 +161,7 @@ fileprivate struct PropertiesView: View {
     
     @ViewBuilder
     func PropertyNavigationLink(_ title: String, @ViewBuilder _ content: @escaping () -> some View) -> some View {
-        NavigationLink(destination: {
-            content()
-        }, label: {
+        NavigationLink(destination: content, label: {
             Text(title)
         })
     }

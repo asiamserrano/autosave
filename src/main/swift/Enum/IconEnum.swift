@@ -12,6 +12,7 @@ public enum IconEnum: Enumerable {
     case trash
     case pencil
     case calendar
+    case chevron_left
     case chevron_right
     case chevron_up
     case chevron_down

@@ -34,36 +34,57 @@ extension ModelContext {
         self.store()
     }
     
-    
-    
+    // TODO: complete this save implementation for GameBuilder
+//
 //    @discardableResult
-//    func save(_ original: GameSnapshot, _ builder: GameBuilder) -> GameResult {
-//        let current: GameSnapshot = builder.snapshot
-//        let composite: GameFetchDescriptor = .getByCompositeKey(current)
+//    func save(_ builder: GameBuilder) -> GameResult {
+//        let current: GameSnapshot = builder.game
+//        let composite: GameFetchDescriptor = .getBySnapshot(current)
 //        let new: GameModel? = self.fetchModel(composite)
-//        let uuid: GameFetchDescriptor = .getByUUID(original)
-//        if let old: GameModel = self.fetchModel(uuid) {
+//        if let old: GameModel = builder.model {
 //            if let new: GameModel = new, old.uuid != new.uuid {
 //                return .init(new.snapshot, false, .edit)
 //            } else {
 //                old.updateFromSnapshot(current)
+//                // TODO: finish the tags update
 //                self.store()
 //                return .init(current, true, .edit)
+//                
 //            }
 //        } else {
-//            if let new: GameModel = new {
-//                return .init(new.snapshot, false, .add)
-//            } else {
+//            let create: Bool = new != nil
+//            if create {
 //                let game: GameModel = .fromSnapshot(current)
 //                self.add(game)
-//                return .init(current, true, .add)
 //            }
+//            return .init(current, create, .add)
 //        }
+//        
+//        
+//
+////        let uuid: GameFetchDescriptor = .getByUUID(original)
+////        if let old: GameModel = self.fetchModel(uuid) {
+////            if let new: GameModel = new, old.uuid != new.uuid {
+////                return .init(new.snapshot, false, .edit)
+////            } else {
+////                old.updateFromSnapshot(current)
+////                self.store()
+////                return .init(current, true, .edit)
+////            }
+////        } else {
+////            if let new: GameModel = new {
+////                return .init(new.snapshot, false, .add)
+////            } else {
+////                let game: GameModel = .fromSnapshot(current)
+////                self.add(game)
+////                return .init(current, true, .add)
+////            }
+////        }
 //    }
     
     @discardableResult
     public func save(_ snapshot: GameSnapshot) -> GameModel? {
-        let composite: GameFetchDescriptor = .getByCompositeKey(snapshot)
+        let composite: GameFetchDescriptor = .getBySnapshot(snapshot)
         if self.fetchModel(composite) == nil {
             let game: GameModel = .fromSnapshot(snapshot)
             self.add(game)
@@ -71,7 +92,6 @@ extension ModelContext {
         }
         return nil
     }
-    
     
     private func save(_ snapshot: PropertySnapshot) -> PropertyModel {
         if let existing: PropertyModel = self.fetchModel(snapshot) {
@@ -83,11 +103,25 @@ extension ModelContext {
         }
     }
     
+    // TODO: get rid of dead properties
+//    private func remove(_ snapshot: PropertySnapshot) -> Void {
+//        if let existing: PropertyModel = self.fetchModel(snapshot) {
+//            
+//        }
+//    }
+    
     private func save(_ category: RelationCategory, _ game: GameModel, _ tag: TagSnapshot) -> Void {
         let snapshot: RelationSnapshot = .init(category, game, tag)
         if self.fetchModel(snapshot) == nil {
             let relation: RelationModel = .fromSnapshot(snapshot)
             self.add(relation)
+        }
+    }
+    
+    private func remove(_ category: RelationCategory, _ game: GameModel, _ tag: TagSnapshot) -> Void {
+        let snapshot: RelationSnapshot = .init(category, game, tag)
+        if let model: RelationModel = self.fetchModel(snapshot) {
+            self.remove(model)
         }
     }
  
@@ -103,6 +137,23 @@ extension ModelContext {
             let snapshot: TagSnapshot = .fromModel(key)
             save(.tag, game, snapshot)
             save(.property, game, snapshot)
+        }
+    }
+    
+    private func remove(_ game: GameModel, _ builder: TagBuilder) -> Void {
+        if let key: PropertyModel = self.fetchModel(builder.key) {
+            switch builder {
+            case .platform:
+                if let value: PropertyModel = self.fetchModel(builder.value) {
+                    remove(.tag, game, .fromModel(key, value))
+                    remove(.property, game, .fromModel(key))
+                    remove(.property, game, .fromModel(value))
+                }
+            default:
+                let snapshot: TagSnapshot = .fromModel(key)
+                remove(.tag, game, snapshot)
+                remove(.property, game, snapshot)
+            }
         }
     }
     

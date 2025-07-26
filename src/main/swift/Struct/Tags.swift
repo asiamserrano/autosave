@@ -84,6 +84,16 @@ public struct Tags {
         return map
     }
     
+    public static func build(_ builders: Set<Builder>) -> Self {
+        var map: Self = .init()
+        
+        builders.forEach { builder in
+            map.add(builder)
+        }
+        
+        return map
+    }
+    
     public private(set) var inputs: Inputs = .init()
     public private(set) var modes: Modes = .init()
     public private(set) var platforms: Platforms = .init()
@@ -214,9 +224,14 @@ public extension Tags {
         }
     }
             
-    func category(_ category: Category) -> Element? {
-        let element: Element = self.get(category)
+    func get(_ category: Category) -> Element? {
+        let element: Element = self.getElement(category)
         return element.isEmpty ? nil : element
+    }
+    
+    func get(_ tagType: TagType) -> Element {
+        let category: Category = tagType.category
+        return getElement(category)
     }
 
     var isEmpty: Bool {
@@ -237,7 +252,7 @@ private extension Tags {
         case platforms(Platforms.Value)
     }
     
-    func get(_ category: Category) -> Element {
+    func getElement(_ category: Category) -> Element {
         switch category {
         case .input:
             return .inputs(inputs)

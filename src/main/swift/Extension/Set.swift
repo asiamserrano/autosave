@@ -7,6 +7,20 @@
 
 import Foundation
 
+extension Set {
+    
+    public static func +(lhs: Self, rhs: Self) -> Self {
+        lhs.union(rhs)
+    }
+    
+    public static func -(lhs: Self, rhs: Self) -> Self {
+        var new: Self = lhs
+        rhs.forEach { new.remove($0) }
+        return new
+    }
+    
+}
+
 extension Set: Defaultable {
     
     public static var defaultValue: Self { .init() }
@@ -73,6 +87,25 @@ extension Set where Element == SystemBuilder {
         }
         
         return set
+    }
+    
+}
+
+extension Set where Element == TagBuilder {
+    
+    public func filter(_ tagType: TagType) -> Self {
+        self.filter { $0.type == tagType }
+    }
+    
+    public func filter(_ system: SystemBuilder) -> [PlatformBuilder] {
+        self.compactMap { builder in
+            switch builder {
+            case .platform(let platform):
+                return platform.system == system ? platform : nil
+            default:
+                return nil
+            }
+        }
     }
     
 }

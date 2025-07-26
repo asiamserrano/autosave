@@ -14,6 +14,7 @@ public class GameBuilder: ObservableObject {
     @Published public var title: String
     @Published public var release: Date
     @Published public var boxart: Data?
+    // TODO: implement logic that keeps track of what properties were added and deleted
     @Published public var tags: Tags
     
     @Published public var editMode: EditMode

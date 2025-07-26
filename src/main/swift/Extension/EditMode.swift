@@ -14,4 +14,8 @@ extension EditMode: Iterable {
         .init(.active, .inactive)
     }
     
+    public init(_ model: GameModel?) {
+        self = model == nil ? .active : .inactive
+    }
+    
 }
