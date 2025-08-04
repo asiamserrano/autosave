@@ -69,7 +69,7 @@ extension GameBuilder {
     
     public func save() -> Void {
         self.original.snapshot = self.game
-//        self.original.tags = self.tags
+        self.original.tags = self.tags
         self.original.invalid = .init()
     }
         
@@ -82,14 +82,14 @@ extension GameBuilder {
     public var count: Int {
         self.tags.current.count
     }
+    
+    public var game: GameSnapshot {
+        .fromBuilder(self)
+    }
 
 }
 
 private extension GameBuilder {
-    
-    var game: GameSnapshot {
-        .fromBuilder(self)
-    }
     
     struct Snapshot: Stable {
         var snapshot: GameSnapshot
@@ -158,15 +158,5 @@ extension GameBuilder {
         let builder: TagBuilder = .platform(platform)
         self.delete(builder)
     }
-    
-    
-    
-//    public func get(_ system: SystemBuilder?) -> Formats {
-//        if let system: SystemBuilder = system {
-//            return self.tags.get(system)
-//        } else {
-//            return .defaultValue
-//        }
-//    }
     
 }

@@ -120,6 +120,9 @@ struct GameView: View {
                     Button(action: {
                         boolean_action(isEditing, TRUE: {
                             // TODO: do the save logic
+                            self.builder.save()
+                            self.modelContext.save(self.builder)
+                            self.toggleEditMode()
                         }, FALSE: self.toggleEditMode)
                     }, label: {
                         CustomText(self.topBarTrailingButton)

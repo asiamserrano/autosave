@@ -34,53 +34,61 @@ extension ModelContext {
         self.store()
     }
     
-    // TODO: complete this save implementation for GameBuilder
-//
-//    @discardableResult
-//    func save(_ builder: GameBuilder) -> GameResult {
-//        let current: GameSnapshot = builder.game
-//        let composite: GameFetchDescriptor = .getBySnapshot(current)
-//        let new: GameModel? = self.fetchModel(composite)
-//        if let old: GameModel = builder.model {
+    @discardableResult
+    // TODO: Does not work
+    func save(_ builder: GameBuilder) -> GameResult {
+        let current: GameSnapshot = builder.game
+        let composite: GameFetchDescriptor = .getBySnapshot(current)
+        let new: GameModel? = self.fetchModel(composite)
+        
+        if let old: GameModel = self.fetchModel(.getByUUID(builder.uuid)) {
+            if let new: GameModel = new, old.uuid != new.uuid {
+                return .init(new.snapshot, false, .edit)
+            } else {
+                old.updateFromSnapshot(current)
+                
+                builder.tags.deleted.forEach {
+                    self.remove(old, $0)
+                }
+                
+                builder.tags.added.forEach {
+                    self.save(old, $0)
+                }
+                
+                self.store()
+                return .init(current, true, .edit)
+                
+            }
+        } else {
+            let create: Bool = new != nil
+            if create {
+                let game: GameModel = .fromSnapshot(current)
+                self.add(game)
+            }
+            return .init(current, create, .add)
+        }
+        
+        
+
+//        let uuid: GameFetchDescriptor = .getByUUID(original)
+//        if let old: GameModel = self.fetchModel(uuid) {
 //            if let new: GameModel = new, old.uuid != new.uuid {
 //                return .init(new.snapshot, false, .edit)
 //            } else {
 //                old.updateFromSnapshot(current)
-//                // TODO: finish the tags update
 //                self.store()
 //                return .init(current, true, .edit)
-//                
 //            }
 //        } else {
-//            let create: Bool = new != nil
-//            if create {
+//            if let new: GameModel = new {
+//                return .init(new.snapshot, false, .add)
+//            } else {
 //                let game: GameModel = .fromSnapshot(current)
 //                self.add(game)
+//                return .init(current, true, .add)
 //            }
-//            return .init(current, create, .add)
 //        }
-//        
-//        
-//
-////        let uuid: GameFetchDescriptor = .getByUUID(original)
-////        if let old: GameModel = self.fetchModel(uuid) {
-////            if let new: GameModel = new, old.uuid != new.uuid {
-////                return .init(new.snapshot, false, .edit)
-////            } else {
-////                old.updateFromSnapshot(current)
-////                self.store()
-////                return .init(current, true, .edit)
-////            }
-////        } else {
-////            if let new: GameModel = new {
-////                return .init(new.snapshot, false, .add)
-////            } else {
-////                let game: GameModel = .fromSnapshot(current)
-////                self.add(game)
-////                return .init(current, true, .add)
-////            }
-////        }
-//    }
+    }
     
     @discardableResult
     public func save(_ snapshot: GameSnapshot) -> GameModel? {
