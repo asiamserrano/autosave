@@ -9,12 +9,14 @@
 /* Begin PBXBuildFile section */
 		1E639C822DCE4BE800E478BF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1E639C812DCE4BE800E478BF /* Assets.xcassets */; };
 		1E90FC102DCB17F600682C80 /* autosaveApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E90FC0B2DCB17F600682C80 /* autosaveApp.swift */; };
+		624CA0292E412FB700C24DCB /* SortedSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624CA0282E412FB700C24DCB /* SortedSet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		1E639C812DCE4BE800E478BF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1E90FBF92DCB170700682C80 /* autosave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = autosave.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E90FC0B2DCB17F600682C80 /* autosaveApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = autosaveApp.swift; sourceTree = "<group>"; };
+		624CA0282E412FB700C24DCB /* SortedSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortedSet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -87,6 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				1E90FC0B2DCB17F600682C80 /* autosaveApp.swift */,
+				624CA0282E412FB700C24DCB /* SortedSet.swift */,
 				1E639C872DCE4EC600E478BF /* Class */,
 				1E639C8C2DCE4ECD00E478BF /* Enum */,
 				1E639C9E2DCE4ECF00E478BF /* Extension */,
@@ -204,6 +207,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				624CA0292E412FB700C24DCB /* SortedSet.swift in Sources */,
 				1E90FC102DCB17F600682C80 /* autosaveApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
