@@ -39,3 +39,30 @@ public class RelationModel: Persistable {
     }
     
 }
+
+extension RelationModel {
+    
+    public func getTagBuilder(_ properties: [PropertyModel]) -> TagBuilder? {
+        
+        if let key: PropertyModel = properties.get(self.key_uuid) {
+            let property: PropertyBuilder = .fromModel(key)
+            switch property {
+            case .input(let i):
+                return .input(i)
+            case .selected(let s):
+                switch s {
+                case .mode(let m):
+                    return .mode(m)
+                default:
+                    if let value: PropertyModel = properties.get(self.value_uuid),
+                       let platform: PlatformBuilder = .fromModels(key, value) {
+                        return .platform(platform)
+                    }
+                }
+            }
+        }
+        
+        return nil
+    }
+    
+}

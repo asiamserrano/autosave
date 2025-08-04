@@ -1,12 +1,27 @@
+////
+////  AddPlatformView.swift
+////  autosave
+////
+////  Created by Asia Serrano on 7/14/25.
+////
 //
-//  AddPlatformView.swift
-//  autosave
-//
-//  Created by Asia Serrano on 7/14/25.
-//
-
 import SwiftUI
 import SwiftData
+
+//struct AddPlatformView: View {
+//    
+//    init(_ builder: GameBuilder, _ system: SystemBuilder? = nil) {
+//
+//    }
+//    
+//    var body: some View {
+//        Text("self.TBD")
+//    }
+//    
+//    
+//}
+
+
 
 struct AddPlatformView: AddPlatformProtocol {
 
@@ -63,8 +78,8 @@ struct AddPlatformView: AddPlatformProtocol {
             
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {
-                    if let element: Tags.Platforms.Element = self.element {
-                        self.builder.tags.set(element)
+                    if let element: Systems.Element = self.element {
+                        self.builder.set(element)
                         self.dismiss()
                     }
                 }, label: {
@@ -117,15 +132,15 @@ struct AddPlatformView: AddPlatformProtocol {
 fileprivate class AddPlatform: ObservableObject {
     
     @Published var system: SystemBuilder?
-    @Published var formats: Set<FormatBuilder>
+    @Published var formats: Formats
     
     let used: [SystemBuilder]
     let isNavigationLinkDisabled: Bool
 
     init(_ builder: GameBuilder, _ system: SystemBuilder?) {
         self.system = system
-        self.formats = builder.tags.platforms.get(system)
-        self.used = builder.tags.platforms.enums
+        self.formats = builder.tags.get(system)
+        self.used = builder.tags.platforms.systemKeys
         self.isNavigationLinkDisabled = system != nil
     }
     
@@ -143,14 +158,14 @@ fileprivate extension AddPlatformProtocol {
     
     func update(_ element: FormatBuilder) -> Void {
         if contains(element) {
-            self.object.formats.delete(element)
+            self.object.formats -= element
         } else {
-            self.object.formats.insert(element)
+            self.object.formats += element
         }
     }
     
     func get(_ system: SystemEnum) -> [SystemBuilder] {
-        SystemBuilder.filter(system).filter { !self.object.used.contains($0) }
+        SystemBuilder.filter(system).filter { self.object.used.lacks($0) }
     }
     
     var system: SystemBuilder? { self.object.system }
@@ -160,13 +175,13 @@ fileprivate extension AddPlatformProtocol {
     var navigationTitle: String { "\(self.isNavigationLinkDisabled ? "Edit" : "Add") Platform" }
 
     var isDoneDisabled: Bool {
-        let isUnchanged: Bool = self.tags.platforms.get(system) == self.object.formats
+        let isUnchanged: Bool = self.builder.tags.get(system) == self.object.formats
         let isNull: Bool = self.system == nil
         let isEmpty: Bool = self.object.formats.isEmpty
         return isUnchanged || isNull || isEmpty
     }
     
-    var element: Tags.Platforms.Element? {
+    var element: Systems.Element? {
         if let system: SystemBuilder = self.system {
             return (system, self.object.formats)
         } else {

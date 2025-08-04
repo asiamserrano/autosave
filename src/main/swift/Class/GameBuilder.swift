@@ -14,8 +14,11 @@ public class GameBuilder: ObservableObject {
     @Published public var title: String
     @Published public var release: Date
     @Published public var boxart: Data?
-    // TODO: implement logic that keeps track of what properties were added and deleted
-    @Published public var tags: Tags
+    
+//    // TODO: implement logic that keeps track of what properties were added and deleted
+//    @Published public var tags: Tags
+    
+    @Published public var tags: TagContainer
     
     @Published public var editMode: EditMode
     
@@ -26,7 +29,7 @@ public class GameBuilder: ObservableObject {
     public let status: GameStatusEnum
     public let uuid: UUID
     
-    private init(_ snap: GameSnapshot, _ tags: Tags, _ edit: EditMode) {
+    private init(_ snap: GameSnapshot, _ tags: TagContainer, _ edit: EditMode) {
         self.uuid = snap.uuid
         self.title = snap.title
         self.release = snap.release
@@ -45,8 +48,8 @@ public class GameBuilder: ObservableObject {
     
     public convenience init(_ model: GameModel, _ relations: [RelationModel], _ properties: [PropertyModel]) {
         let snap: GameSnapshot = model.snapshot
-        let tags: Tags = .build(relations, properties)
-        self.init(snap, tags, .inactive)
+        let container: TagContainer = .build(relations, properties)
+        self.init(snap, container, .inactive)
     }
     
 }
@@ -66,7 +69,7 @@ extension GameBuilder {
     
     public func save() -> Void {
         self.original.snapshot = self.game
-        self.original.tags = self.tags
+//        self.original.tags = self.tags
         self.original.invalid = .init()
     }
         
@@ -74,6 +77,10 @@ extension GameBuilder {
         let isInvalid: Bool = self.original.isInvalid(self)
         let isSame: Bool = self.original.equals(self)
         return self.editMode == .active ? isInvalid || isSame : false
+    }
+    
+    public var count: Int {
+        self.tags.current.count
     }
 
 }
@@ -86,10 +93,10 @@ private extension GameBuilder {
     
     struct Snapshot: Stable {
         var snapshot: GameSnapshot
-        var tags: Tags
+        var tags: TagContainer
         var invalid: Set<GameSnapshot>
         
-        init(_ snapshot: GameSnapshot, _ tags: Tags) {
+        init(_ snapshot: GameSnapshot, _ tags: TagContainer) {
             self.snapshot = snapshot
             self.tags = tags
             self.invalid = .init()
@@ -110,5 +117,56 @@ private extension GameBuilder {
         }
         
     }
+    
+}
+
+extension GameBuilder {
+    
+    public typealias Builder = TagBuilder
+    
+    public func add(_ builder: Builder) -> Void {
+        self.tags += builder
+    }
+    
+    public func set(_ element: Systems.Element) -> Void {
+        let system: SystemBuilder = element.key
+        self.tags.get(system).allBuilders.map {  PlatformBuilder(system, $0) }.map(TagBuilder.platform).forEach(self.delete)
+        element.value.allBuilders.map {  PlatformBuilder(system, $0) }.map(TagBuilder.platform).forEach(self.add)
+    }
+    
+    public func delete(_ builder: Builder) -> Void {
+        self.tags -= builder
+    }
+    
+    private func delete(_ system: SystemBuilder, _ formats: FormatBuilders) -> Void {
+        formats.map { PlatformBuilder(system, $0) }.map(TagBuilder.platform).forEach(self.delete)
+    }
+    
+    public func delete(_ system: SystemBuilder) -> Void {
+        let formats: Formats = self.tags.get(system)
+        formats.values.forEach { self.delete(system, $0) }
+    }
+    
+    public func delete(_ system: SystemBuilder, _ format: FormatEnum) -> Void {
+        let formats: Formats = self.tags.get(system)
+        let builders: FormatBuilders = formats[format] ?? .defaultValue
+        self.delete(system, builders)
+    }
+    
+    public func delete(_ system: SystemBuilder, _ format: FormatBuilder) -> Void {
+        let platform: PlatformBuilder = .init(system, format)
+        let builder: TagBuilder = .platform(platform)
+        self.delete(builder)
+    }
+    
+    
+    
+//    public func get(_ system: SystemBuilder?) -> Formats {
+//        if let system: SystemBuilder = system {
+//            return self.tags.get(system)
+//        } else {
+//            return .defaultValue
+//        }
+//    }
     
 }

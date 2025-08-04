@@ -8,6 +8,16 @@
 import SwiftUI
 import SwiftData
 
+public typealias StringBuilders = Set<StringBuilder>
+public typealias FormatBuilders = Set<FormatBuilder>
+
+public typealias Inputs = [InputEnum: StringBuilders]
+public typealias Modes = [ModeEnum: Bool]
+
+public typealias Formats = [FormatEnum: FormatBuilders]
+public typealias Systems = [SystemBuilder: Formats]
+public typealias Platforms = [SystemEnum: Systems]
+
 @main
 struct autosaveApp: App {
     
@@ -82,8 +92,8 @@ fileprivate struct ContentView: Configurable {
             if let model: GameModel = container.mainContext.save(.random) {
                 if model.status_bool {
                     isLibraryEmpty = false
-                    let tags: Tags = .random
-                    tags.builders.forEach { builder in
+                    let tags: TagContainer = .random
+                    tags.current.forEach { builder in
                         container.mainContext.save(model, builder)
                     }
                 }

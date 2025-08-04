@@ -128,10 +128,6 @@ public enum SelectedLabel: Encapsulable {
   
 }
 
-
-
-
-
 public enum PropertyCategory: Enumerable {
     case input, selected
 }

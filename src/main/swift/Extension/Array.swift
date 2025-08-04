@@ -29,12 +29,19 @@ extension Array {
 public extension Array where Element: Hashable {
     
     var deduped: Self {
-        let set: Set<Element> = .init(self)
-        return set.map(\.self)
+        self.toSet.map(\.self)
     }
     
     func remove(_ element: Element) -> Self {
         self.filter { $0 != element }
+    }
+    
+    var toSet: Set<Element> {
+        .init(self)
+    }
+    
+    func lacks(_ element: Element) -> Bool {
+        !self.contains(element)
     }
     
 }
@@ -146,9 +153,9 @@ extension Array where Element == PlatformBuilder {
         self.map { $0.system }.deduped.sorted()
     }
     
-    public func filter(_ system: SystemBuilder) -> Tags.Platforms.Value {
-        .init(self.filter { $0.system == system }.map { $0.format })
-    }
+//    public func filter(_ system: SystemBuilder) -> Tags.Platforms.Value {
+//        .init(self.filter { $0.system == system }.map { $0.format })
+//    }
     
 }
 

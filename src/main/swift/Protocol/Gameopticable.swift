@@ -34,7 +34,7 @@ public extension Gameopticable {
         self.builder.boxart
     }
     
-    var tags: Tags {
+    var tags: TagContainer {
         self.builder.tags
     }
     
@@ -91,10 +91,16 @@ public extension Gameopticable {
         self.setEditMode(mode)
     }
     
-    func delete(_ builder: Tags.Builder) -> Void {
-        self.builder.tags.delete(builder)
+    func contains(_ builder: TagBuilder) -> Bool {
+        self.tags.contains(builder)
     }
     
+    
+    
+//    func delete(_ builder: Tags.Builder) -> Void {
+//        self.builder.delete(builder)
+//    }
+//    
     
     
 //    func setData(_ data: Data?, _ picker: ImagePickerEnum) -> Void {

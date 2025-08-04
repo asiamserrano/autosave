@@ -11,7 +11,6 @@ import Foundation
 
 public enum MenuEnum: Encapsulable {
     
-    
     public static var allCases: Cases {
         ModelEnum.cases.flatMap { type in
             switch type {

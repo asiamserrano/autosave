@@ -1,12 +1,28 @@
+////
+////  AddPropertyView.swift
+////  cancun
+////
+////  Created by Asia Serrano on 6/30/24.
+////
 //
-//  AddPropertyView.swift
-//  cancun
-//
-//  Created by Asia Serrano on 6/30/24.
-//
-
 import SwiftUI
 import SwiftData
+
+//struct AddPropertyView: View {
+//    
+//    init(_ builder: GameBuilder, _ input: InputEnum, _ used: [String]) {
+//        
+////        self.builder = builder
+////        self._object = .init(wrappedValue: .init(input, used))
+//    }
+//    
+//    var body: some View {
+//        Text("TBD")
+//    }
+//    
+//}
+//
+//
 
 struct AddPropertyView: AddPropertyProtocol {
         
@@ -27,7 +43,8 @@ struct AddPropertyView: AddPropertyProtocol {
         AddView(input, used, binding)
             .environmentObject(self.builder)
             .environmentObject(self.object)
-            .searchable(text: binding, placement: .navigationBarDrawer(displayMode: .always), prompt: "search or add new \(input.rawValue.lowercased())")
+            .searchable(text: binding, placement: .navigationBarDrawer(displayMode: .always),
+                        prompt: "search or add new \(input.rawValue.lowercased())")
     }
     
     private struct AddView: AddPropertyProtocol {
@@ -105,7 +122,8 @@ struct AddPropertyView: AddPropertyProtocol {
         private func done() -> Void {
             if let selected: StringBuilder = self.selected {
                 let inputBuilder: InputBuilder = .init(input, selected.trim)
-                self.builder.tags.add(.input(inputBuilder))
+                let tagBuilder: TagBuilder = .input(inputBuilder)
+                self.builder.add(tagBuilder)
             }
             self.dismiss()
         }

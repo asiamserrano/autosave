@@ -19,6 +19,10 @@ extension Set {
         return new
     }
     
+    public func lacks(_ element: Element) -> Bool {
+        !self.contains(element)
+    }
+    
 }
 
 extension Set: Defaultable {
@@ -41,6 +45,18 @@ extension Set: Defaultable {
 
 extension Set where Element == StringBuilder {
     
+    public static func +(lhs: Self, rhs: Element) -> Self {
+        var new: Self = lhs
+        new.insert(rhs)
+        return new
+    }
+    
+    public static func -(lhs: Self, rhs: Element) -> Self {
+        var new: Self = lhs
+        new.remove(rhs)
+        return new
+    }
+    
     public static func random(_ range: Range<Int>) -> Self {
         let size: Int = Int.random(in: range)
         
@@ -56,6 +72,14 @@ extension Set where Element == StringBuilder {
         self.map { InputBuilder(input, $0.trim) }.map(TagBuilder.input)
     }
     
+    public var array: [String] {
+        self.map { $0.trim }.sorted()
+    }
+    
+    public var string: String {
+        self.array.joined(separator: ", ")
+    }
+    
 }
 
 extension Set where Element == FormatBuilder {
@@ -64,13 +88,44 @@ extension Set where Element == FormatBuilder {
         self.map { PlatformBuilder(system, $0) }.map(TagBuilder.platform)
     }
     
-    public func remove(_ format: FormatEnum) -> Self {
-        self.filter { $0.type != format }
+    static func +(lhs: Self, rhs: Element) -> Self {
+        var new: Self = lhs
+        new.insert(rhs)
+        return new
     }
     
-    public func remove(_ format: FormatBuilder) -> Self {
-        self.filter { $0 != format }
+    static func -(lhs: Self, rhs: Element) -> Self {
+        var new: Self = lhs
+        new.remove(rhs)
+        return new
     }
+    
+    
+//    @discardableResult
+//    @inlinable public mutating func remove(_ element: FormatEnum) -> [Element] {
+//        self.filter { $0.type != element }.compactMap { self.remove($0) }
+//    }
+    
+//    @discardableResult
+//    @inlinable public mutating func remove(_ element: FormatBuilder) -> [Element] {
+//        self.filter { $0 != element }.compactMap { self.remove($0) }
+//    }
+    
+//    public static func remove(lhs: inout Self, rhs: FormatEnum) -> Void {
+//        lhs.filter { $0.type != rhs }.forEach { lhs.remove($0) }
+//    }
+    
+//    public static func remove(lhs: inout Self, rhs: FormatBuilder) -> Void {
+//        lhs.filter { $0 != rhs }.forEach { lhs.remove($0) }
+//    }
+    
+//    public func remove(_ format: FormatEnum) -> Self {
+//        self.filter { $0.type != format }
+//    }
+//    
+//    public func remove(_ format: FormatBuilder) -> Self {
+//        self.filter { $0 != format }
+//    }
     
 }
 
@@ -107,6 +162,31 @@ extension Set where Element == TagBuilder {
             }
         }
     }
+    
+    public static func +(lhs: Self, rhs: Element) -> Self {
+        var new: Self = lhs
+        new.insert(rhs)
+        return new
+    }
+    
+    public static func -(lhs: Self, rhs: Element) -> Self {
+        var new: Self = lhs
+        new.remove(rhs)
+        return new
+    }
+    
+    
+//    static func +=(lhs: inout Self, rhs: Element) -> Void {
+////        let key: Inputs.Key = rhs.type
+////        lhs[key] = lhs.getOrDefault(key) + rhs.stringBuilder
+//        lhs.insert(rhs)
+//    }
+//    
+//    static func -=(lhs: inout Self, rhs: InputBuilder) -> Void {
+////        let key: Inputs.Key = rhs.type
+////        lhs[key] = lhs.getOrDefault(key) - rhs.stringBuilder
+//    }
+    
     
 }
 
