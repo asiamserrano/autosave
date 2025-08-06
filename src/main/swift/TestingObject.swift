@@ -21,13 +21,6 @@ private extension TagContainer {
     
     static var RANDOM_RANGE: Range<Int> = 0..<3
     
-//    private init(_ other: Self) {
-//        self.builders = other.builders
-//        self.inputs = other.inputs
-//        self.modes = other.modes
-//        self.platforms = other.platforms
-//    }
-    
 }
 
 public extension TagContainer {
@@ -139,8 +132,8 @@ public extension TagContainer {
         self.get(tagType.category)
     }
     
-    func get(_ system: SystemBuilder?) -> Formats {
-        if let system: SystemBuilder = system {
+    func get(_ system: Systems.Key?) -> Formats {
+        if let system: Systems.Key = system {
             return self.platforms.get(system)
         } else {
             return .defaultValue
@@ -183,17 +176,6 @@ public enum TagsElement: Quantifiable {
     case modes(Modes)
     case platforms(Platforms)
 
-//    public var isEmpty: Bool {
-//        switch self {
-//        case .inputs(let inputs):
-//            return inputs.isEmpty
-//        case .modes(let modes):
-//            return modes.isEmpty
-//        case .platforms(let platforms):
-//            return platforms.isEmpty
-//        }
-//    }
-    
     public var count: Int {
         switch self {
         case .inputs(let inputs):
