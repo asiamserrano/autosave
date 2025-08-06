@@ -7,218 +7,41 @@
 
 import Foundation
 
-enum RBColor {
-    case red
-    case black
-}
-
-final class RBNode<Element: Comparable> {
-    var element: Element
-    var color: RBColor
-    var left: RBNode?
-    var right: RBNode?
-    weak var parent: RBNode?
-    
-    init(_ element: Element, color: RBColor = .red) {
-        self.element = element
-        self.color = color
-    }
-}
-
-final class RedBlackTree<Element: Comparable>: ObservableObject {
-    
-    @Published private(set) var root: RBNode<Element>?
-    
-    // MARK: - Public Insert
-    func insert(_ element: Element) {
-        let newNode = RBNode(element)
-        bstInsert(newNode)
-        fixInsert(newNode)
-        self.root = root
-    }
-    
-    // MARK: - Lookup
-    func contains(_ element: Element) -> Bool {
-        var node = root
-        while let current = node {
-            if element < current.element {
-                node = current.left
-            } else if element > current.element {
-                node = current.right
-            } else {
-                return true
-            }
-        }
-        return false
-    }
-    
-    // MARK: - In-order Traversal
-    func inOrderElements() -> [Element] {
-        var result: [Element] = []
-        
-        func traverse(_ node: RBNode<Element>?) {
-            guard let node = node else { return }
-            traverse(node.left)
-            result.append(node.element)
-            traverse(node.right)
-        }
-        
-        traverse(root)
-        return result
-    }
-}
-
-private extension RedBlackTree {
-    
-    func bstInsert(_ node: RBNode<Element>) {
-        var y: RBNode<Element>? = nil
-        var x = root
-        
-        while let current = x {
-            y = current
-            if node.element < current.element {
-                x = current.left
-            } else if node.element > current.element {
-                x = current.right
-            } else {
-                x = nil
-            }
-        }
-        
-        node.parent = y
-        if y == nil {
-            root = node
-        } else if node.element < y!.element {
-            y!.left = node
-        } else if node.element > y!.element {
-            y!.right = node
-        }
-        
-        node.left = nil
-        node.right = nil
-        node.color = .red
-    }
-    
-    func fixInsert(_ node: RBNode<Element>) {
-        var z = node
-        
-        while z.parent?.color == .red {
-            if z.parent === z.parent?.parent?.left {
-                let y = z.parent?.parent?.right
-                if y?.color == .red {
-                    // Case 1
-                    z.parent?.color = .black
-                    y?.color = .black
-                    z.parent?.parent?.color = .red
-                    z = z.parent!.parent!
-                } else {
-                    if z === z.parent?.right {
-                        // Case 2
-                        z = z.parent!
-                        leftRotate(z)
-                    }
-                    // Case 3
-                    z.parent?.color = .black
-                    z.parent?.parent?.color = .red
-                    if let grandparent = z.parent?.parent {
-                        rightRotate(grandparent)
-                    }
-                }
-            } else {
-                // Symmetric to above
-                let y = z.parent?.parent?.left
-                if y?.color == .red {
-                    z.parent?.color = .black
-                    y?.color = .black
-                    z.parent?.parent?.color = .red
-                    z = z.parent!.parent!
-                } else {
-                    if z === z.parent?.left {
-                        z = z.parent!
-                        rightRotate(z)
-                    }
-                    z.parent?.color = .black
-                    z.parent?.parent?.color = .red
-                    if let grandparent = z.parent?.parent {
-                        leftRotate(grandparent)
-                    }
-                }
-            }
-        }
-        root?.color = .black
-    }
-    
-    func leftRotate(_ x: RBNode<Element>) {
-        guard let y = x.right else { return }
-        x.right = y.left
-        if y.left != nil {
-            y.left?.parent = x
-        }
-        y.parent = x.parent
-        if x.parent == nil {
-            root = y
-        } else if x === x.parent?.left {
-            x.parent?.left = y
-        } else {
-            x.parent?.right = y
-        }
-        y.left = x
-        x.parent = y
-    }
-    
-    func rightRotate(_ x: RBNode<Element>) {
-        guard let y = x.left else { return }
-        x.left = y.right
-        if y.right != nil {
-            y.right?.parent = x
-        }
-        y.parent = x.parent
-        if x.parent == nil {
-            root = y
-        } else if x === x.parent?.right {
-            x.parent?.right = y
-        } else {
-            x.parent?.left = y
-        }
-        y.right = x
-        x.parent = y
-    }
-    
-}
-
-// LINE BREAK
-
-public struct SortedSet<Element>: Hashable, RandomAccessCollection, Collection where Element: Hashable & Comparable {
+public struct SortedSet<Element>: RandomAccessCollection, Collection where Element: Hashable & Comparable {
     
     private var set: ElementSet
     private var array: ElementArray
     
     public init() {
-        self.set = .init()
-        self.array = .init()
+        self.init(.defaultValue, .defaultValue)
     }
     
     public init(_ collection: ElementCollection) {
-        self.set = .init(collection)
-        self.array = collection.sorted()
+        let set: ElementSet = .init(collection)
+        let array: ElementArray = collection.sorted()
+        self.init(set, array)
+    }
+    
+    public init(_ elements: Element...) {
+        let set: ElementSet = .init(elements)
+        let array: ElementArray = elements.sorted()
+        self.init(set, array)
+    }
+    
+    private init(_ set: ElementSet, _ array: ElementArray) {
+        self.set = set
+        self.array = array
     }
     
 }
 
-private extension SortedSet {
+infix operator -->: AdditionPrecedence
+
+fileprivate extension SortedSet {
     
-    enum Action: Enumerable {
-        case insert, remove
-    }
-    
-    mutating func mutate(_ element: Element, _ action: Action) -> Void {
-        switch action {
-        case .insert:
-            self.set.insert(element)
-        case .remove:
-            self.set.remove(element)
-        }
-        self.array = self.set.sorted()
+    static func -->(lhs: inout Self, rhs: ElementSet) -> Void {
+        lhs.set = rhs
+        lhs.array = rhs.sorted()
     }
     
 }
@@ -229,6 +52,34 @@ public extension SortedSet {
     typealias ElementArray = [Element]
     typealias ElementSet = Set<Element>
     typealias Index = ElementArray.Index
+    
+    static func +=(lhs: inout Self, rhs: Self) -> Void {
+        rhs.forEach { lhs += $0 }
+    }
+    
+    static func -=(lhs: inout Self, rhs: Self) -> Void {
+        rhs.forEach { lhs -= $0 }
+    }
+
+    static func +=(lhs: inout Self, rhs: Element) -> Void {
+        lhs --> (lhs.set + rhs)
+    }
+    
+    static func -=(lhs: inout Self, rhs: Element) -> Void {
+        lhs --> (lhs.set - rhs)
+    }
+    
+    static func +(lhs: Self, rhs: Element) -> Self {
+        var new: Self = lhs
+        new += rhs
+        return new
+    }
+    
+    static func -(lhs: Self, rhs: Element) -> Self {
+        var new: Self = lhs
+        new -= rhs
+        return new
+    }
     
     subscript(index: Index) -> Element {
         get { return array[index] }
@@ -246,16 +97,115 @@ public extension SortedSet {
         array.index(after: i)
     }
     
-    mutating func remove(_ index: Index) {
-        self.mutate(self[index], .remove)
+//    mutating func remove(_ index: Index) {
+//        self.mutate(self[index], .remove)
+//    }
+//    
+//    mutating func remove(_ element: Element) -> Void {
+//        self.mutate(element, .remove)
+//    }
+//    
+//    mutating func insert(_ element: Element) -> Void {
+//        self.mutate(element, .insert)
+//    }
+    
+}
+
+
+private extension SortedSet {
+        
+    static func random(_ range: Range<Int>, method: @escaping () -> Element) -> Self {
+        let size: Int = Int.random(in: range)
+        
+        var new: Self = .init()
+        
+        while new.count < size {
+            new += method()
+        }
+        
+        return new
     }
     
-    mutating func remove(_ element: Element) -> Void {
-        self.mutate(element, .remove)
+//    enum Action: Enumerable {
+//        case insert, remove
+//    }
+//    
+//    mutating func mutate(_ element: Element, _ action: Action) -> Void {
+//        switch action {
+//        case .insert:
+//            self.set.insert(element)
+//        case .remove:
+//            self.set.remove(element)
+//        }
+//        self.array = self.set.sorted()
+//    }
+    
+}
+
+
+extension SortedSet: Hashable {
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.array)
     }
     
-    mutating func insert(_ element: Element) -> Void {
-        self.mutate(element, .insert)
+}
+
+extension SortedSet: Defaultable {
+    
+    public static var defaultValue: Self { .init() }
+    
+}
+
+extension SortedSet: Comparable {
+    
+    public static func < (lhs: Self, rhs: Self) -> Bool {
+        lhs.hashValue < rhs.hashValue
     }
+    
+}
+
+extension SortedSet where Element == SystemBuilder {
+    
+    public static func random(_ range: Range<Int>) -> Self {
+        Self.random(range) {
+            .random
+        }
+    }
+    
+}
+
+extension SortedSet where Element == StringBuilder {
+    
+//    public static func +(lhs: Self, rhs: Element) -> Self {
+//        var new: Self = lhs
+//        new.insert(rhs)
+//        return new
+//    }
+//    
+//    public static func -(lhs: Self, rhs: Element) -> Self {
+//        var new: Self = lhs
+//        new.remove(rhs)
+//        return new
+//    }
+//
+    
+    public static func random(_ range: Range<Int>) -> Self {
+        Self.random(range) {
+            .string(.random)
+        }
+    }
+    
+//    public func tags(_ input: InputEnum) -> [TagBuilder] {
+//        self.map { InputBuilder(input, $0.trim) }.map(TagBuilder.input)
+//    }
+//    
+//    public var array: [String] {
+//        self.map { $0.trim }.sorted()
+//    }
+//    
+//    public var string: String {
+//        self.array.joined(separator: ", ")
+//    }
     
 }

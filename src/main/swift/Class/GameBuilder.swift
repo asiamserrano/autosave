@@ -25,6 +25,8 @@ public class GameBuilder: ObservableObject {
     @Published private var original: Snapshot
     
     @Published public var tagType: TagType = .defaultValue
+    
+    @Published private var master: SortedSet<TagBuilder> = .init()
   
     public let status: GameStatusEnum
     public let uuid: UUID
@@ -80,7 +82,7 @@ extension GameBuilder {
     }
     
     public var count: Int {
-        self.tags.current.count
+        self.tags.count
     }
     
     public var game: GameSnapshot {
@@ -129,9 +131,9 @@ extension GameBuilder {
     }
     
     public func set(_ element: Systems.Element) -> Void {
-        let system: SystemBuilder = element.key
-        self.tags.get(system).allBuilders.map {  PlatformBuilder(system, $0) }.map(TagBuilder.platform).forEach(self.delete)
-        element.value.allBuilders.map {  PlatformBuilder(system, $0) }.map(TagBuilder.platform).forEach(self.add)
+//        let system: SystemBuilder = element.key
+//        self.tags.get(system).allBuilders.map {  PlatformBuilder(system, $0) }.map(TagBuilder.platform).forEach(self.delete)
+//        element.value.allBuilders.map {  PlatformBuilder(system, $0) }.map(TagBuilder.platform).forEach(self.add)
     }
     
     public func delete(_ builder: Builder) -> Void {
@@ -143,8 +145,8 @@ extension GameBuilder {
     }
     
     public func delete(_ system: SystemBuilder) -> Void {
-        let formats: Formats = self.tags.get(system)
-        formats.values.forEach { self.delete(system, $0) }
+//        let formats: Formats = self.tags.get(system)
+//        formats.values.forEach { self.delete(system, $0) }
     }
     
     public func delete(_ system: SystemBuilder, _ format: FormatEnum) -> Void {

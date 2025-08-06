@@ -8,13 +8,15 @@
 import SwiftUI
 import SwiftData
 
-public typealias StringBuilders = Set<StringBuilder>
-public typealias FormatBuilders = Set<FormatBuilder>
+public typealias StringBuilders = SortedSet<StringBuilder>
+public typealias FormatBuilders = SortedSet<FormatBuilder>
 
-public typealias Inputs = [InputEnum: StringBuilders]
-public typealias Modes = [ModeEnum: Bool]
+public typealias Inputs = SortedMap<InputEnum, StringBuilder>
+public typealias Modes = SortedSet<ModeEnum>
 
-public typealias Formats = [FormatEnum: FormatBuilders]
+public typealias Formats = SortedMap<FormatEnum, FormatBuilder>
+
+
 public typealias Systems = [SystemBuilder: Formats]
 public typealias Platforms = [SystemEnum: Systems]
 
@@ -93,7 +95,7 @@ fileprivate struct ContentView: Configurable {
                 if model.status_bool {
                     isLibraryEmpty = false
                     let tags: TagContainer = .random
-                    tags.current.forEach { builder in
+                    tags.builders.forEach { builder in
                         container.mainContext.save(model, builder)
                     }
                 }

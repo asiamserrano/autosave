@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol Defaultable: Equatable {
+public protocol Defaultable {
     
     static var defaultValue: Self { get }
     

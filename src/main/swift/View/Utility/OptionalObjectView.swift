@@ -7,10 +7,6 @@
 
 import SwiftUI
 
-public protocol Quantifiable {
-    var isEmpty: Bool { get }
-}
-
 struct OptionalObjectView<Element: Any, T: View>: View {
     
     typealias Content = (Element) -> T

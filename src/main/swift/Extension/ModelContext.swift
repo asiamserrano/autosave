@@ -47,13 +47,13 @@ extension ModelContext {
             } else {
                 old.updateFromSnapshot(current)
                 
-                builder.tags.deleted.forEach {
-                    self.remove(old, $0)
-                }
-                
-                builder.tags.added.forEach {
-                    self.save(old, $0)
-                }
+//                builder.tags.deleted.forEach {
+//                    self.remove(old, $0)
+//                }
+//                
+//                builder.tags.added.forEach {
+//                    self.save(old, $0)
+//                }
                 
                 self.store()
                 return .init(current, true, .edit)

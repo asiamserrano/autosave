@@ -9,28 +9,44 @@ import SwiftUI
 
 struct TestingView: View {
     
-    @StateObject var tree = RedBlackTree<Int>()
+    @State var sortedSet: SortedSet<TagBuilder> = .init()
 
     var body: some View {
         NavigationStack {
             Form {
                 
-                ForEach(self.tree.inOrderElements(), id:\.self) {
-                    Text($0.description)
+                ForEach(self.sortedSet) {
+                    BuilderView($0)
                 }
                 
             }
-        
             .toolbar {
                 
                 ToolbarItem(placement: .topBarTrailing, content: {
                     Button("Add") {
-                        self.tree.insert(.random(in: 0..<20))
+                        let a: TagBuilder = create()
+                        let b: TagBuilder = create()
+                        print("____________________")
+                        let new: SortedSet<TagBuilder> = .init(a, b)
+                        self.sortedSet += new
                     }
                 })
              
             }
         }
+    }
+    
+    func create() -> TagBuilder {
+        let b: TagBuilder = .random
+        switch b {
+        case .input(let inputBuilder):
+            print(inputBuilder.type.rawValue + " " + inputBuilder.stringBuilder.trim)
+        case .mode(let modeEnum):
+            print("Mode" + " " + modeEnum.rawValue)
+        case .platform(let platformBuilder):
+            print(platformBuilder.system.rawValue + " " + platformBuilder.format.rawValue)
+        }
+        return b
     }
     
     @ViewBuilder

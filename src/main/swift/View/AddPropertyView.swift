@@ -55,28 +55,16 @@ struct AddPropertyView: AddPropertyProtocol {
         @EnvironmentObject fileprivate var object: AddProperty
         
         @Query var models: [PropertyModel]
-        @Query var property: [PropertyModel]
+        @Query var searchResults: [PropertyModel]
 
         init(_ input: InputEnum, _ used: [String], _ binding: Binding<String>) {
             self._models = .init(filter: .getByLabel(input, binding, used), sort: .defaultValue)
-            self._property = .init(filter: .getByInput(input, binding))
+            self._searchResults = .init(filter: .getByInput(input, binding))
         }
         
         var body: some View {
             Form {
-//                if self.search.isNotEmpty {
-//                    let expression: Expression = .init(raw: self.search)
-//                    if self.expressions.map({ $0.key }).notContains(expression.key) {
-//                        Button(action: {
-//                            self.update(expression)
-//                            self.done()
-//                        }, label: {
-//                            Text(self.buttonLabel)
-//                        })
-//                    }
-//                }
-                
-                if property.isEmpty && search.isNotEmpty {
+                if searchResults.isEmpty && search.isNotEmpty {
                     Section {
                         Button(action: {
                             self.update(.string(search))
@@ -88,23 +76,10 @@ struct AddPropertyView: AddPropertyProtocol {
                 }
                 
                 Section {
-//                    ForEach(models) { model in
-//                        Text(model.value_trim)
-//                    }
                     ForEach(models) { model in
                         BuilderView(.string(model.value_trim))
                     }
-//                    ForEach(models) { model in
-//                        if self.validate(expression) {
-//                            Button(action: {
-//                                self.update(expression)
-//                            }, label: {
-//                                CheckMarkView(expression, self.selected != expression)
-//                            })
-//                        }
-//                    }
                 }
-                
             }
             .navigationTitle("Add \(self.input.rawValue)")
             .toolbar {
