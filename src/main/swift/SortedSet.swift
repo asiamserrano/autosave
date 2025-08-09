@@ -7,7 +7,17 @@
 
 import Foundation
 
-public struct SortedSet<Element>: RandomAccessCollection, Collection where Element: Hashable & Comparable {
+public protocol SortedSetProtocol: Defaultable, Hashable, Quantifiable, RandomAccessCollection where Element: Hashable & Comparable {
+    var isEmpty: Bool { get }
+    var count: Int { get }
+    
+    func contains(_ element: Element) -> Bool
+    
+    init()
+
+}
+
+public struct SortedSet<Element: Hashable & Comparable>: SortedSetProtocol {
     
     private var set: ElementSet
     private var array: ElementArray
@@ -31,17 +41,6 @@ public struct SortedSet<Element>: RandomAccessCollection, Collection where Eleme
     private init(_ set: ElementSet, _ array: ElementArray) {
         self.set = set
         self.array = array
-    }
-    
-}
-
-infix operator -->: AdditionPrecedence
-
-fileprivate extension SortedSet {
-    
-    static func -->(lhs: inout Self, rhs: ElementSet) -> Void {
-        lhs.set = rhs
-        lhs.array = rhs.sorted()
     }
     
 }
@@ -111,6 +110,14 @@ public extension SortedSet {
     
 }
 
+fileprivate extension SortedSet {
+    
+    static func -->(lhs: inout Self, rhs: ElementSet) -> Void {
+        lhs.set = rhs
+        lhs.array = rhs.sorted()
+    }
+    
+}
 
 private extension SortedSet {
         
@@ -142,6 +149,13 @@ private extension SortedSet {
     
 }
 
+extension SortedSet: Comparable {
+    
+    public static func < (lhs: Self, rhs: Self) -> Bool {
+        lhs.hashValue < rhs.hashValue
+    }
+    
+}
 
 extension SortedSet: Hashable {
     
@@ -157,10 +171,20 @@ extension SortedSet: Defaultable {
     
 }
 
-extension SortedSet: Comparable {
+extension SortedSet: Quantifiable {
     
-    public static func < (lhs: Self, rhs: Self) -> Bool {
-        lhs.hashValue < rhs.hashValue
+    public var quantity: Int {
+        self.array.count
+    }
+    
+}
+
+//
+
+extension SortedSet where Element: Valuable {
+    
+    public var joined: String {
+        self.map { $0.rawValue }.joined(separator: ", ")
     }
     
 }

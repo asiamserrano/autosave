@@ -7,12 +7,87 @@
 
 import SwiftUI
 
-struct WrapperView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+struct WrapperView<Element: Any, T: View>: View {
+ 
+    typealias Content = (Element) -> T
+    
+    let element: Element?
+    let content: Content
+    
+    init(_ element: Element?, @ViewBuilder content: @escaping Content) {
+        self.element = element
+        self.content = content
     }
+
+    var body: some View {
+        if let element: Element = element {
+            content(element)
+        }
+    }
+    
 }
 
-#Preview {
-    WrapperView()
+struct QuantifiableView<Element: Quantifiable, T: View>: View {
+ 
+    typealias Content = (Element) -> T
+    
+    let element: Element
+    let content: Content
+    
+    init(_ element: Element, @ViewBuilder content: @escaping Content) {
+        self.element = element
+        self.content = content
+    }
+
+    var body: some View {
+        if element.isOccupied {
+            content(element)
+        }
+    }
+    
+}
+
+//struct WrapperSortedSetView<Element: Hashable & Comparable, W: View, E: View>: View {
+//    
+//    typealias Sorted = SortedSet<Element>
+//    typealias WrapperContent = (Sorted) -> W
+//    typealias ElementContent = (Element) -> E
+//    
+//    let sorted: Sorted
+//    let wrapper: WrapperContent
+//    let element: ElementContent
+//    
+//    init(_ sorted: Sorted, @ViewBuilder wrapper: @escaping WrapperContent, @ViewBuilder element: @escaping ElementContent) {
+//        self.sorted = sorted
+//        self.wrapper = wrapper
+//        self.element = element
+//    }
+//
+//    var body: some View {
+//        QuantifiableView(sorted) { s in
+//            wrapper(s) {
+//                
+//            }
+//        }
+//    }
+//    
+//}
+
+struct SortedSetView<Element: Hashable & Comparable, T: View>: View {
+    
+    typealias Sorted = SortedSet<Element>
+    typealias Content = (Element) -> T
+    
+    let sorted: Sorted
+    let content: Content
+    
+    init(_ sorted: Sorted, @ViewBuilder content: @escaping Content) {
+        self.sorted = sorted
+        self.content = content
+    }
+
+    var body: some View {
+        ForEach(sorted, id:\.self, content: content)
+    }
+    
 }

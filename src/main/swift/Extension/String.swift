@@ -30,10 +30,6 @@ extension String {
         } else { return self }
     }
     
-}
-
-extension String {
-    
     public var canonicalized: Self {
         self.components(separatedBy: CharacterSet.alphanumerics.inverted)
             .joined()
@@ -42,6 +38,14 @@ extension String {
     
     public var trimmed: Self {
         self.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+}
+
+extension String: Quantifiable {
+    
+    public var quantity: Int {
+        self.canonicalized.count
     }
     
 }

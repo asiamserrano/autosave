@@ -31,10 +31,31 @@ struct BooleanView<TrueContent: View, FalseContent: View>: View {
     }
 }
 
-#Preview {
-    BooleanView(false, trueView: {
-        Text("True View")
-    }, falseView: {
-        Text("False View")
-    })
+struct TrueView<T: View>: View {
+    
+    typealias Content = () -> T
+    
+    private let boolean: Bool
+    private let content: Content
+    
+    init(_ boolean: Bool, @ViewBuilder _ content: @escaping Content) {
+        self.boolean = boolean
+        self.content = content
+    }
+    
+    var body: some View {
+        if boolean {
+            content()
+        }
+    }
+    
 }
+
+
+//#Preview {
+//    BooleanView(false, trueView: {
+//        Text("True View")
+//    }, falseView: {
+//        Text("False View")
+//    })
+//}

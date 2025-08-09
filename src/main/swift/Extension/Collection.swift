@@ -7,10 +7,12 @@
 
 import Foundation
 
-extension Collection {
-    
-    var isNotEmpty: Bool {
-        self.count > 0
-    }
-    
-}
+//extension Collection {
+//    
+//    var isNotEmpty: Bool {
+//        self.count > 0
+//    }
+//    
+//}
+
+

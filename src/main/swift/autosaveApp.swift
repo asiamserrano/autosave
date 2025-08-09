@@ -8,17 +8,20 @@
 import SwiftUI
 import SwiftData
 
+infix operator -->: AdditionPrecedence
+
 public typealias StringBuilders = SortedSet<StringBuilder>
 public typealias FormatBuilders = SortedSet<FormatBuilder>
 
-public typealias Inputs = SortedMap<InputEnum, StringBuilder>
+public typealias Inputs = SortedMap<InputEnum, StringBuilders>
 public typealias Modes = SortedSet<ModeEnum>
 
-public typealias Formats = SortedMap<FormatEnum, FormatBuilder>
+public typealias Formats = SortedMap<FormatEnum, FormatBuilders>
 
-
-public typealias Systems = [SystemBuilder: Formats]
-public typealias Platforms = [SystemEnum: Systems]
+public typealias Systems = NestedSortedMap<SystemBuilder, Formats>
+public typealias Platforms = NestedSortedMap<SystemEnum, Systems>
+//public typealias Systems = [SystemBuilder: Formats]
+//public typealias Platforms = [SystemEnum: Systems]
 
 @main
 struct autosaveApp: App {

@@ -8,126 +8,139 @@
 import SwiftUI
 import SwiftData
 
-struct AddPlatformView: View {
-    
-    init(_ builder: GameBuilder, _ system: SystemBuilder? = nil) {
-
-    }
-    
-    var body: some View {
-        Text("self.TBD")
-    }
-    
-    
-}
-
-//
-//
-//struct AddPlatformView: AddPlatformProtocol {
-//
-//    @Environment(\.dismiss) var dismiss
-//
-//    @ObservedObject var builder: GameBuilder
+//struct AddPlatformView: View {
 //    
-//    @StateObject fileprivate var object: AddPlatform
-//        
 //    init(_ builder: GameBuilder, _ system: SystemBuilder? = nil) {
-//        self._object = .init(wrappedValue: .init(builder, system))
-//        self.builder = builder
+//
 //    }
 //    
 //    var body: some View {
-//        
-//        Form {
-//            
-//            BooleanView(self.isNavigationLinkDisabled, trueView: PlatformLabel, falseView: {
-//                NavigationLink(destination: {
-//                    SelectPlatformView()
-//                        .environmentObject(self.builder)
-//                        .environmentObject(self.object)
-//                }, label: PlatformLabel)
-//            })
-//            
-//            OptionalObjectView(self.system, content: { system in
-//                OptionalArrayView(system.digitalBuilders) { digitals in
-//                    Section("Digital") {
-//                        ForEach(digitals.sorted()) { digital in
-//                            Button(action: {
-//                                self.update(digital)
-//                            }, label: {
-//                                CheckMarkView(digital.rawValue, isVisible: contains(digital))
-//                            })
-//                        }
-//                    }
-//                }
-//                
-//                OptionalObjectView(system.physicalBuilder, content: { physical in
-//                    Section("Physical") {
-//                        Toggle(physical.rawValue, isOn: .init(get: {
-//                            self.contains(physical)
-//                        }, set: { _ in
-//                            self.update(physical)
-//                        }))
-//                    }
-//                })
-//            })
-//            
-//        }
-//        .navigationTitle(self.navigationTitle)
-//        .toolbar {
-//            
-//            ToolbarItem(placement: .topBarTrailing) {
-//                Button(action: {
-//                    if let element: Systems.Element = self.element {
-//                        self.builder.set(element)
-//                        self.dismiss()
-//                    }
-//                }, label: {
-//                    CustomText(.done)
-//                })
-//                .disabled(self.isDoneDisabled)
-//            }
-//            
-//        }
-//    
+//        Text("self.TBD")
 //    }
 //    
-//    @ViewBuilder
-//    private func PlatformLabel() -> some View {
-//        SpacedLabel("Platform", self.display, self.emphasis)
-//    }
-//    
-//    private struct SelectPlatformView: AddPlatformProtocol {
-//        
-//        @EnvironmentObject var builder: GameBuilder
-//        @EnvironmentObject var object: AddPlatform
-//
-//        @Environment(\.dismiss) var dismiss
-//        
-//        var body: some View {
-//            Form {
-//                ForEach(SystemEnum.cases) { systemEnum in
-//                    
-//                    OptionalArrayView(self.get(systemEnum)) { builders in
-//                        Section(systemEnum.rawValue) {
-//                            ForEach(builders, id:\.hashValue) { systemBuilder in
-//                                Button(action: {
-//                                    self.object.system = self.system == systemBuilder ? nil : systemBuilder
-//                                    self.dismiss()
-//                                }, label: {
-//                                    CheckMarkView(systemBuilder.rawValue, isVisible: self.system == systemBuilder)
-//                                })
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//           
-//        }
-//
-//    }
 //    
 //}
+
+
+
+struct AddPlatformView: AddPlatformProtocol {
+
+    @Environment(\.dismiss) var dismiss
+
+    @ObservedObject var builder: GameBuilder
+    
+    @StateObject fileprivate var object: AddPlatform
+        
+    init(_ builder: GameBuilder, _ system: SystemBuilder? = nil) {
+        self._object = .init(wrappedValue: .init(builder, system))
+        self.builder = builder
+    }
+    
+    var body: some View {
+        
+        Form {
+            
+            BooleanView(self.isNavigationLinkDisabled, trueView: PlatformLabel, falseView: FalseView)
+            
+            WrapperView(self.system) { systemBuilder in
+                DigitalView(systemBuilder)
+                PhysicalView(systemBuilder)
+            }
+            
+        }
+        .navigationTitle(self.navigationTitle)
+        .toolbar {
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: {
+                    if let element: Systems.Element = self.element {
+                        self.builder.set(element)
+                        self.dismiss()
+                    }
+                }, label: {
+                    CustomText(.done)
+                })
+                .disabled(self.isDoneDisabled)
+            }
+            
+        }
+    
+    }
+    
+    @ViewBuilder
+    private func FalseView() -> some View {
+        NavigationLink(destination: {
+            SelectPlatformView()
+                .environmentObject(self.builder)
+                .environmentObject(self.object)
+        }, label: PlatformLabel)
+    }
+    
+    @ViewBuilder
+    private func DigitalView(_ systemBuilder: SystemBuilder) -> some View {
+        WrapperView(systemBuilder.digitalBuilders) { digitals in
+            Section("Digital") {
+                SortedSetView(digitals) { digital in
+                    Button(action: {
+                        self.update(digital)
+                    }, label: {
+                        CheckMarkView(digital.rawValue, isVisible: contains(digital))
+                    })
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func PhysicalView(_ systemBuilder: SystemBuilder) -> some View {
+        WrapperView(systemBuilder.physicalBuilder) { physical in
+            Section("Physical") {
+                Toggle(physical.rawValue, isOn: .init(get: {
+                    self.contains(physical)
+                }, set: { _ in
+                    self.update(physical)
+                }))
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func PlatformLabel() -> some View {
+        SpacedLabel("Platform", self.display, self.emphasis)
+    }
+    
+}
+
+fileprivate struct SelectPlatformView: AddPlatformProtocol {
+    
+    @EnvironmentObject var builder: GameBuilder
+    @EnvironmentObject var object: AddPlatform
+
+    @Environment(\.dismiss) var dismiss
+    
+    var body: some View {
+        Form {
+            ForEach(SystemEnum.cases) { systemEnum in
+                QuantifiableView(self.get(systemEnum)) { builders in
+                    Section(systemEnum.rawValue) {
+                        SortedSetView(builders, content: ButtonView)
+                    }
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func ButtonView(_ systemBuilder: SystemBuilder) -> some View {
+        Button(action: {
+            self.object.system = self.system == systemBuilder ? nil : systemBuilder
+            self.dismiss()
+        }, label: {
+            CheckMarkView(systemBuilder.rawValue, isVisible: self.system == systemBuilder)
+        })
+    }
+
+}
 
 fileprivate class AddPlatform: ObservableObject {
     
@@ -164,8 +177,8 @@ fileprivate extension AddPlatformProtocol {
         }
     }
     
-    func get(_ system: SystemEnum) -> [SystemBuilder] {
-        SystemBuilder.filter(system).filter { self.object.used.lacks($0) }
+    func get(_ system: SystemEnum) -> SortedSet<SystemBuilder> {
+        .init(SystemBuilder.filter(system).filter { self.object.used.lacks($0) })
     }
     
     var system: SystemBuilder? { self.object.system }
@@ -183,7 +196,7 @@ fileprivate extension AddPlatformProtocol {
     
     var element: Systems.Element? {
         if let system: SystemBuilder = self.system {
-            return (system, self.object.formats)
+            return .init(key: system, value: self.object.formats)
         } else {
             return nil
         }

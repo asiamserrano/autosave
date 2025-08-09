@@ -28,6 +28,24 @@ public extension TagContainer {
     typealias Builder = TagBuilder
     typealias Builders = SortedSet<Builder>
     
+    enum Element: Quantifiable {
+        case inputs(Inputs)
+        case modes(Modes)
+        case platforms(Platforms)
+
+        public var quantity: Int {
+            switch self {
+            case .inputs(let inputs):
+                return inputs.count
+            case .modes(let modes):
+                return modes.count
+            case .platforms(let platforms):
+                return platforms.count
+            }
+        }
+
+    }
+    
     static func ==(lhs: Self, rhs: Builders) -> Bool {
         lhs.builders == rhs
     }
@@ -87,8 +105,8 @@ public extension TagContainer {
         
         var bool: Bool = false
         
-        Inputs.Key.cases.forEach { i in
-            let strings: Inputs.Value = .random(RANDOM_RANGE)
+        InputEnum.cases.forEach { i in
+            let strings: StringBuilders = .random(RANDOM_RANGE)
             strings.forEach { value in
                 let input: InputBuilder = .init(i, value.trim)
                 new += (.input(input))
@@ -117,7 +135,7 @@ public extension TagContainer {
         return new
     }
     
-    func get(_ category: TagCategory) -> TagsElement {
+    func get(_ category: TagCategory) -> Element {
         switch category {
         case .input:
             return .inputs(self.inputs)
@@ -128,12 +146,12 @@ public extension TagContainer {
         }
     }
     
-    func get(_ tagType: TagType) -> TagsElement {
+    func get(_ tagType: TagType) -> Element {
         self.get(tagType.category)
     }
     
-    func get(_ system: Systems.Key?) -> Formats {
-        if let system: Systems.Key = system {
+    func get(_ system: Systems.K?) -> Formats {
+        if let system: Systems.K = system {
             return self.platforms.get(system)
         } else {
             return .defaultValue
@@ -144,12 +162,11 @@ public extension TagContainer {
         self.builders.contains(builder)
     }
     
-    var systems: [Systems.Key] {
-        self.platforms.values.flatMap { $0.keys }
+    var systems: [Systems.K] {
+        self.platforms.flatMap { $0.value.keys }
     }
     
 }
-
 
 extension TagContainer: Stable {
     
@@ -167,25 +184,6 @@ extension TagContainer: Defaultable {
 
 extension TagContainer: Quantifiable {
     
-    public var count: Int { self.builders.count }
+    public var quantity: Int { self.builders.count }
     
 }
-
-public enum TagsElement: Quantifiable {
-    case inputs(Inputs)
-    case modes(Modes)
-    case platforms(Platforms)
-
-    public var count: Int {
-        switch self {
-        case .inputs(let inputs):
-            return inputs.count
-        case .modes(let modes):
-            return modes.count
-        case .platforms(let platforms):
-            return platforms.count
-        }
-    }
-
-}
-

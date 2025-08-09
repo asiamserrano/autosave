@@ -32,75 +32,75 @@ extension Dictionary where Key: Enumerable, Value: Defaultable {
     
 }
 
-public extension Platforms {
-
-    typealias Builder = PlatformBuilder
-    
-    static func +=(lhs: inout Self, rhs: Value.Element) -> Void {
-        let key: Key = rhs.key.type
-        var value: Value = lhs.get(key)
-        value[rhs.key] = rhs.value
-        lhs[key] = value
-    }
-    
-    static func +=(lhs: inout Self, rhs: Builder) -> Void {
-        let key: Key = rhs.system.type
-        lhs[key] = lhs.get(key) + rhs
-    }
-    
-    static func -=(lhs: inout Self, rhs: Builder) -> Void {
-        let key: Key = rhs.system.type
-        lhs[key] = lhs.get(key) - rhs
-    }
-
-    func contains(_ builder: Builder) -> Bool {
-        let key: Key = builder.system.type
-        let value: Value = self.get(key)
-        return value.contains(builder)
-    }
-    
-    func get(_ system: Value.Key) -> Value.Value {
-        self.get(system.type).get(system)
-    }
-    
-//    var systemKeys: [ValueKey] {
-//        self.values.flatMap { $0.keys }
+//public extension Platforms {
+//
+//    typealias Builder = PlatformBuilder
+//    
+//    static func +=(lhs: inout Self, rhs: Value.Element) -> Void {
+//        let key: Key = rhs.key.type
+//        var value: Value = lhs.get(key)
+//        value[rhs.key] = rhs.value
+//        lhs[key] = value
 //    }
 //    
-//    var unused: [ValueKey] {
-//        Systems.Key.cases.filter { self.systemKeys.lacks($0) }
+//    static func +=(lhs: inout Self, rhs: Builder) -> Void {
+//        let key: Key = rhs.system.type
+//        lhs[key] = lhs.get(key) + rhs
 //    }
-    
-}
-
-public extension Systems {
-    
-    static func +(lhs: Self, rhs: PlatformBuilder?) -> Self {
-        var new: Self = lhs
-        if let rhs: PlatformBuilder = rhs {
-            let key: Key = rhs.system
-            new[key] = new.get(key) + rhs
-        }
-        return new
-    }
-    
-    static func -(lhs: Self, rhs: PlatformBuilder?) -> Self {
-        var new: Self = lhs
-        if let rhs: PlatformBuilder = rhs {
-            let key: Key = rhs.system
-            new[key] = new.get(key) - rhs
-        }
-        
-        return new
-    }
-    
-    func contains(_ builder: PlatformBuilder) -> Bool {
-        let key: Key = builder.system
-        let value: Value = self.get(key)
-        return value.contains(builder)
-    }
-    
-}
+//    
+//    static func -=(lhs: inout Self, rhs: Builder) -> Void {
+//        let key: Key = rhs.system.type
+//        lhs[key] = lhs.get(key) - rhs
+//    }
+//
+//    func contains(_ builder: Builder) -> Bool {
+//        let key: Key = builder.system.type
+//        let value: Value = self.get(key)
+//        return value.contains(builder)
+//    }
+//    
+//    func get(_ system: Value.Key) -> Value.Value {
+//        self.get(system.type).get(system)
+//    }
+//    
+////    var systemKeys: [ValueKey] {
+////        self.values.flatMap { $0.keys }
+////    }
+////    
+////    var unused: [ValueKey] {
+////        Systems.Key.cases.filter { self.systemKeys.lacks($0) }
+////    }
+//    
+//}
+//
+//public extension Systems {
+//    
+//    static func +(lhs: Self, rhs: PlatformBuilder?) -> Self {
+//        var new: Self = lhs
+//        if let rhs: PlatformBuilder = rhs {
+//            let key: Key = rhs.system
+//            new[key] = new.get(key) + rhs
+//        }
+//        return new
+//    }
+//    
+//    static func -(lhs: Self, rhs: PlatformBuilder?) -> Self {
+//        var new: Self = lhs
+//        if let rhs: PlatformBuilder = rhs {
+//            let key: Key = rhs.system
+//            new[key] = new.get(key) - rhs
+//        }
+//        
+//        return new
+//    }
+//    
+//    func contains(_ builder: PlatformBuilder) -> Bool {
+//        let key: Key = builder.system
+//        let value: Value = self.get(key)
+//        return value.contains(builder)
+//    }
+//    
+//}
 
 
 // TODO: old code

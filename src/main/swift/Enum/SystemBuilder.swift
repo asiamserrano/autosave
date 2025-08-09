@@ -153,7 +153,7 @@ extension SystemBuilder {
         }
     }
     
-    public var digitalBuilders: [FormatBuilder] {
+    public var digitalBuilders: SortedSet<FormatBuilder> {
         let free: FormatBuilder = .digital(.free)
         switch self {
         case .playstation(let playstation):

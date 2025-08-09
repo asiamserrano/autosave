@@ -9,24 +9,24 @@ import SwiftUI
 import SwiftData
 
 //struct AddPropertyView: View {
-//    
+//
 //    init(_ builder: GameBuilder, _ input: InputEnum, _ used: [String]) {
-//        
+//
 ////        self.builder = builder
 ////        self._object = .init(wrappedValue: .init(input, used))
 //    }
-//    
+//
 //    var body: some View {
 //        Text("TBD")
 //    }
-//    
+//
 //}
 //
 //
 
-struct AddPropertyView: AddPropertyProtocol {
-        
-    @ObservedObject var builder: GameBuilder
+public struct AddPropertyView: AddPropertyProtocol {
+    
+    @ObservedObject public var builder: GameBuilder
     
     @StateObject fileprivate var object: AddProperty
     
@@ -39,15 +39,14 @@ struct AddPropertyView: AddPropertyProtocol {
         self.$object.search
     }
     
-    var body: some View {
-        AddView(input, used, binding)
-            .environmentObject(self.builder)
-            .environmentObject(self.object)
-            .searchable(text: binding, placement: .navigationBarDrawer(displayMode: .always),
-                        prompt: "search or add new \(input.rawValue.lowercased())")
+    public var body: some View {
+        QueryView(input, used, binding)
+            .environmentObject(builder)
+            .environmentObject(object)
+            .searchable(text: binding, placement: .navigationBarDrawer(displayMode: .always), prompt: prompt)
     }
     
-    private struct AddView: AddPropertyProtocol {
+    private struct QueryView: AddPropertyProtocol {
         
         @Environment(\.dismiss) var dismiss
         
@@ -56,7 +55,7 @@ struct AddPropertyView: AddPropertyProtocol {
         
         @Query var models: [PropertyModel]
         @Query var searchResults: [PropertyModel]
-
+        
         init(_ input: InputEnum, _ used: [String], _ binding: Binding<String>) {
             self._models = .init(filter: .getByLabel(input, binding, used), sort: .defaultValue)
             self._searchResults = .init(filter: .getByInput(input, binding))
@@ -64,34 +63,49 @@ struct AddPropertyView: AddPropertyProtocol {
         
         var body: some View {
             Form {
-                if searchResults.isEmpty && search.isNotEmpty {
-                    Section {
-                        Button(action: {
-                            self.update(.string(search))
-                            self.done()
-                        }, label: {
-                            Text("Add \'\(search.trimmed)\'")
-                        })
-                    }
+                TrueView(searchResults.isEmpty && search.isOccupied) {
+                    Section(content: AddButton)
                 }
                 
                 Section {
                     ForEach(models) { model in
-                        BuilderView(.string(model.value_trim))
+                        WrapperView(model.value_trim, content: StringView)
                     }
                 }
+                
             }
-            .navigationTitle("Add \(self.input.rawValue)")
+            .navigationTitle(navigationTitle)
             .toolbar {
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: self.done, label: {
-                        Text("Done")
+                        CustomText(.done)
                     })
                     .disabled(self.equals(.none))
                 }
                 
             }
+        }
+        
+        @ViewBuilder
+        private func StringView(_ string: String) -> some View {
+            WrapperView(.string(string)) { (stringBuilder: StringBuilder) in
+                Button(action: {
+                    self.update(stringBuilder)
+                }, label: {
+                    CheckMarkView(stringBuilder, isVisible: self.equals(stringBuilder))
+                })
+            }
+        }
+        
+        @ViewBuilder
+        private func AddButton() -> some View {
+            Button(action: {
+                self.update(.string(search))
+                self.done()
+            }, label: {
+                Text("Add \'\(search.trimmed)\'")
+            })
         }
         
         private func done() -> Void {
@@ -103,33 +117,15 @@ struct AddPropertyView: AddPropertyProtocol {
             self.dismiss()
         }
         
-        private func update(_ string: StringBuilder) -> Void {
-            self.object.selected = self.equals(string) ? nil : string
-        }
-        
-        private func equals(_ other: StringBuilder?) -> Bool {
-            self.selected == other
-        }
-        
-        @ViewBuilder
-        private func BuilderView(_ string: StringBuilder) -> some View {
-            Button(action: {
-                self.update(string)
-            }, label: {
-                CheckMarkView(string, isVisible: self.equals(string))
-            })
-        }
-    
     }
     
 }
-
 
 fileprivate class AddProperty: ObservableObject {
     
     @Published var search: String = .defaultValue
     @Published var selected: StringBuilder? = .none
-
+    
     let input: InputEnum
     let used: [String]
     
@@ -151,9 +147,24 @@ fileprivate extension AddPropertyProtocol {
     var search: String { self.object.search }
     var selected: StringBuilder? { self.object.selected }
     
+    var prompt: String {
+        let str: String = self.input.rawValue.lowercased()
+        return "search or add new \(str)"
+    }
+    
+    var navigationTitle: String {
+        "Add \(self.input.rawValue)"
+    }
+    
+    func equals(_ other: StringBuilder?) -> Bool {
+        self.selected == other
+    }
+    
+    func update(_ string: StringBuilder) -> Void {
+        self.object.selected = self.equals(string) ? nil : string
+    }
+    
 }
-
-
 
 //    let input: InputEnum
 //    let used: Inputs.Value

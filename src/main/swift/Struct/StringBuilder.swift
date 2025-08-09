@@ -42,3 +42,9 @@ extension StringBuilder: Comparable {
     }
     
 }
+
+extension StringBuilder: Valuable {
+    
+    public var rawValue: String { self.trim }
+    
+}

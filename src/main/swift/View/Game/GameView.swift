@@ -228,21 +228,27 @@ struct GameView: View {
 //    }
 //    
 //}
-//
-//fileprivate struct ElementView: Gameopticable {
-//    
-//    @EnvironmentObject public var builder: GameBuilder
-//    
-//    @State var navigation: Bool = false
-//    @State var navigationEnum: NavigationEnum? = .none
-//    
-//    let element: TagContainer.Element
-//    
-//    init(_ element: TagContainer.Element) {
-//        self.element = element
-//    }
-//    
-//    var body: some View {
+
+
+// TODO: start
+
+fileprivate struct ElementView: Gameopticable {
+    
+    typealias Element = TagContainer.Element
+    
+    @EnvironmentObject public var builder: GameBuilder
+    
+    @State var navigation: Bool = false
+    @State var navigationEnum: NavigationEnum? = .none
+    
+    let element: Element
+    
+    init(_ element: Element) {
+        self.element = element
+    }
+    
+    var body: some View {
+        Text("TBD")
 //        BooleanView(isEditing, trueView: EditOnView, falseView: EditOffView)
 //            .navigationDestination(isPresented: $navigation, destination: {
 //                OptionalObjectView(self.navigationEnum, content: {
@@ -254,26 +260,26 @@ struct GameView: View {
 //                    }
 //                })
 //            })
-//    }
-//    
+    }
+    
 //    @ViewBuilder
 //    private func EditOffView() -> some View {
 //        switch element {
 //        case .inputs(let inputs):
-//            ForEach(inputs.enums) { key in
-//                OptionalObjectView(inputs.toString(key)) { value in
+//            SortedSetView(inputs.keys) { key in
+//                QuantifiableView(inputs.get(key).joined) { value in
 //                    FormattedView(key.rawValue.pluralize(), value)
 //                }
 //            }
 //        case .modes(let modes):
-//            ForEach(modes.enums) { mode in
+//            SortedSetView(modes) { mode in
 //                HStack(alignment: .center, spacing: 10) {
 //                    IconView(mode.icon)
 //                    Text(mode.rawValue)
 //                }
 //            }
 //        case .platforms(let platforms):
-//            ForEach(platforms.systemKeys) { system in
+//            SortedSetView(platforms.keys) { system in
 //                OptionalObjectView(platforms.get(system)) { formats in
 //                    OrientationStack(.vstack) {
 //                        Text(system.rawValue)
@@ -386,40 +392,44 @@ struct GameView: View {
 //            })
 //        }
 //    }
-//    
-//    @ViewBuilder
-//    private func ModeToggle(_ mode: TagBuilder) -> some View {
-//        Toggle(String.defaultValue, isOn: .init(get: {
-//            self.contains(mode)
-//        }, set: { newValue in
-//            if newValue {
-//                self.builder.add(mode)
-//            } else {
-//                self.builder.delete(mode)
-//            }
-//        }))
-//    }
-//    
-//    @ViewBuilder
-//    private func FormatsView(_ formats: Formats) -> some View {
-//        OptionalArrayView(formats.keys.sorted()) { keys in
-//            OrientationStack(.hstack) {
-//                ForEach(keys) { key in
-//                    OptionalArrayView(formats.get(key).sorted()) { builders in
-//                        OrientationStack(.hstack) {
-//                            IconView(key.icon, 16)
-//                            Text(builders.joined)
-//                                .font(.system(size: 14))
-//                                .foregroundColor(.gray)
-//                                .italic()
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    
-//}
+    
+    @ViewBuilder
+    private func ModeToggle(_ mode: TagBuilder) -> some View {
+        Toggle(String.defaultValue, isOn: .init(get: {
+            self.contains(mode)
+        }, set: { newValue in
+            if newValue {
+                self.builder.add(mode)
+            } else {
+                self.builder.delete(mode)
+            }
+        }))
+    }
+    
+    @ViewBuilder
+    private func FormatsView(_ formats: Formats) -> some View {
+        QuantifiableView(formats.keys) { keys in
+            OrientationStack(.hstack) {
+                SortedSetView(keys) { key in
+                    QuantifiableView(formats.get(key)) { builders in
+                        OrientationStack(.hstack) {
+                            IconView(key.icon, 16)
+                            Text(builders.joined)
+                                .font(.system(size: 14))
+                                .foregroundColor(.gray)
+                                .italic()
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+}
+
+// TODO: end
+
+
 
 
 //

@@ -82,7 +82,7 @@ extension GameBuilder {
     }
     
     public var count: Int {
-        self.tags.count
+        self.tags.quantity
     }
     
     public var game: GameSnapshot {

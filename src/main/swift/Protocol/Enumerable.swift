@@ -9,12 +9,11 @@ import Foundation
 
 public typealias Enumeror = any Enumerable
 
-public protocol Enumerable: Identifiable, Hashable, Comparable, Equatable, CaseIterable, Iterable {
+public protocol Enumerable: Identifiable, Hashable, Comparable, Equatable, CaseIterable, Iterable, Valuable {
     
     typealias Cases = [Self]
     
     var id: String { get }
-    var rawValue: String { get }
 }
 
 public extension Enumerable {
@@ -88,3 +87,4 @@ public extension Enumerable {
     }
      
 }
+

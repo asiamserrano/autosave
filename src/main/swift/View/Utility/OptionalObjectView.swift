@@ -15,7 +15,7 @@ struct OptionalObjectView<Element: Any, T: View>: View {
     let content: Content
     
     init(_ quantifiable: any Quantifiable, @ViewBuilder content: @escaping Content) {
-        self.element = quantifiable.isEmpty ? nil : quantifiable as? Element
+        self.element = quantifiable.isVacant ? nil : quantifiable as? Element
         self.content = content
     }
     
