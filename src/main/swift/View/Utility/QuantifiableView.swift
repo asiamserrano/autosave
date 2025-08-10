@@ -1,14 +1,14 @@
 //
-//  WrapperView.swift
+//  QuantifiableView.swift
 //  autosave
 //
-//  Created by Asia Michelle Serrano on 8/7/25.
+//  Created by Asia Serrano on 8/9/25.
 //
 
 import SwiftUI
 
-struct WrapperView<Element: Any, T: View>: View {
- 
+struct QuantifiableView<Element: Quantifiable, T: View>: View {
+    
     typealias Content = (Element) -> T
     
     private let element: Element
@@ -21,6 +21,7 @@ struct WrapperView<Element: Any, T: View>: View {
 
     var body: some View {
         content(element)
+            .show(element.isOccupied)
     }
     
 }

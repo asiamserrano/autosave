@@ -126,12 +126,12 @@ extension PropertyPredicate {
         }
     }
     
-    public static func getByLabel(_ enumeror: Enumeror, _ search: Binding<String>, _ strings: [String]) -> PropertyPredicate {
+    public static func getByLabel(_ enumeror: Enumeror, _ search: Binding<String>, _ sorted: SortedSet<String>) -> PropertyPredicate {
         let label_id: String = enumeror.id
         let canon = search.wrappedValue.canonicalized
+        let strings: [String] = sorted.list
         switch canon.count {
         case 0:
-            
             return #Predicate {
                 $0.label_id == label_id && !strings.contains($0.value_trim)
             }

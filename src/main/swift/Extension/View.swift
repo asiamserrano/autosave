@@ -60,9 +60,11 @@ extension View {
         HStack(alignment: .center) {
             Text(str.trimmed)
             Spacer()
-            OptionalView(isVisible, content: {
-                IconView(.checkmark)
-            })
+            IconView(.checkmark)
+                .show(isVisible)
+//            OptionalView(isVisible, content: {
+//                IconView(.checkmark)
+//            })
         }
     }
     

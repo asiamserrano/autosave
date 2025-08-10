@@ -22,9 +22,14 @@ public extension NestedSortedMap {
     typealias Keys = SortedSet<Key>
     typealias Index = Keys.Index
     
-    struct Element: Hashable {
-        let key: Key
-        let value: Value
+    struct Element: SortedMapElementProtocol {
+        public let key: Key
+        public let value: Value
+        
+        public  init(_ key: K, _ value: V) {
+            self.key = key
+            self.value = value
+        }
     }
 
     subscript(key: Key) -> Value? {
@@ -43,7 +48,7 @@ public extension NestedSortedMap {
     }
     
     func get(_ k: Key, _ v: Value) -> Element {
-        .init(key: k, value: v)
+        .init(k, v)
     }
 
 }
@@ -68,6 +73,15 @@ public extension Platforms {
         let key: Key = rhs.system.type
         lhs[key] = lhs.get(key) - rhs
     }
+    
+//    static func -=(lhs: inout Self, rhs: (Systems.K, Formats.K)) -> Void {
+////        let key: Key = rhs.0.type
+////        lhs[key] = lhs.get(key) - rhs
+//    }
+//    
+//    static func -=(lhs: inout Self, rhs: Systems.K) -> Void {
+//        lhs[rhs.type] = nil
+//    }
 
     func contains(_ builder: Builder) -> Bool {
         let key: Key = builder.system.type
@@ -109,6 +123,25 @@ public extension Systems {
         
         return new
     }
+    
+    static func -(lhs: Self, rhs: K) -> Self {
+        var new: Self = lhs
+        new -= rhs
+        return new
+    }
+    
+    static func -=(lhs: inout Self, rhs: K) -> Void {
+        lhs[rhs] = nil
+    }
+    
+    
+    
+//    static func -(lhs: Self, rhs: (K, Formats.K)) -> Self {
+//        var new: Self = lhs
+//        let key: K = rhs.0
+//        new[key] = new.get(key) - rhs.1
+//        return new
+//    }
     
     func contains(_ builder: PlatformBuilder) -> Bool {
         let key: Key = builder.system

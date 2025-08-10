@@ -7,59 +7,6 @@
 
 import Foundation
 
-
-public protocol SortedMapProtocol: Hashable, Defaultable, Quantifiable, RandomAccessCollection where Index == Keys.Index, Element: Hashable {
-    associatedtype K: Enumerable
-    associatedtype V: Hashable & Defaultable
-    associatedtype Keys: SortedSetProtocol where Keys.Element == K
-    
-    var keys: Keys { get }
-    
-    subscript(key: K) -> V? { get set }
-    
-    init()
-    
-    func get(_ key: K, _ v: V) -> Element
-}
-
-extension SortedMapProtocol {
-
-    public static var defaultValue: Self { .init() }
-    
-    public func get(_ key: K) -> V {
-        self[key] ?? .defaultValue
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        self.forEach { hasher.combine($0) }
-    }
-    
-    public func index(after i: Index) -> Index {
-        self.keys.index(after: i)
-    }
-    
-    public var startIndex: Index {
-        self.keys.startIndex
-    }
-    
-    public var endIndex: Index {
-        self.keys.endIndex
-    }
-    
-    public var quantity: Int {
-        self.keys.quantity
-    }
-    
-    public subscript(index: Index) -> Element {
-        get {
-            let key: K = self.keys[index]
-            let value: V = self.get(key)
-            return self.get(key, value)
-        }
-    }
-    
-}
-
 public struct SortedMap<Key: Enumerable, Value: SortedSetProtocol>: SortedMapProtocol {
     public private(set) var keys: Keys
     private var map: [Key: Value]
@@ -75,9 +22,14 @@ public extension SortedMap {
     typealias Keys = SortedSet<Key>
     typealias Index = Keys.Index
     
-    struct Element: Hashable {
-        let key: Key
-        let value: Value
+    struct Element: SortedMapElementProtocol {
+        public let key: Key
+        public let value: Value
+        
+        public  init(_ key: K, _ value: V) {
+            self.key = key
+            self.value = value
+        }
     }
 
     subscript(key: Key) -> Value? {
@@ -96,7 +48,7 @@ public extension SortedMap {
     }
     
     func get(_ k: Key, _ v: Value) -> Element {
-        .init(key: k, value: v)
+        .init(k, v)
     }
 
 }
@@ -136,6 +88,12 @@ public extension Formats {
         }
     }
     
+    static func -=(lhs: inout Self, rhs: FormatEnum?) -> Void {
+        if let rhs: FormatEnum = rhs {
+            lhs[rhs] = nil
+        }
+    }
+    
     static func +=(lhs: inout Self, rhs: Format?) -> Void {
         if let rhs: FormatBuilder = rhs {
             let key: Key = rhs.type
@@ -164,6 +122,23 @@ public extension Formats {
         var new: Self = lhs
         if let rhs: PlatformBuilder = rhs {
             let format: FormatBuilder = rhs.format
+            let key: Key = format.type
+            new[key] = new.get(format) - format
+        }
+        return new
+    }
+    
+    static func -(lhs: Self, rhs: Key?) -> Self {
+        var new: Self = lhs
+        if let rhs: FormatEnum = rhs {
+            new[rhs] = nil
+        }
+        return new
+    }
+    
+    static func -(lhs: Self, rhs: Format?) -> Self {
+        var new: Self = lhs
+        if let format: Format = rhs {
             let key: Key = format.type
             new[key] = new.get(format) - format
         }

@@ -17,29 +17,26 @@ struct GameImageView: Gameopticable {
     @State private var picker: ImagePickerEnum = .picker
     
     var body: some View {
-        OptionalView(isLibrary) {
-            Section {
-                VStack(alignment: .center) {
-                    ImageView()
-                        .onTapGesture(count: 2, perform: self.tapAction)
-                    OptionalView(isEditing) {
-                        HStack {
-                            PhotosPicker(selection: $photosPickerItem, matching: .images, photoLibrary: .shared()) {
-                                BoldCustomText(self.isBoxartEmpty ? .add : .edit)
-                            }
-                            .onChange(of: self.photosPickerItem, self.pickerAction)
-                            
-                            OptionalView(isBoxartNotEmpty) {
-                                Button(action: self.resetPhotosPickerItem, label: {
-                                    BoldCustomText(.delete)
-                                })
-                            }
-                        }
-                        .buttonStyle(.borderless)
+        Section {
+            VStack(alignment: .center) {
+                ImageView()
+                    .onTapGesture(count: 2, perform: self.tapAction)
+                HStack {
+                    PhotosPicker(selection: $photosPickerItem, matching: .images, photoLibrary: .shared()) {
+                        BoldCustomText(self.isBoxartEmpty ? .add : .edit)
                     }
+                    .onChange(of: self.photosPickerItem, self.pickerAction)
+                    
+                    Button(action: self.resetPhotosPickerItem, label: {
+                        BoldCustomText(.delete)
+                    })
+                    .hide(isBoxartEmpty)
                 }
+                .show(isEditing)
+                .buttonStyle(.borderless)
             }
         }
+        .show(isLibrary)
     }
     
 }

@@ -42,7 +42,7 @@ struct AddPlatformView: AddPlatformProtocol {
             
             BooleanView(self.isNavigationLinkDisabled, trueView: PlatformLabel, falseView: FalseView)
             
-            WrapperView(self.system) { systemBuilder in
+            OptionalView(self.system) { systemBuilder in
                 DigitalView(systemBuilder)
                 PhysicalView(systemBuilder)
             }
@@ -196,7 +196,7 @@ fileprivate extension AddPlatformProtocol {
     
     var element: Systems.Element? {
         if let system: SystemBuilder = self.system {
-            return .init(key: system, value: self.object.formats)
+            return .init(system, self.object.formats)
         } else {
             return nil
         }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1E4BF5962E47AE1B00650250 /* TagContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E4BF5942E47AE1B00650250 /* TagContainer.swift */; };
 		1E639C822DCE4BE800E478BF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1E639C812DCE4BE800E478BF /* Assets.xcassets */; };
 		1E64E2F12E41812F0077E0C1 /* TestingObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E64E2F02E41812F0077E0C1 /* TestingObject.swift */; };
 		1E64E2F32E425C250077E0C1 /* SortedMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E64E2F22E425C250077E0C1 /* SortedMap.swift */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1E4BF5942E47AE1B00650250 /* TagContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagContainer.swift; sourceTree = "<group>"; };
 		1E639C812DCE4BE800E478BF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1E64E2F02E41812F0077E0C1 /* TestingObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestingObject.swift; sourceTree = "<group>"; };
 		1E64E2F22E425C250077E0C1 /* SortedMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortedMap.swift; sourceTree = "<group>"; };
@@ -26,6 +28,11 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		1E4BF6842E47B46500650250 /* View */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = View;
+			sourceTree = "<group>";
+		};
 		1E639C872DCE4EC600E478BF /* Class */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Class;
@@ -54,11 +61,6 @@
 		1E639CB82DCE4ED900E478BF /* Struct */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Struct;
-			sourceTree = "<group>";
-		};
-		62A13EB22E1D7C1900B9D738 /* View */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = View;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -98,6 +100,7 @@
 				624CA0282E412FB700C24DCB /* SortedSet.swift */,
 				1E64E2F22E425C250077E0C1 /* SortedMap.swift */,
 				1E750AAB2E466DFD00C5AF0A /* NestedSortedMap.swift */,
+				1E4BF5942E47AE1B00650250 /* TagContainer.swift */,
 				1E64E2F02E41812F0077E0C1 /* TestingObject.swift */,
 				1E639C872DCE4EC600E478BF /* Class */,
 				1E639C8C2DCE4ECD00E478BF /* Enum */,
@@ -105,7 +108,7 @@
 				1E639CAE2DCE4ED400E478BF /* Model */,
 				1E639CB22DCE4ED700E478BF /* Protocol */,
 				1E639CB82DCE4ED900E478BF /* Struct */,
-				62A13EB22E1D7C1900B9D738 /* View */,
+				1E4BF6842E47B46500650250 /* View */,
 			);
 			path = swift;
 			sourceTree = "<group>";
@@ -150,13 +153,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				1E4BF6842E47B46500650250 /* View */,
 				1E639C872DCE4EC600E478BF /* Class */,
 				1E639C8C2DCE4ECD00E478BF /* Enum */,
 				1E639C9E2DCE4ECF00E478BF /* Extension */,
 				1E639CAE2DCE4ED400E478BF /* Model */,
 				1E639CB22DCE4ED700E478BF /* Protocol */,
 				1E639CB82DCE4ED900E478BF /* Struct */,
-				62A13EB22E1D7C1900B9D738 /* View */,
 			);
 			name = autosave;
 			packageProductDependencies = (
@@ -217,6 +220,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				624CA0292E412FB700C24DCB /* SortedSet.swift in Sources */,
+				1E4BF5962E47AE1B00650250 /* TagContainer.swift in Sources */,
 				1E64E2F12E41812F0077E0C1 /* TestingObject.swift in Sources */,
 				1E64E2F32E425C250077E0C1 /* SortedMap.swift in Sources */,
 				1E90FC102DCB17F600682C80 /* autosaveApp.swift in Sources */,

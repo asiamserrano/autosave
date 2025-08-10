@@ -26,6 +26,12 @@ extension Array {
     
 }
 
+extension Array: Quantifiable {
+    
+    public var quantity: Int { self.count }
+    
+}
+
 public extension Array where Element: Hashable {
     
     var deduped: Self {

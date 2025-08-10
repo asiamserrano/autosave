@@ -21,41 +21,18 @@ struct BooleanView<TrueContent: View, FalseContent: View>: View {
         self.trueContent = trueView
         self.falseContent = falseView
     }
+    
+    init(_ quantifiable: any Quantifiable, @ViewBuilder isOccupied: @escaping True, @ViewBuilder isVacant: @escaping False) {
+        self.boolean = quantifiable.isOccupied
+        self.trueContent = isOccupied
+        self.falseContent = isVacant
+    }
 
     var body: some View {
-        if boolean {
-            trueContent()
-        } else {
-            falseContent()
-        }
-    }
-}
-
-struct TrueView<T: View>: View {
-    
-    typealias Content = () -> T
-    
-    private let boolean: Bool
-    private let content: Content
-    
-    init(_ boolean: Bool, @ViewBuilder _ content: @escaping Content) {
-        self.boolean = boolean
-        self.content = content
-    }
-    
-    var body: some View {
-        if boolean {
-            content()
-        }
+        self.trueContent()
+            .show(self.boolean)
+        self.falseContent()
+            .hide(self.boolean)
     }
     
 }
-
-
-//#Preview {
-//    BooleanView(false, trueView: {
-//        Text("True View")
-//    }, falseView: {
-//        Text("False View")
-//    })
-//}

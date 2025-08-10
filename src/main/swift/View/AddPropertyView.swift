@@ -30,7 +30,7 @@ public struct AddPropertyView: AddPropertyProtocol {
     
     @StateObject fileprivate var object: AddProperty
     
-    init(_ builder: GameBuilder, _ input: InputEnum, _ used: [String]) {
+    init(_ builder: GameBuilder, _ input: InputEnum, _ used: SortedSet<String>) {
         self.builder = builder
         self._object = .init(wrappedValue: .init(input, used))
     }
@@ -56,16 +56,15 @@ public struct AddPropertyView: AddPropertyProtocol {
         @Query var models: [PropertyModel]
         @Query var searchResults: [PropertyModel]
         
-        init(_ input: InputEnum, _ used: [String], _ binding: Binding<String>) {
+        init(_ input: InputEnum, _ used: SortedSet<String>, _ binding: Binding<String>) {
             self._models = .init(filter: .getByLabel(input, binding, used), sort: .defaultValue)
             self._searchResults = .init(filter: .getByInput(input, binding))
         }
         
         var body: some View {
             Form {
-                TrueView(searchResults.isEmpty && search.isOccupied) {
-                    Section(content: AddButton)
-                }
+                Section(content: AddButton)
+                    .show(searchResults.isEmpty && search.isOccupied)
                 
                 Section {
                     ForEach(models) { model in
@@ -127,9 +126,9 @@ fileprivate class AddProperty: ObservableObject {
     @Published var selected: StringBuilder? = .none
     
     let input: InputEnum
-    let used: [String]
+    let used: SortedSet<String>
     
-    init(_ i: InputEnum, _ u: [String]) {
+    init(_ i: InputEnum, _ u: SortedSet<String>) {
         self.input = i
         self.used = u
     }
@@ -143,7 +142,7 @@ fileprivate protocol AddPropertyProtocol: Gameopticable {
 fileprivate extension AddPropertyProtocol {
     
     var input: InputEnum { self.object.input }
-    var used: [String] { self.object.used }
+    var used: SortedSet<String> { self.object.used }
     var search: String { self.object.search }
     var selected: StringBuilder? { self.object.selected }
     

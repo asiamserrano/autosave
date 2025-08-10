@@ -23,8 +23,10 @@ struct GamesListView: View {
     }
     
     var body: some View {
-        OptionalView(models, "no games", content: {
+        BooleanView(models, isOccupied: {
             SearchView(status, search)
+        }, isVacant: {
+            Text("no games")
         })
         .searchable(text: $search)
         .toolbar {
@@ -54,13 +56,13 @@ fileprivate struct SearchView: View {
     }
     
     var body: some View {
-        OptionalView(models, "no results", content: {
+        BooleanView(models, isOccupied: {
             Form {
                 ForEach(models) { model in
                     NavigationLink(destination: {
                         GameView(model)
                     }, label: {
-                        OptionalObjectView(model.snapshot) { snapshot in
+                        WrapperView(model.snapshot) { snapshot in
                             VStack(alignment: .leading, spacing: 5) {
                                 Text(snapshot.title)
                                     .bold()
@@ -83,6 +85,8 @@ fileprivate struct SearchView: View {
                     }
                 })
             }
+        }, isVacant: {
+            Text("no results")
         })
     }
     

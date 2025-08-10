@@ -8,7 +8,7 @@
 import Foundation
 
 public enum NavigationEnum {
-    case property(GameBuilder, InputEnum, [String])
+    case property(GameBuilder, InputEnum, SortedSet<String>)
     case platform(GameBuilder, SystemBuilder?)
 }
 

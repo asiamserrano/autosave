@@ -248,85 +248,146 @@ fileprivate struct ElementView: Gameopticable {
     }
     
     var body: some View {
-        Text("TBD")
-//        BooleanView(isEditing, trueView: EditOnView, falseView: EditOffView)
-//            .navigationDestination(isPresented: $navigation, destination: {
-//                OptionalObjectView(self.navigationEnum, content: {
-//                    switch $0 {
-//                    case .property(let gameBuilder, let inputEnum, let array):
-//                        AddPropertyView(gameBuilder, inputEnum, array)
-//                    case .platform(let gameBuilder, let systemBuilder):
-//                        AddPlatformView(gameBuilder, systemBuilder)
-//                    }
-//                })
-//            })
+        BooleanView(isEditing, trueView: EditOnView, falseView: EditOffView)
+            .navigationDestination(isPresented: $navigation, destination: {
+                OptionalView(self.navigationEnum) { nav in
+                    switch nav {
+                    case .property(let gameBuilder, let inputEnum, let array):
+                        AddPropertyView(gameBuilder, inputEnum, array)
+                    case .platform(let gameBuilder, let systemBuilder):
+                        AddPlatformView(gameBuilder, systemBuilder)
+                    }
+                }
+            })
     }
     
-//    @ViewBuilder
-//    private func EditOffView() -> some View {
-//        switch element {
-//        case .inputs(let inputs):
-//            SortedSetView(inputs.keys) { key in
-//                QuantifiableView(inputs.get(key).joined) { value in
-//                    FormattedView(key.rawValue.pluralize(), value)
-//                }
-//            }
-//        case .modes(let modes):
-//            SortedSetView(modes) { mode in
-//                HStack(alignment: .center, spacing: 10) {
-//                    IconView(mode.icon)
-//                    Text(mode.rawValue)
-//                }
-//            }
-//        case .platforms(let platforms):
-//            SortedSetView(platforms.keys) { system in
-//                OptionalObjectView(platforms.get(system)) { formats in
-//                    OrientationStack(.vstack) {
-//                        Text(system.rawValue)
-//                            .bold()
-//                        FormatsView(formats)
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    
-//    @ViewBuilder
-//    private func EditOnView() -> some View {
-//        switch element {
-//        case .inputs(let inputs):
-//            OptionalObjectView(InputEnum.convert(tagType)) { input in
-//                OptionalObjectView(inputs.array(input)) { strings in
-//                    ButtonSection("add \(input.rawValue.lowercased())", action: {
-//                        self.navigationEnum = .property(builder, input, strings)
-//                        self.navigation.toggle()
-//                    }, content: {
-//                        ForEach(strings, id:\.self) { string in
-//                            Text(string)
-//                                .tag(string)
+    @ViewBuilder
+    private func EditOffView() -> some View {
+        switch element {
+        case .inputs(let inputs):
+            SortedSetView(inputs.keys) { key in
+                QuantifiableView(inputs.get(key).joined) { value in
+                    FormattedView(key.rawValue.pluralize(), value)
+                }
+            }
+        case .modes(let modes):
+            SortedSetView(modes) { mode in
+                HStack(alignment: .center, spacing: 10) {
+                    IconView(mode.icon)
+                    Text(mode.rawValue)
+                }
+            }
+        case .platforms(let platforms):
+            SortedMapView(platforms) { platform in
+                SortedMapView(platform.value) { system, formats in
+                    OrientationStack(.vstack) {
+                        Text(system.rawValue)
+                            .bold()
+                        FormatsView(formats)
+                    }
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func EditOnView() -> some View {
+        switch element {
+        case .inputs(let inputs):
+            InputsEditOnView(inputs)
+        case .modes(let modes):
+            ModesEditOnView(modes)
+        case .platforms(let platforms):
+            PlatformsEditOnView(platforms)
+        }
+    }
+    
+    @ViewBuilder
+    private func InputsEditOnView(_ inputs: Inputs) -> some View {
+        OptionalView(InputEnum.convert(tagType)) { input in
+            QuantifiableView(inputs.get(input).strings) { strings in
+                ButtonSection("add \(input.rawValue.lowercased())", action: {
+                    self.navigationEnum = .property(builder, input, strings)
+                    self.navigation.toggle()
+                }, content: {
+                    SortedSetView(strings) { string in
+                        Text(string).tag(string)
+                    }
+                    .onDelete(action: { indexSet in
+                        indexSet.forEach { index in
+                            let value: String = strings[index]
+                            let builder: InputBuilder = .init(input, value)
+                            let tag: TagBuilder = .input(builder)
+                            self.builder.delete(tag)
+                        }
+                    })
+                })
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func ModesEditOnView(_ modes: Modes) -> some View {
+        Section {
+            SortedSetView(ModeEnum.self) { mode in
+                HStack {
+                    IconView(mode.icon)
+                    Text(mode.rawValue)
+                    Spacer()
+                    ModeToggle(.mode(mode))
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func PlatformsEditOnView(_ platforms: Platforms) -> some View {
+        
+    }
+    
+    @ViewBuilder
+    private func Foo( _ systemBuilder: SystemBuilder, _ formats: Formats) -> some View {
+        
+        WrapperView(formats.keys) { formatEnums in
+            SortedSetView(formatEnums) { formatEnum in
+                SortedSetView(formats.get(formatEnum)) { formatBuilder in
+                    DisclosureGroup(content: {
+                        
+                        
+//                        ForEach(formatBuilders) { formatBuilder in
+//                            HStack(spacing: 15) {
+//                                IconView(.arrow_right, .blue)
+//                                Text(formatBuilder.rawValue)
+//                            }
 //                        }
 //                        .onDelete(perform: { indexSet in
-//                            indexSet.forEach { index in
-//                                let value: String = strings[index]
-//                                let builder: InputBuilder = .init(input, value)
-//                                let tag: TagBuilder = .input(builder)
-//                                self.builder.delete(tag)
+//                            indexSet.forEach {
+//                                self.builder.delete(systemBuilder, formatBuilders[$0])
 //                            }
 //                        })
-//                    })
-//                }
-//            }
-//        case .modes:
-//            Section {
-//                ForEach(ModeEnum.cases) { mode in
-//                    HStack {
-//                        IconView(mode.icon)
-//                        Text(mode.rawValue)
-//                        Spacer()
-//                        ModeToggle(.mode(mode))
-//                    }
-//                }
-//            }
+                    }, label: {
+                        HStack {
+                            IconView(formatEnum.icon, .blue)
+                            Text(formatEnum.rawValue)
+                        }
+                    })
+                }
+            }
+            .onDelete { indexSet in
+                indexSet.forEach {
+                    self.builder.delete(systemBuilder, formatEnums[$0])
+                }
+            }
+            
+        }
+        
+        
+        
+    }
+    
+//
+//    @ViewBuilder
+//    private func EditOnView() -> some View {
 //        case .platforms(let platforms):
 //            ButtonSection("add \(self.tagType.rawValue)", platforms.unused.isEmpty, action: {
 //                self.navigationEnum = .platform(builder, nil)
@@ -392,34 +453,30 @@ fileprivate struct ElementView: Gameopticable {
 //            })
 //        }
 //    }
-    
+        
     @ViewBuilder
     private func ModeToggle(_ mode: TagBuilder) -> some View {
         Toggle(String.defaultValue, isOn: .init(get: {
             self.contains(mode)
         }, set: { newValue in
-            if newValue {
+            self.boolean_action(newValue, TRUE: {
                 self.builder.add(mode)
-            } else {
+            }, FALSE: {
                 self.builder.delete(mode)
-            }
+            })
         }))
     }
     
     @ViewBuilder
     private func FormatsView(_ formats: Formats) -> some View {
-        QuantifiableView(formats.keys) { keys in
+        SortedMapView(formats) { key, value in
             OrientationStack(.hstack) {
-                SortedSetView(keys) { key in
-                    QuantifiableView(formats.get(key)) { builders in
-                        OrientationStack(.hstack) {
-                            IconView(key.icon, 16)
-                            Text(builders.joined)
-                                .font(.system(size: 14))
-                                .foregroundColor(.gray)
-                                .italic()
-                        }
-                    }
+                OrientationStack(.hstack) {
+                    IconView(key.icon, 16)
+                    Text(value.joined)
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                        .italic()
                 }
             }
         }

@@ -81,7 +81,11 @@ fileprivate struct PropertiesView: View {
     
     @ViewBuilder
     func OptionalPropertyView(@ViewBuilder _ content: @escaping () -> some View) -> some View {
-        OptionalView(models, property.message, content: content)
+        BooleanView(models, isOccupied: content, isVacant: {
+            if let message: String = property.message {
+                Text(message)
+            }
+        })
     }
     
     @ViewBuilder
