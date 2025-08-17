@@ -19,6 +19,13 @@ public struct NestedSortedMap<Key: Enumerable, Value: SortedMapProtocol>: Sorted
 
 public extension NestedSortedMap {
     
+    static func --> (lhs: Self, rhs: (K, V?)) -> Self {
+        let value: V = rhs.1 ?? .defaultValue
+        var new: Self = lhs
+        new[rhs.0] = value.isEmpty ? nil : value
+        return new
+    }
+    
     typealias Keys = SortedSet<Key>
     typealias Index = Keys.Index
     
@@ -54,10 +61,22 @@ public extension NestedSortedMap {
 }
 
 public extension Platforms {
-
+    
     typealias Builder = PlatformBuilder
     
-    static func +=(lhs: inout Self, rhs: Value.Element) -> Void {
+    static func + (lhs: Self, rhs: (V.K, Value.V.V.Element)) -> Self {
+        let system: SystemBuilder = rhs.0
+        let key: SystemEnum = system.type
+        
+        return lhs --> (key, lhs.get(key) + .init(system, rhs.1))
+    }
+    
+    static func -=(lhs: inout Self, rhs: Element) -> Void {
+        let value: V = rhs.value
+        lhs[rhs.key] = value.isEmpty ? nil : value
+    }
+    
+    static func +=(lhs: inout Self, rhs: V.Element) -> Void {
         let key: Key = rhs.key.type
         var value: Value = lhs.get(key)
         value[rhs.key] = rhs.value
@@ -101,9 +120,24 @@ public extension Platforms {
 //        Systems.Key.cases.filter { self.systemKeys.lacks($0) }
 //    }
     
+    var unused: SortedSet<Value.K> {
+        .init(Value.K.cases.filter { self.flatMap { $0.value.keys }.lacks($0) })
+    }
+    
 }
 
 public extension Systems {
+    
+//    static func --> (lhs: Self, rhs: Element) -> Self {
+//        let value: V = rhs.value
+//        var new: Self = lhs
+//        new[rhs.key] = value.isEmpty ? nil : value
+//        return new
+//    }
+    
+//    static func +(lhs: Self, rhs: (SystemBuilder, FormatBuilder)) -> Self {
+//        lhs + .init(rhs.0, rhs.1)
+//    }
     
     static func +(lhs: Self, rhs: PlatformBuilder?) -> Self {
         var new: Self = lhs
@@ -150,3 +184,14 @@ public extension Systems {
     }
     
 }
+
+
+//
+//fileprivate extension SortedSet {
+//    
+//    static func -->(lhs: inout Self, rhs: Group) -> Void {
+//        lhs.set = rhs
+//        lhs.list = rhs.sorted()
+//    }
+//    
+//}

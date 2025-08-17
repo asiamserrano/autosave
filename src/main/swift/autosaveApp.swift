@@ -10,11 +10,12 @@ import SwiftData
 
 infix operator -->: AdditionPrecedence
 
+public typealias TagBuilders = SortedSet<TagBuilder>
 public typealias StringBuilders = SortedSet<StringBuilder>
 public typealias FormatBuilders = SortedSet<FormatBuilder>
 
 public typealias Inputs = SortedMap<InputEnum, StringBuilders>
-public typealias Modes = SortedSet<ModeEnum>
+//public typealias Modes = SortedSet<ModeEnum>
 
 public typealias Formats = SortedMap<FormatEnum, FormatBuilders>
 

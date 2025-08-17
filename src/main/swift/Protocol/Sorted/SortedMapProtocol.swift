@@ -57,4 +57,8 @@ extension SortedMapProtocol {
         }
     }
     
+    public func get(_ k: K, _ v: V) -> Element {
+        .init(k, v)
+    }
+    
 }

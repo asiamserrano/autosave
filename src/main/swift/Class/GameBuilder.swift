@@ -145,9 +145,15 @@ extension GameBuilder {
     }
     
     public func delete(_ system: SystemBuilder) -> Void {
-//        let formats: Formats = self.tags.get(system)
-//        formats.values.forEach { self.delete(system, $0) }
+        let formats: Formats = self.tags.get(system)
+        formats.keys.forEach { self.delete(system, $0) }
     }
+    
+//    public func delete(_ systemEnum: SystemEnum, _ systemBuilder: SystemBuilder) -> Void {
+//        let systems: Systems = self.tags.get
+////        let formats: Formats = self.tags.get(system)
+////        formats.values.forEach { self.delete(system, $0) }
+//    }
     
     public func delete(_ system: SystemBuilder, _ format: FormatEnum) -> Void {
         let formats: Formats = self.tags.get(system)

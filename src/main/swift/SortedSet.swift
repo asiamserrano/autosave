@@ -9,26 +9,13 @@ import Foundation
 
 public struct SortedSet<Element: Hashable & Comparable>: SortedSetProtocol {
     
-    private var set: Group
+    public typealias List = [Element]
+    public typealias Index = List.Index
+    
+    public private(set) var set: Group
     public private(set) var list: List
-    
-    public init() {
-        self.init(.defaultValue, .defaultValue)
-    }
-    
-    public init(_ party: Party) {
-        let set: Group = .init(party)
-        let list: List = party.sorted()
-        self.init(set, list)
-    }
-    
-    public init(_ elements: Element...) {
-        let set: Group = .init(elements)
-        let list: List = elements.sorted()
-        self.init(set, list)
-    }
-    
-    private init(_ set: Group, _ list: List) {
+
+    public init(_ set: Group, _ list: List) {
         self.set = set
         self.list = list
     }
@@ -36,23 +23,6 @@ public struct SortedSet<Element: Hashable & Comparable>: SortedSetProtocol {
 }
 
 public extension SortedSet {
-            
-//    typealias Party = any Collection<Element>
-    typealias List = [Element]
-    typealias Group = Set<Element>
-    typealias Index = List.Index
-
-    static func +=(lhs: inout Self, rhs: Element) -> Void {
-        lhs --> (lhs.set + rhs)
-    }
-    
-    static func -=(lhs: inout Self, rhs: Element) -> Void {
-        lhs --> (lhs.set - rhs)
-    }
-    
-}
-
-fileprivate extension SortedSet {
     
     static func -->(lhs: inout Self, rhs: Group) -> Void {
         lhs.set = rhs

@@ -20,6 +20,10 @@ public struct InputBuilder {
     let type: InputEnum
     let string: String
     
+    public init(_ t: InputEnum, _ s: StringBuilder) {
+        self.init(t, s.trim)
+    }
+    
     public init(_ t: InputEnum, _ s: String) {
         self.type = t
         self.string = s.trimmed

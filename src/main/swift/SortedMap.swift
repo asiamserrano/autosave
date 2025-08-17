@@ -46,10 +46,6 @@ public extension SortedMap {
             }
         }
     }
-    
-    func get(_ k: Key, _ v: Value) -> Element {
-        .init(k, v)
-    }
 
 }
 
@@ -63,6 +59,13 @@ public extension Inputs {
     static func -=(lhs: inout Self, rhs: InputBuilder) -> Void {
         let key: InputEnum = rhs.type
         lhs[key] = lhs.get(key) - rhs.stringBuilder
+    }
+    
+    static func + (lhs: Self, rhs: (Key, String)) -> Self {
+        let key: Key = rhs.0
+        var new: Self = lhs
+        new[key] = new.get(key) + .string(rhs.1)
+        return new
     }
     
 //    func toString(_ key: Key) -> String? {

@@ -48,3 +48,9 @@ extension StringBuilder: Valuable {
     public var rawValue: String { self.trim }
     
 }
+
+extension StringBuilder: Identifiable {
+    
+    public var id: Int { self.hashValue }
+    
+}

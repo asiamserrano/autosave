@@ -40,6 +40,8 @@ struct AddPlatformView: AddPlatformProtocol {
         
         Form {
             
+            Text("object count: \(self.object.count.description)")
+            
             BooleanView(self.isNavigationLinkDisabled, trueView: PlatformLabel, falseView: FalseView)
             
             OptionalView(self.system) { systemBuilder in
@@ -54,8 +56,11 @@ struct AddPlatformView: AddPlatformProtocol {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {
                     if let element: Systems.Element = self.element {
+                        print("setting")
                         self.builder.set(element)
                         self.dismiss()
+                    } else {
+                        print("not setting")
                     }
                 }, label: {
                     CustomText(.done)
@@ -78,7 +83,7 @@ struct AddPlatformView: AddPlatformProtocol {
     
     @ViewBuilder
     private func DigitalView(_ systemBuilder: SystemBuilder) -> some View {
-        WrapperView(systemBuilder.digitalBuilders) { digitals in
+        QuantifiableView(systemBuilder.digitalBuilders) { digitals in
             Section("Digital") {
                 SortedSetView(digitals) { digital in
                     Button(action: {
@@ -157,6 +162,12 @@ fileprivate class AddPlatform: ObservableObject {
         self.isNavigationLinkDisabled = system != nil
     }
     
+    var count: Int {
+        var c: Int = 0
+        self.formats.forEach { c = c + $0.value.count }
+        return c
+    }
+    
 }
 
 fileprivate protocol AddPlatformProtocol: Gameopticable {
@@ -202,4 +213,52 @@ fileprivate extension AddPlatformProtocol {
         }
     }
     
+}
+
+
+
+private struct AddPlatformViewPreview: View {
+    
+    @StateObject var builder: GameBuilder = .init(.library)
+    
+    var body: some View {
+        NavigationStack {
+            Form {
+                Text("builder count: \(self.builder.tags.quantity)")
+                
+                Section {
+                    ForEach(self.builder.tags.builders) { t in
+                        switch t {
+                        case .input(let i):
+                            FormattedView(i.type.rawValue, i.string)
+                        case .mode(let m):
+                            FormattedView("Mode", m.rawValue)
+                        case .platform(let p):
+                            FormattedView(p.system.rawValue, p.format.rawValue)
+                        }
+                    }
+                }
+
+                SortedSetView(SystemEnum.self) { systemEnum in
+                    Section(systemEnum.rawValue) {
+                        ForEach(SystemBuilder.cases.filter { $0.type == systemEnum}) { systemBuilder in
+                            NavigationLink(destination: {
+                                AddPlatformView(self.builder, systemBuilder)
+                            }, label: {
+                                Text(systemBuilder.rawValue)
+                            })
+                            
+                        }
+                    }
+                }
+                
+            }
+        }
+        
+    }
+    
+}
+
+#Preview {
+    AddPlatformViewPreview()
 }

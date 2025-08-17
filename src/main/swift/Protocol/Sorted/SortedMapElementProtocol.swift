@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol SortedMapElementProtocol: Hashable {
+public protocol SortedMapElementProtocol: Identifiable, Hashable {
     associatedtype K: Enumerable
     associatedtype V: Hashable & Defaultable
 
@@ -15,4 +15,12 @@ public protocol SortedMapElementProtocol: Hashable {
     
     var key: K { get }
     var value: V { get }
+}
+
+extension SortedMapElementProtocol {
+    
+    public var id: Int {
+        self.hashValue
+    }
+    
 }
