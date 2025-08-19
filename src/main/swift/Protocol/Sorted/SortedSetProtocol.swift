@@ -7,47 +7,47 @@
 
 import Foundation
 
-public protocol SortedSetProtocol: Defaultable, Hashable, Quantifiable, RandomAccessCollection where Element: Hashable & Comparable, Index == List.Index {
+public protocol SortedSetProtocol: Defaultable, Hashable, Quantifiable, RandomAccessCollection where Element: Hashable & Comparable, Index == Ordered.Index {
     
     typealias Party = any Collection<Element>
-    typealias Group = Set<Element>
-    typealias List = [Element]
+    typealias Unordered = Set<Element>
+    typealias Ordered = [Element]
     
-    var set: Group { get }
-    var list: List { get }
+    var unordered: Unordered { get }
+    var ordered: Ordered { get }
     
     func contains(_ element: Element) -> Bool
     
-    init(_ g: Group, _ l: List)
+    init(_ u: Unordered, _ o: Ordered)
     
-    static func -->(lhs: inout Self, rhs: Group) -> Void
+    static func -->(lhs: inout Self, rhs: Unordered) -> Void
     
 }
 
 public extension SortedSetProtocol {
     
     var quantity: Int {
-        self.list.count
+        self.ordered.count
     }
     
     var startIndex: Index {
-        list.startIndex
+        ordered.startIndex
     }
     
     var endIndex: Index {
-        list.endIndex
+        ordered.endIndex
     }
     
     subscript(index: Index) -> Element {
-        get { return list[index] }
+        get { return ordered[index] }
     }
     
     func index(after i: Index) -> Index {
-        list.index(after: i)
+        ordered.index(after: i)
     }
     
     func hash(into hasher: inout Hasher) {
-        self.list.forEach { hasher.combine($0) }
+        self.ordered.forEach { hasher.combine($0) }
     }
     
 }
@@ -61,15 +61,15 @@ public extension SortedSetProtocol {
     }
     
     init(_ party: Party) {
-        let set: Group = .init(party)
-        let list: List = party.sorted()
-        self.init(set, list)
+        let unordered: Unordered = .init(party)
+        let ordered: Ordered = party.sorted()
+        self.init(unordered, ordered)
     }
     
     init(_ elements: Element...) {
-        let set: Group = .init(elements)
-        let list: List = elements.sorted()
-        self.init(set, list)
+        let unordered: Unordered = .init(elements)
+        let ordered: Ordered = elements.sorted()
+        self.init(unordered, ordered)
     }
     
 }
@@ -81,15 +81,15 @@ public extension SortedSetProtocol {
     static var defaultValue: Self { .init() }
     
     static func -=(lhs: inout Self, rhs: Index) -> Void {
-        lhs -= lhs.list[rhs]
+        lhs -= lhs.ordered[rhs]
     }
     
     static func +=(lhs: inout Self, rhs: Element) -> Void {
-        lhs --> (lhs.set + rhs)
+        lhs --> (lhs.unordered + rhs)
     }
     
     static func -=(lhs: inout Self, rhs: Element) -> Void {
-        lhs --> (lhs.set - rhs)
+        lhs --> (lhs.unordered - rhs)
     }
     
     static func +=(lhs: inout Self, rhs: Self) -> Void {
@@ -112,13 +112,19 @@ public extension SortedSetProtocol {
         return new
     }
     
+    static func -(lhs: Self, rhs: Index) -> Self {
+        var new: Self = lhs
+        new -= rhs
+        return new
+    }
+    
     static func +(lhs: Self, rhs: Self) -> Self {
-        let group: Group = lhs.set.union(rhs.set)
+        let group: Unordered = lhs.unordered.union(rhs.unordered)
         return .init(group)
     }
 
     static func -(lhs: Self, rhs: Self) -> Self {
-        let group: Group = lhs.set.subtracting(rhs.set)
+        let group: Unordered = lhs.unordered.subtracting(rhs.unordered)
         return .init(group)
     }
     

@@ -11,17 +11,19 @@ struct QuantifiableView<Element: Quantifiable, T: View>: View {
     
     typealias Content = (Element) -> T
     
-    private let element: Element
+    private let element: Element?
     private let content: Content
     
-    init(_ element: Element, @ViewBuilder content: @escaping Content) {
+    init(_ element: Element?, @ViewBuilder content: @escaping Content) {
         self.element = element
         self.content = content
     }
 
     var body: some View {
-        content(element)
-            .show(element.isOccupied)
+        if let element: Element = element {
+            content(element)
+                .show(element.isOccupied)
+        }
     }
     
 }

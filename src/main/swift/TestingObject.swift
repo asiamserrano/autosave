@@ -1,189 +1,124 @@
-////
-////  TestingObject.swift
-////  autosave
-////
-////  Created by Asia Serrano on 8/4/25.
-////
 //
-//import Foundation
+//  TestingObject.swift
+//  autosave
 //
-//public struct TagContainer {
-//    
-//    public var builders: Builders = .defaultValue
-//    
-//    private var inputs: Inputs = .defaultValue
-//    private var modes: Modes = .defaultValue
-//    private var platforms: Platforms = .defaultValue
-//    
-//}
+//  Created by Asia Serrano on 8/4/25.
 //
-//private extension TagContainer {
-//    
-//    static var RANDOM_RANGE: Range<Int> = 0..<3
-//    
-//}
-//
-//public extension TagContainer {
-//    
-//    typealias Builder = TagBuilder
-//    typealias Builders = SortedSet<Builder>
-//    
-//    enum Element: Quantifiable {
-//        case inputs(Inputs)
-//        case modes(Modes)
-//        case platforms(Platforms)
-//
-//        public var quantity: Int {
-//            switch self {
-//            case .inputs(let inputs):
-//                return inputs.count
-//            case .modes(let modes):
-//                return modes.count
-//            case .platforms(let platforms):
-//                return platforms.count
-//            }
-//        }
-//
-//    }
-//    
-//    static func ==(lhs: Self, rhs: Builders) -> Bool {
-//        lhs.builders == rhs
-//    }
-//    
-//    static func +=(lhs: inout Self, rhs: Builder?) -> Void {
-//        if let builder: Builder = rhs {
-//            switch builder {
-//            case .input(let input):
-//                lhs.inputs += input
-//            case .mode(let mode):
-//                lhs.modes += mode
-//            case .platform(let platform):
-//                lhs.platforms += platform
-//            }
-//            
-//            lhs.builders += builder
-//        }
-//    }
-//    
-//    static func -=(lhs: inout Self, rhs: Builder?) -> Void {
-//        if let builder: Builder = rhs {
-//            switch builder {
-//            case .input(let input):
-//                lhs.inputs -= input
-//            case .mode(let mode):
-//                lhs.modes -= mode
-//            case .platform(let platform):
-//                print(platform)
-//                lhs.platforms -= platform
-//            }
-//            
-//            lhs.builders -= builder
-//        }
-//    }
-//    
-//    static func build(_ relations: [RelationModel], _ properties: [PropertyModel]) -> Self {
-//        var new: Self = .init()
-//        relations.forEach {
-//            if let builder: Builder = $0.getTagBuilder(properties) {
-//                new += builder
-//            }
-//        }
-//        return new
-//    }
-//    
-//    static func random(_ status: GameStatusEnum) -> Self {
-//        switch status {
-//        case .library:
-//            return .random
-//        case .wishlist:
-//            return .defaultValue
-//        }
-//    }
-//
-//    static var random: Self {
-//        var new: Self = .init()
-//        
-//        var bool: Bool = false
-//        
-//        InputEnum.cases.forEach { i in
-//            let strings: StringBuilders = .random(RANDOM_RANGE)
-//            strings.forEach { value in
-//                let input: InputBuilder = .init(i, value.trim)
-//                new += (.input(input))
-//            }
-//        }
-//        
-//        ModeEnum.allCases.forEach { mode in
-//            bool = .random()
-//            if bool {
-//                new += (.mode(mode))
-//            }
-//        }
-//        
-//        let systems: SortedSet<SystemBuilder> = .random(RANDOM_RANGE)
-//        
-//        systems.forEach { system in
-//            system.formatBuilders.forEach { format in
-//                bool = .random()
-//                if bool {
-//                    let platform: PlatformBuilder = .init(system, format)
-//                    new += (.platform(platform))
-//                }
-//            }
-//        }
-//        
-//        return new
-//    }
-//    
-//    func get(_ category: TagCategory) -> Element {
-//        switch category {
-//        case .input:
-//            return .inputs(self.inputs)
-//        case .mode:
-//            return .modes(self.modes)
-//        case .platform:
-//            return .platforms(self.platforms)
-//        }
-//    }
-//    
-//    func get(_ tagType: TagType) -> Element {
-//        self.get(tagType.category)
-//    }
-//    
-//    func get(_ system: Systems.K?) -> Formats {
-//        if let system: Systems.K = system {
-//            return self.platforms.get(system)
-//        } else {
-//            return .defaultValue
-//        }
-//    }
-//    
-//    func contains(_ builder: Builder) -> Bool {
-//        self.builders.contains(builder)
-//    }
-//    
-//    var systems: [Systems.K] {
-//        self.platforms.flatMap { $0.value.keys }
-//    }
-//    
-//}
-//
-//extension TagContainer: Stable {
-//    
-//    public func hash(into hasher: inout Hasher) {
-//        hasher.combine(self.builders)
-//    }
-//    
-//}
-//
-//extension TagContainer: Defaultable {
-//    
-//    public static var defaultValue: Self { .init() }
-//    
-//}
-//
-//extension TagContainer: Quantifiable {
-//    
-//    public var quantity: Int { self.builders.count }
-//    
-//}
+
+import Foundation
+/*
+public protocol MapQueryKey { associatedtype Output }
+
+public struct InputKey: MapQueryKey {
+    public typealias Output = [String]
+    public let input: InputEnum
+    public init(_ input: InputEnum) { self.input = input }
+}
+
+public struct ModesKey: MapQueryKey {
+    public typealias Output = [ModeEnum]
+    public init() {}
+}
+
+// Query a concrete leaf: (SystemEnum, SystemBuilder, FormatEnum) → [FormatBuilder]
+public struct PlatformKey: MapQueryKey {
+    public typealias Output = [FormatBuilder]
+    public let system: SystemEnum
+    public let builder: SystemBuilder
+    public let format: FormatEnum
+    public init(_ system: SystemEnum, _ builder: SystemBuilder, _ format: FormatEnum) {
+        self.system = system; self.builder = builder; self.format = format
+    }
+}
+
+// (Optional) convenience keys for intermediate queries:
+public struct SystemBuildersKey: MapQueryKey {
+    public typealias Output = [SystemBuilder]
+    public let system: SystemEnum
+    public init(_ system: SystemEnum) { self.system = system }
+}
+
+public struct FormatsKey: MapQueryKey {
+    public typealias Output = [FormatEnum]
+    public let system: SystemEnum
+    public let builder: SystemBuilder
+    public init(_ system: SystemEnum, _ builder: SystemBuilder) {
+        self.system = system; self.builder = builder
+    }
+}
+
+public struct CatalogMap {
+    // Inputs and Modes unchanged...
+    private var inputs: [InputEnum: [String]] = [:]
+    private var modes: Set<ModeEnum> = []
+
+    // Platform: SystemEnum → SystemBuilder → FormatEnum → [FormatBuilder]
+    private var platforms: [SystemEnum: [SystemBuilder: [FormatEnum: [FormatBuilder]]]] = [:]
+
+    public init() {}
+}
+
+
+public extension CatalogMap {
+    // Inputs
+    subscript(key: InputKey) -> [String] {
+        get { inputs[key.input] ?? [] }
+        set { inputs[key.input] = newValue.isEmpty ? nil : newValue }
+    }
+
+    // Modes
+    subscript(key: ModesKey) -> [ModeEnum] {
+        get { Array(modes).sorted() }
+        set { modes = Set(newValue) }
+    }
+
+    // Platforms: leaf level
+    subscript(key: PlatformKey) -> [FormatBuilder] {
+        get { platforms[key.system]?[key.builder]?[key.format] ?? [] }
+        set {
+            if newValue.isEmpty {
+                // delete leaf and clean up empty parents
+                platforms[key.system]?[key.builder]?[key.format] = nil
+                if platforms[key.system]?[key.builder]?.isEmpty == true {
+                    platforms[key.system]?[key.builder] = nil
+                }
+                if platforms[key.system]?.isEmpty == true {
+                    platforms[key.system] = nil
+                }
+            } else {
+                platforms[key.system, default: [:]][key.builder, default: [:]][key.format] = newValue
+            }
+        }
+    }
+
+    // (Optional) intermediate queries
+    subscript(key: SystemBuildersKey) -> [SystemBuilder] {
+        get {
+            if let systems = self.platforms[key.system] {
+                return systems.keys.sorted()
+            } else {
+                return .defaultValue
+            }
+        }
+        set {
+            // if you want this to be writable, decide how to materialize empty builder buckets
+            // simplest: ignore setter or clear
+        }
+    }
+
+    subscript(key: FormatsKey) -> [FormatEnum] {
+        get {
+            if let systems = self.platforms[key.system] {
+                if let formats = systems[key.builder] {
+                    return formats.keys.sorted()
+                }
+            }
+            return .defaultValue
+        }
+        set {
+            // similar note as above; typically read-only
+        }
+    }
+}
+
+*/

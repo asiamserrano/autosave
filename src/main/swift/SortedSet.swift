@@ -9,24 +9,24 @@ import Foundation
 
 public struct SortedSet<Element: Hashable & Comparable>: SortedSetProtocol {
     
-    public typealias List = [Element]
-    public typealias Index = List.Index
+    public typealias Ordered = [Element]
+    public typealias Index = Ordered.Index
     
-    public private(set) var set: Group
-    public private(set) var list: List
+    public private(set) var unordered: Unordered
+    public private(set) var ordered: Ordered
 
-    public init(_ set: Group, _ list: List) {
-        self.set = set
-        self.list = list
+    public init(_ u: Unordered, _ o: Ordered) {
+        self.unordered = u
+        self.ordered = o
     }
-    
+        
 }
 
 public extension SortedSet {
     
-    static func -->(lhs: inout Self, rhs: Group) -> Void {
-        lhs.set = rhs
-        lhs.list = rhs.sorted()
+    static func -->(lhs: inout Self, rhs: Unordered) -> Void {
+        lhs.unordered = rhs
+        lhs.ordered = rhs.sorted()
     }
     
 }
@@ -67,6 +67,21 @@ extension SortedSet where Element == StringBuilder {
     
     public var strings: SortedSet<String> {
         .init(self.map { $0.trim })
+    }
+    
+    public func toBuilders(_ input: InputEnum) -> TagBuilders {
+        let inputs: [InputBuilder] = self.map { .init(input, $0) }
+        let tags: [TagBuilder] = inputs.map { .input($0) }
+        return .init(tags)
+    }
+    
+}
+
+extension SortedSet where Element == ModeEnum {
+    
+    public var toBuilders: TagBuilders {
+        let tags: [TagBuilder] = self.map { .mode($0) }
+        return .init(tags)
     }
     
 }

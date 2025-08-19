@@ -50,8 +50,8 @@ public class GameBuilder: ObservableObject {
     
     public convenience init(_ model: GameModel, _ relations: [RelationModel], _ properties: [PropertyModel]) {
         let snap: GameSnapshot = model.snapshot
-        let container: TagContainer = .build(relations, properties)
-        self.init(snap, container, .inactive)
+//        let container: TagContainer = .build(relations, properties)
+        self.init(snap, .defaultValue, .inactive)
     }
     
 }
@@ -126,45 +126,45 @@ extension GameBuilder {
     
     public typealias Builder = TagBuilder
     
-    public func add(_ builder: Builder) -> Void {
-        self.tags += builder
-    }
-    
-    public func set(_ element: Systems.Element) -> Void {
-//        let system: SystemBuilder = element.key
-//        self.tags.get(system).allBuilders.map {  PlatformBuilder(system, $0) }.map(TagBuilder.platform).forEach(self.delete)
-//        element.value.allBuilders.map {  PlatformBuilder(system, $0) }.map(TagBuilder.platform).forEach(self.add)
-    }
-    
-    public func delete(_ builder: Builder) -> Void {
-        self.tags -= builder
-    }
-    
-    private func delete(_ system: SystemBuilder, _ formats: FormatBuilders) -> Void {
-        formats.map { PlatformBuilder(system, $0) }.map(TagBuilder.platform).forEach(self.delete)
-    }
-    
-    public func delete(_ system: SystemBuilder) -> Void {
-        let formats: Formats = self.tags.get(system)
-        formats.keys.forEach { self.delete(system, $0) }
-    }
-    
-//    public func delete(_ systemEnum: SystemEnum, _ systemBuilder: SystemBuilder) -> Void {
-//        let systems: Systems = self.tags.get
-////        let formats: Formats = self.tags.get(system)
-////        formats.values.forEach { self.delete(system, $0) }
+//    public func add(_ builder: Builder) -> Void {
+//        self.tags += builder
 //    }
-    
-    public func delete(_ system: SystemBuilder, _ format: FormatEnum) -> Void {
-        let formats: Formats = self.tags.get(system)
-        let builders: FormatBuilders = formats[format] ?? .defaultValue
-        self.delete(system, builders)
-    }
-    
-    public func delete(_ system: SystemBuilder, _ format: FormatBuilder) -> Void {
-        let platform: PlatformBuilder = .init(system, format)
-        let builder: TagBuilder = .platform(platform)
-        self.delete(builder)
-    }
+//    
+//    public func set(_ element: Systems.Element) -> Void {
+////        let system: SystemBuilder = element.key
+////        self.tags.get(system).allBuilders.map {  PlatformBuilder(system, $0) }.map(TagBuilder.platform).forEach(self.delete)
+////        element.value.allBuilders.map {  PlatformBuilder(system, $0) }.map(TagBuilder.platform).forEach(self.add)
+//    }
+//    
+//    public func delete(_ builder: Builder) -> Void {
+//        self.tags -= builder
+//    }
+//    
+//    private func delete(_ system: SystemBuilder, _ formats: FormatBuilders) -> Void {
+//        formats.map { PlatformBuilder(system, $0) }.map(TagBuilder.platform).forEach(self.delete)
+//    }
+//    
+//    public func delete(_ system: SystemBuilder) -> Void {
+//        let formats: Formats = self.tags.get(system)
+//        formats.keys.forEach { self.delete(system, $0) }
+//    }
+//    
+////    public func delete(_ systemEnum: SystemEnum, _ systemBuilder: SystemBuilder) -> Void {
+////        let systems: Systems = self.tags.get
+//////        let formats: Formats = self.tags.get(system)
+//////        formats.values.forEach { self.delete(system, $0) }
+////    }
+//    
+//    public func delete(_ system: SystemBuilder, _ format: FormatEnum) -> Void {
+//        let formats: Formats = self.tags.get(system)
+//        let builders: FormatBuilders = formats[format] ?? .defaultValue
+//        self.delete(system, builders)
+//    }
+//    
+//    public func delete(_ system: SystemBuilder, _ format: FormatBuilder) -> Void {
+//        let platform: PlatformBuilder = .init(system, format)
+//        let builder: TagBuilder = .platform(platform)
+//        self.delete(builder)
+//    }
     
 }

@@ -92,7 +92,8 @@ public extension Gameopticable {
     }
     
     func contains(_ builder: TagBuilder) -> Bool {
-        self.tags.contains(builder)
+        false
+//        self.tags.contains(builder)
     }
     
     

@@ -13,14 +13,17 @@ infix operator -->: AdditionPrecedence
 public typealias TagBuilders = SortedSet<TagBuilder>
 public typealias StringBuilders = SortedSet<StringBuilder>
 public typealias FormatBuilders = SortedSet<FormatBuilder>
+public typealias SystemBuilders = SortedSet<SystemBuilder>
+public typealias FormatEnums = SortedSet<FormatEnum>
+public typealias SystemEnums = SortedSet<SystemEnum>
 
-public typealias Inputs = SortedMap<InputEnum, StringBuilders>
-//public typealias Modes = SortedSet<ModeEnum>
-
-public typealias Formats = SortedMap<FormatEnum, FormatBuilders>
-
-public typealias Systems = NestedSortedMap<SystemBuilder, Formats>
-public typealias Platforms = NestedSortedMap<SystemEnum, Systems>
+//public typealias Inputs = SortedMap<InputEnum, StringBuilders>
+////public typealias Modes = SortedSet<ModeEnum>
+//
+//public typealias Formats = SortedMap<FormatEnum, FormatBuilders>
+//
+//public typealias Systems = NestedSortedMap<SystemBuilder, Formats>
+//public typealias Platforms = NestedSortedMap<SystemEnum, Systems>
 //public typealias Systems = [SystemBuilder: Formats]
 //public typealias Platforms = [SystemEnum: Systems]
 
@@ -48,12 +51,13 @@ fileprivate struct ContentView: Configurable {
     var body: some View {
         NavigationStack {
             Group {
-                switch self.menu {
-                case .game(let status):
-                    GamesListView(status)
-                case .properties:
-                    PropertiesListView()
-                }
+                EmptyView()
+//                switch self.menu {
+//                case .game(let status):
+//                    GamesListView(status)
+//                case .properties:
+//                    PropertiesListView()
+//                }
             }
             .navigationTitle(self.menu.rawValue)
             .toolbar {
@@ -83,7 +87,7 @@ fileprivate struct ContentView: Configurable {
 
 #Preview {
     
-    let games_max: Int = 20
+//    let games_max: Int = 20
     
     let previewModelContainer: ModelContainer = {
         
@@ -92,19 +96,19 @@ fileprivate struct ContentView: Configurable {
         container.mainContext.autosaveEnabled = false
         container.mainContext.undoManager = .init()
                 
-        var isLibraryEmpty: Bool = true
-        
-        while container.mainContext.fetchCount(.game) < games_max || isLibraryEmpty {
-            if let model: GameModel = container.mainContext.save(.random) {
-                if model.status_bool {
-                    isLibraryEmpty = false
-                    let tags: TagContainer = .random
-                    tags.builders.forEach { builder in
-                        container.mainContext.save(model, builder)
-                    }
-                }
-            }
-        }
+//        var isLibraryEmpty: Bool = true
+//        
+//        while container.mainContext.fetchCount(.game) < games_max || isLibraryEmpty {
+//            if let model: GameModel = container.mainContext.save(.random) {
+//                if model.status_bool {
+//                    isLibraryEmpty = false
+//                    let tags: TagContainer = .random
+//                    tags.builders.forEach { builder in
+//                        container.mainContext.save(model, builder)
+//                    }
+//                }
+//            }
+//        }
         
         return container
         

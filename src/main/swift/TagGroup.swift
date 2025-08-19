@@ -7,193 +7,224 @@
 
 import Foundation
 
-public protocol TagGroupProtocol: Hashable, Defaultable, Quantifiable, RandomAccessCollection where Index == Keys.Index {
-    associatedtype K: Enumerable
-    associatedtype Keys: SortedSetProtocol where Keys.Element == K
+public protocol TagsQueryKey { associatedtype Output }
 
-    var keys: Keys { get }
+//public typealias StringBuilderMap = CustomDictionary
 
-    subscript(key: K) -> Element? { get set }
-
-    init()
-
-    func get(_ key: K) -> Element
+public struct InputsKey: TagsQueryKey {
+    public typealias Output = StringBuilders
+    public let input: InputEnum
+    public init(_ input: InputEnum) { self.input = input }
 }
 
-public struct TagGroup: TagGroupProtocol {
-    
-    static func +=(lhs: inout Self, rhs: Element) -> Void {
-        lhs[rhs.key] = rhs
-    }
-    
-    public enum Key: Enumerable {
-        case inputs
-        case modes
-        case platforms
-    }
-    
-    public enum Element: Quantifiable {
-        case inputs(Inputs)
-        case modes(Modes)
-        case platforms(Platforms)
+public struct ModesKey: TagsQueryKey {
+    public typealias Output = Modes
+    public init() {}
+}
 
-        public var key: Key {
-            switch self {
-            case .inputs:
-                return .inputs
-            case .modes:
-                return .modes
-            case .platforms:
-                return .platforms
-            }
-        }
+public struct PlatformKey: TagsQueryKey {
+    public typealias Output = SortedSet<SystemBuilder>
+    public let system: SystemEnum
+    public init(_ system: SystemEnum) { self.system = system }
+}
+
+// (Optional) convenience keys for intermediate queries:
+public struct SystemsKey: TagsQueryKey {
+    public typealias Output = SortedSet<FormatEnum>
+    public let builder: SystemBuilder
+    
+    public init(_ builder: SystemBuilder) {
+        self.builder = builder
+    }
+}
+
+public struct FormatsKey: TagsQueryKey {
+    public typealias Output = FormatBuilders
+    public let builder: SystemBuilder
+    public let format: FormatEnum
+    
+    public init(_ builder: SystemBuilder, _ format: FormatEnum) {
+        self.builder = builder
+        self.format = format
+    }
+    
+}
+
+
+//public typealias Inputs = [InputEnum: StringBuilders]
+public typealias Modes = SortedSet<ModeEnum>
+public typealias Inputs = SortedSet<InputEnum>
+public typealias Formats = [FormatEnum: FormatBuilders]
+public typealias Systems = [SystemBuilder: Formats]
+public typealias Platforms = [SystemEnum: Systems]
+
+public struct Tags {
+    
+    private var inputsMap: [InputEnum: StringBuilders] = .defaultValue
+    private var platformsMap: [SystemEnum: [SystemBuilder: [FormatEnum: FormatBuilders]]] = .defaultValue
+    private var map: TagsBuilders = .init()
+    
+    public private(set) var modes: Modes = .defaultValue
+    
+    public init() {}
+}
+
+public extension Tags {
+    
+    // remove a format builder
+    // remove a format enum
+    // remove a system builder
+    
+    typealias PlatformElement = (SystemBuilder, FormatEnum)
+    
+    static func -= (lhs: inout Self, rhs: PlatformBuilder) -> Void {
+        let sb: SystemBuilder = rhs.system
+        let fb: FormatBuilder = rhs.format
+        let se: SystemEnum = sb.type
+        let te: TagsEnum = .platform(sb)
         
-        public var quantity: Int {
-            switch self {
-            case .inputs(let inputs):
-                return inputs.count
-            case .modes(let modes):
-                return modes.count
-            case .platforms(let platforms):
-                return platforms.count
-            }
+        lhs.platformsMap --> (se, lhs[se] --> (lhs[sb] - (fb.type, fb), sb))
+        lhs.map --> (te, lhs[te] - .platform(rhs))
+    }
+    
+    static func -= (lhs: inout Self, rhs: PlatformElement) -> Void {
+        let systemBuilder: SystemBuilder = rhs.0
+        let formatEnum: FormatEnum = rhs.1
+        let systemEnum: SystemEnum = systemBuilder.type
+        let tagsEnum: TagsEnum = .platform(systemBuilder)
+        
+        var formats: Formats = lhs[systemBuilder]
+        
+        let formatBuilders: FormatBuilders = formats[formatEnum] ?? .defaultValue
+        
+        formats[formatEnum] = nil
+        
+        var systems: Systems = lhs[systemEnum]
+        systems[systemBuilder] = formats.isEmpty ? nil : formats
+        
+        lhs.platformsMap[systemEnum] = systems.isEmpty ? nil : systems
+        lhs.map[tagsEnum] = (lhs.map[tagsEnum] ?? .defaultValue) - .init(formatBuilders.map { .platform(.init(systemBuilder, $0)) })
+        
+    }
+    
+    static func -= (lhs: inout Self, rhs: SystemBuilder) -> Void {
+        var systems: Systems = lhs[rhs.type]
+        systems[rhs] = nil
+        lhs.platformsMap[rhs.type] = systems
+        lhs.map[.platform(rhs)] = nil
+    }
+
+    static func += (lhs: inout Self, rhs: TagBuilder) -> Void {
+        switch rhs {
+        case .input(let i):
+            let key: InputEnum = i.type
+            lhs[key] = lhs[key] + i.stringBuilder
+        case .mode(let m):
+            lhs --> (lhs.modes + m)
+        case .platform(let p):
+            let systemBuilder: SystemBuilder = p.system
+            let formatBuilder: FormatBuilder = p.format
+            let formatEnum: FormatEnum = formatBuilder.type
+            let systemEnum: SystemEnum = systemBuilder.type
+            let tagsEnum: TagsEnum = .platform(systemBuilder)
+            
+            var formats: Formats = lhs[systemBuilder]
+            
+            let formatBuilders: FormatBuilders = formats[formatEnum] ?? .defaultValue
+            
+            formats[formatEnum] = formatBuilders + formatBuilder
+            
+            var systems: Systems = lhs[systemEnum]
+            systems[systemBuilder] = formats.isEmpty ? nil : formats
+            
+            lhs.platformsMap[systemEnum] = systems.isEmpty ? nil : systems
+            lhs.map[tagsEnum] = (lhs.map[tagsEnum] ?? .defaultValue) + .platform(p)
         }
-
+    }
+    
+    static func -= (lhs: inout Self, rhs: TagBuilder) -> Void {
+        switch rhs {
+        case .input(let i):
+            let key: InputEnum = i.type
+            lhs[key] = lhs[key] - i.stringBuilder
+        case .mode(let m):
+            lhs --> (lhs.modes - m)
+        case .platform(let p):
+            lhs -= p
+        }
     }
 
-    public typealias K = Key
-    public typealias Keys = SortedSet<K>
-    public typealias Index = Keys.Index
+    var inputs: Inputs { .init(self.inputsMap.keys) }
+    var systems: SystemEnums { .init(self.platformsMap.keys) }
+    var builders: TagBuilders { .init(self.map.flatMap(\.value)) }
+        
+    func get(_ key: SystemEnum) -> SystemBuilders { .init(self[key].keys) }
+    func get(_ key: SystemBuilder) -> FormatEnums { .init(self[key].keys) }
+    func get(_ key: InputEnum) -> StringBuilders { self[key] }
+    func get(_ system: SystemBuilder, _ format: FormatEnum) -> FormatBuilders { self[(system, format)] }
+
+}
+
+private extension Tags {
     
-    private var inputs: Inputs
-    private var modes: Modes
-    private var platforms: Platforms
+    typealias TagsBuilders = [TagsEnum: TagBuilders]
     
-    public init() {
-        self.inputs = .defaultValue
-        self.modes = .defaultValue
-        self.platforms = .defaultValue
+    enum TagsEnum: Hashable {
+        case input(InputEnum)
+        case mode
+        case platform(SystemBuilder)
     }
     
-    public var quantity: Int {
-        self.builders.count
+    static func -->(lhs: inout Self, rhs: Modes) -> Void {
+        lhs.modes = rhs
+        lhs.map --> (.mode, rhs.toBuilders)
     }
-    
-    public var keys: SortedSet<K> {
-        .init(K.cases.filter { self[$0] != nil })
-    }
-    
-    public subscript(index: Index) -> Element {
+
+    subscript(key: InputEnum) -> StringBuilders {
         get {
-            switch K.cases[index] {
-            case .inputs:
-                return .inputs(self.inputs)
-            case .modes:
-                return .modes(self.modes)
-            case .platforms:
-                return .platforms(self.platforms)
-            }
+            self.inputsMap.get(key)
+        } set {
+            self.inputsMap --> (key, newValue)
+            self.map --> (.input(key), newValue.toBuilders(key))
         }
     }
     
-    public subscript(key: K) -> Element? {
+    subscript(key: SystemEnum) -> Systems {
         get {
-            let element: Element = self.get(key)
-            return element.isVacant ? nil : element
-        }
-        set {
-            if let newValue: Element = newValue {
-                switch newValue {
-                case .inputs(let i):
-                    self.inputs = i
-                case .modes(let m):
-                    self.modes = m
-                case .platforms(let p):
-                    self.platforms = p
-                }
-            }
+            self.platformsMap.get(key)
         }
     }
     
-    public func get(_ key: K) -> Element {
-        switch key {
-        case .inputs:
-            return .inputs(self.inputs)
-        case .modes:
-            return .modes(self.modes)
-        case .platforms:
-            return .platforms(self.platforms)
+    subscript(key: SystemBuilder) -> Formats {
+        get {
+            self[key.type].get(key)
         }
     }
     
-    public var startIndex: Index {
-        K.cases.startIndex
+    subscript(key: PlatformElement) -> FormatBuilders {
+        get {
+            self[key.0].get(key.1)
+        }
     }
     
-    public var endIndex: Index {
-        K.cases.endIndex
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(self.builders)
-    }
-    
-}
-
-extension TagGroup {
-    
-    public static var defaultValue: Self { .init() }
-    
-}
-
-private extension TagGroup {
-    
-    var builders: TagBuilders {
-        self.inputs.builders + self.modes.builders + self.platforms.builders
+    subscript(key: TagsEnum) -> TagBuilders {
+        get {
+            self.map.get(key)
+        }
     }
     
 }
 
-fileprivate extension Inputs {
-    
-    var builders: TagBuilders {
-        .init(self.flatMap { element in
-            element.value.map { stringBuilder in
-                let input: InputBuilder = .init(element.key, stringBuilder)
-                return .input(input)
-            }
-        })
-    }
-    
-}
-
-fileprivate extension Formats {
-    
-    func builders(_ system: SystemBuilder) -> TagBuilders {
-        .init(self.flatMap { element in
-            element.value.map { format in
-                let platform: PlatformBuilder = .init(system, format)
-                return .platform(platform)
-            }
-        })
-    }
-    
-}
-
-fileprivate extension Systems {
-    
-    var builders: TagBuilders {
-        .init(self.flatMap { element in
-            element.value.builders(element.key)
-        })
-    }
-    
-}
-
-fileprivate extension Platforms {
-    
-    var builders: TagBuilders {
-        .init(self.flatMap(\.value.builders))
-    }
-    
-}
+//fileprivate extension Formats {
+//    
+//    static func -= (lhs: inout Self, rhs: Key) -> Void {
+//        lhs[rhs] = nil
+//    }
+//    
+//    static func -= (lhs: inout Self, rhs: Value.Element) -> Void {
+//        let key: Key = rhs.type
+//        let value: Value = lhs.get(key) - rhs
+//        lhs[key] = value.isEmpty ? nil : value
+//    }
+//    
+//}
