@@ -17,15 +17,13 @@ public typealias SystemBuilders = SortedSet<SystemBuilder>
 public typealias FormatEnums = SortedSet<FormatEnum>
 public typealias SystemEnums = SortedSet<SystemEnum>
 
-//public typealias Inputs = SortedMap<InputEnum, StringBuilders>
-////public typealias Modes = SortedSet<ModeEnum>
-//
-//public typealias Formats = SortedMap<FormatEnum, FormatBuilders>
-//
-//public typealias Systems = NestedSortedMap<SystemBuilder, Formats>
-//public typealias Platforms = NestedSortedMap<SystemEnum, Systems>
-//public typealias Systems = [SystemBuilder: Formats]
-//public typealias Platforms = [SystemEnum: Systems]
+public typealias ModeEnums = SortedSet<ModeEnum>
+public typealias InputEnums = SortedSet<InputEnum>
+
+public typealias Inputs = [InputEnum: StringBuilders]
+public typealias Formats = [FormatEnum: FormatBuilders]
+public typealias Systems = [SystemBuilder: Formats]
+public typealias Platforms = [SystemEnum: Systems]
 
 @main
 struct autosaveApp: App {

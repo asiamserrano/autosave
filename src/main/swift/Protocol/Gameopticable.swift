@@ -34,7 +34,7 @@ public extension Gameopticable {
         self.builder.boxart
     }
     
-    var tags: TagContainer {
+    var tags: Tags {
         self.builder.tags
     }
     

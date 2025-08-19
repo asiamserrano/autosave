@@ -85,3 +85,13 @@ extension SortedSet where Element == ModeEnum {
     }
     
 }
+
+extension SortedSet where Element == FormatBuilder {
+    
+    public func toBuilders(_ system: SystemBuilder) -> TagBuilders {
+        let platforms: [PlatformBuilder] = self.map { .init(system, $0) }
+        let tags: [TagBuilder] = platforms.map { .platform($0) }
+        return .init(tags)
+    }
+    
+}

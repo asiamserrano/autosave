@@ -50,13 +50,12 @@ struct TestingView: View {
                 
                 ToolbarItem(placement: .topBarTrailing, content: {
                     Button("Add") {
-//                        tags += .input(.random)
-//                        let s: SystemBuilder = .playstation(.ps3)
-//                        let f: FormatBuilder = .random
+                        let s: SystemBuilder = .playstation(.ps3)
+                        let f: FormatBuilder = .random
                         
 //                        tags += .mode(.random)
-                        tags += Bool.random() ? .input(.random) : .mode(.random)
-//                        tags += .platform(.init(s, f))
+//                        tags += Bool.random() ? .input(.random) : .mode(.random)
+                        tags += .platform(.init(s, f))
 //                        tags += random(.random)
                     }
                 })
