@@ -57,34 +57,34 @@ extension SortedSet where Element == SystemBuilder {
     
 }
 
-extension SortedSet where Element == StringBuilder {
-    
-    public static func random(_ range: Range<Int>) -> Self {
-        Self.random(range) {
-            .string(.random)
-        }
-    }
-    
-    public var strings: SortedSet<String> {
-        .init(self.map { $0.trim })
-    }
-    
-    public func toBuilders(_ input: InputEnum) -> TagBuilders {
-        let inputs: [InputBuilder] = self.map { .init(input, $0) }
-        let tags: [TagBuilder] = inputs.map { .input($0) }
-        return .init(tags)
-    }
-    
-}
-
-extension SortedSet where Element == ModeEnum {
-    
-    public var toBuilders: TagBuilders {
-        let tags: [TagBuilder] = self.map { .mode($0) }
-        return .init(tags)
-    }
-    
-}
+//extension SortedSet where Element == StringBuilder {
+//    
+//    public static func random(_ range: Range<Int>) -> Self {
+//        Self.random(range) {
+//            .string(.random)
+//        }
+//    }
+//    
+//    public var strings: SortedSet<String> {
+//        .init(self.map { $0.trim })
+//    }
+//    
+//    public func toBuilders(_ input: InputEnum) -> TagBuilders {
+//        let inputs: [InputBuilder] = self.map { .init(input, $0) }
+//        let tags: [TagBuilder] = inputs.map { .input($0) }
+//        return .init(tags)
+//    }
+//    
+//}
+//
+//extension SortedSet where Element == ModeEnum {
+//    
+//    public var toBuilders: TagBuilders {
+//        let tags: [TagBuilder] = self.map { .mode($0) }
+//        return .init(tags)
+//    }
+//    
+//}
 
 extension SortedSet where Element == FormatBuilder {
     

@@ -24,7 +24,7 @@ struct TestingView: View {
                         SortedSetView(inputs) { input in
                             DisclosureGroup(content: {
                                 QuantifiableView(tags.get(input)) { strings in
-                                    SortedSetView(strings) { string in
+                                    SortedSetView(strings.elements) { string in
                                         Text(string.rawValue)
                                     }
                                     .onDelete(action: { indexSet in
@@ -115,7 +115,7 @@ struct TestingView: View {
                     NavigationLink(destination: {
                         Form {
                             QuantifiableView(tags.get(input)) { strings in
-                                SortedSetView(strings) { string in
+                                SortedSetView(strings.elements) { string in
                                     Text(string.rawValue)
                                 }
                                 .onDelete(action: { indexSet in
@@ -143,12 +143,11 @@ struct TestingView: View {
     private func ModesView() -> some View {
         QuantifiableView(tags.modes) { modes in
             Section {
-                SortedSetView(modes) { mode in
+                SortedSetView(modes.elements) { mode in
                     Text(mode.rawValue)
                 }
                 .onDelete(action: { indexSet in
                     indexSet.forEach {
-                    
                         self.game.delete(.mode(modes[$0]))
                     }
                 })
@@ -197,7 +196,7 @@ struct TestingView: View {
     private func FormatsView(_ system: SystemBuilder, _ format: FormatEnum) -> some View {
         DisclosureGroup(content: {
             QuantifiableView(tags.get(system, format), content: { formatBuilders in
-                SortedSetView(formatBuilders) { formatBuilder in
+                SortedSetView(formatBuilders.elements) { formatBuilder in
                     Text(formatBuilder.rawValue)
                 }
                 .onDelete(action: { indexSet in

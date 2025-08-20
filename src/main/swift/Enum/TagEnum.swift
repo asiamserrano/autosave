@@ -68,7 +68,7 @@ public enum TagBuilder: Tagable {
     
     public static func platform(_ system: SystemBuilder, _ format: FormatBuilder) -> Self {
         let builder: PlatformBuilder = .init(system, format)
-        return .platform(system, format)
+        return .platform(builder)
     }
     
     public static var random: Self {

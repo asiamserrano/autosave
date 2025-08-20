@@ -52,7 +52,7 @@ extension Dictionary where Value: Quantifiable {
     
 }
 
-extension Dictionary where Value: SortedSetProtocol {
+extension Dictionary where Value: TagsSortedSetProtocol {
     
     public typealias SubElement = (Key, Value.Element)
     
@@ -80,4 +80,39 @@ extension Dictionary where Value: SortedSetProtocol {
         return new
     }
     
+    public var builders: TagBuilders {
+        .init(self.values.flatMap { $0.builders })
+    }
+    
 }
+
+
+//extension Dictionary where Value: TagsSortedSetProtocol {
+//    
+//    public typealias SubElement2 = (Key, Value.Element)
+//    
+//    public static func +=(lhs: inout Self, rhs: SubElement2) -> Void {
+//        let key: Key = rhs.0
+//        let value: Value = lhs.get(key) + rhs.1
+//        lhs --> (key, value)
+//    }
+//    
+//    public static func -=(lhs: inout Self, rhs: SubElement2) -> Void {
+//        let key: Key = rhs.0
+//        let value: Value = lhs.get(key) - rhs.1
+//        lhs --> (key, value)
+//    }
+//    
+//    public static func +(lhs: Self, rhs: SubElement2) -> Self {
+//        var new: Self = lhs
+//        new += rhs
+//        return new
+//    }
+//    
+//    public static func -(lhs: Self, rhs: SubElement2) -> Self {
+//        var new: Self = lhs
+//        new -= rhs
+//        return new
+//    }
+//    
+//}

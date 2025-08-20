@@ -11,7 +11,7 @@ public struct Tags {
     
     private var inputsMap: Inputs = .defaultValue
     private var platformsMap: Platforms = .defaultValue
-    private var map: TagsBuilders = .init()
+//    private var map: TagsBuilders = .init()
     
     public private(set) var modes: ModeEnums = .defaultValue
     
@@ -37,8 +37,9 @@ public extension Tags {
         var bool: Bool = false
         
         InputEnum.cases.forEach { i in
-            let strings: StringBuilders = .random(RANDOM_RANGE)
-            strings.forEach { new += .input(i, $0.trim) }
+            for _ in RANDOM_RANGE {
+                new += .input(i, .random)
+            }
         }
         
         ModeEnum.allCases.forEach { mode in
@@ -72,53 +73,44 @@ public extension Tags {
         let sb: SystemBuilder = rhs.system
         let fb: FormatBuilder = rhs.format
         let se: SystemEnum = sb.type
-        let te: TagsEnum = .platform(sb)
-        
-        lhs.platformsMap --> (se, lhs[se] --> (lhs[sb] - (fb.type, fb), sb))
-        lhs.map --> (te, lhs[te] - .platform(rhs))
+
+        lhs --> (lhs.platformsMap --> (lhs[se] --> (lhs[sb] - (fb.type, fb), sb), se))
     }
     
     static func -= (lhs: inout Self, rhs: PlatformElement) -> Void {
         let sb: SystemBuilder = rhs.0
         let fe: FormatEnum = rhs.1
         let se: SystemEnum = sb.type
-        let te: TagsEnum = .platform(sb)
         let formats: Formats = lhs[sb]
-        
-        lhs.platformsMap --> (se, lhs[se] --> (formats - fe, sb))
-        lhs.map --> (te, lhs[te] - formats.get(fe).toBuilders(sb))
+
+        lhs --> (lhs.platformsMap --> (lhs[se] --> (formats - fe, sb), se))
     }
     
     static func -= (lhs: inout Self, rhs: SystemBuilder) -> Void {
         let key: SystemEnum = rhs.type
         
-        lhs.platformsMap --> (key, lhs[key] - rhs)
-        lhs.map -= .platform(rhs)
+        lhs --> (lhs.platformsMap --> (lhs[key] - rhs, key))
     }
 
     static func += (lhs: inout Self, rhs: TagBuilder) -> Void {
         switch rhs {
         case .input(let i):
-            let key: InputEnum = i.type
-            lhs[key] = lhs[key] + i.stringBuilder
+            lhs --> (lhs.inputsMap + (i.type, i.stringBuilder))
         case .mode(let m):
             lhs --> (lhs.modes + m)
         case .platform(let p):
             let sb: SystemBuilder = p.system
             let fb: FormatBuilder = p.format
             let se: SystemEnum = sb.type
-            let te: TagsEnum = .platform(sb)
             
-            lhs.platformsMap --> (se, lhs[se] --> (lhs[sb] + (fb.type, fb), sb))
-            lhs.map --> (te, lhs[te] + .platform(p))
+            lhs --> (lhs.platformsMap --> (lhs[se] --> (lhs[sb] + (fb.type, fb), sb), se))
         }
     }
     
     static func -= (lhs: inout Self, rhs: TagBuilder) -> Void {
         switch rhs {
         case .input(let i):
-            let key: InputEnum = i.type
-            lhs[key] = lhs[key] - i.stringBuilder
+            lhs --> (lhs.inputsMap - (i.type, i.stringBuilder))
         case .mode(let m):
             lhs --> (lhs.modes - m)
         case .platform(let p):
@@ -127,69 +119,26 @@ public extension Tags {
     }
     
     static func -= (lhs: inout Self, rhs: InputEnum) -> Void {
-        lhs[rhs] = .defaultValue
+        lhs --> (lhs.inputsMap - rhs)
     }
 
     var inputs: InputEnums { .init(self.inputsMap.keys) }
     var systems: SystemEnums { .init(self.platformsMap.keys) }
-    var builders: TagBuilders { .init(self.map.flatMap(\.value)) }
+    
+    // TODO: Fix this
+    var builders: TagBuilders {
+        self.inputsMap.builders + self.modes.builders +
+            .init(self.platformsMap.values.flatMap { $0.values.flatMap { $0.builders } })
+    }
         
     func get(_ key: SystemEnum) -> SystemBuilders { .init(self[key].keys) }
     func get(_ key: SystemBuilder) -> FormatEnums { .init(self[key].keys) }
     func get(_ key: InputEnum) -> StringBuilders { self[key] }
     func get(_ system: SystemBuilder, _ format: FormatEnum) -> FormatBuilders { self[(system, format)] }
-    
-    enum PlatformsEnum {
-        case i(InputEnum)
-        case s(SystemBuilder)
-        case p(PlatformElement)
-    }
-    
-    subscript(key: PlatformsEnum) -> TagBuilders {
-        get {
-            switch key {
-            case .i(let i):
-                return self[.input(i)]
-            case .s(let s):
-                return self[.platform(s)]
-            case .p(let p):
-                return self[p].toBuilders(p.0)
-            }
-        }
-    }
-
-}
-
-private extension Tags {
-    
-    typealias TagsBuilders = [TagsEnum: TagBuilders]
-    
-    // TODO: change this to be PlatformElement instead of SystemBuilder
-    enum TagsEnum: Hashable {
-        case input(InputEnum)
-        case mode
-        case platform(SystemBuilder)
-    }
-    
-    static var RANDOM_RANGE: Range<Int> = 0..<3
-    
-    static func -->(lhs: inout Self, rhs: ModeEnums) -> Void {
-        lhs.modes = rhs
-        lhs.map --> (.mode, rhs.toBuilders)
-    }
 
     subscript(key: InputEnum) -> StringBuilders {
         get {
             self.inputsMap.get(key)
-        } set {
-            self.inputsMap --> (key, newValue)
-            self.map --> (.input(key), newValue.toBuilders(key))
-        }
-    }
-    
-    subscript(key: SystemEnum) -> Systems {
-        get {
-            self.platformsMap.get(key)
         }
     }
     
@@ -204,10 +153,28 @@ private extension Tags {
             self[key.0].get(key.1)
         }
     }
+
+}
+
+private extension Tags {
+
+    static var RANDOM_RANGE: Range<Int> = 0..<3
     
-    subscript(key: TagsEnum) -> TagBuilders {
+    static func -->(lhs: inout Self, rhs: ModeEnums) -> Void {
+        lhs.modes = rhs
+    }
+    
+    static func -->(lhs: inout Self, rhs: Inputs) -> Void {
+        lhs.inputsMap = rhs
+    }
+    
+    static func -->(lhs: inout Self, rhs: Platforms) -> Void {
+        lhs.platformsMap = rhs
+    }
+    
+    subscript(key: SystemEnum) -> Systems {
         get {
-            self.map.get(key)
+            self.platformsMap.get(key)
         }
     }
     
