@@ -142,6 +142,22 @@ public extension Tags {
     func get(_ key: SystemBuilder) -> FormatEnums { .init(self[key].keys) }
     func get(_ key: InputEnum) -> StringBuilders { self[key] }
     func get(_ system: SystemBuilder, _ format: FormatEnum) -> FormatBuilders { self[(system, format)] }
+    
+    enum PlatformsEnum {
+        case system(SystemBuilder)
+        case platform(PlatformElement)
+    }
+    
+    subscript(key: PlatformsEnum) -> TagBuilders {
+        get {
+            switch key {
+            case .system(let s):
+                return self[.platform(s)]
+            case .platform(let p):
+                return self[p].toBuilders(p.0)
+            }
+        }
+    }
 
 }
 
@@ -149,6 +165,7 @@ private extension Tags {
     
     typealias TagsBuilders = [TagsEnum: TagBuilders]
     
+    // TODO: change this to be PlatformElement instead of SystemBuilder
     enum TagsEnum: Hashable {
         case input(InputEnum)
         case mode

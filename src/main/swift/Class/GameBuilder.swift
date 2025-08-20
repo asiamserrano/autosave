@@ -22,7 +22,11 @@ public class GameBuilder: ObservableObject {
     @Published public var tagType: TagType = .defaultValue
     
     // tag tracking
-    @Published private var master: SortedSet<TagBuilder> = .init()
+//    @Published private var master: SortedSet<TagBuilder> = .init()
+    
+    @Published private var added: TagBuilders = .defaultValue
+    @Published private var deleted: TagBuilders = .defaultValue
+
   
     // constant
     public let status: GameStatusEnum
@@ -86,57 +90,57 @@ extension GameBuilder {
 
 }
 
-private extension GameBuilder {
+public extension GameBuilder {
     
-//    struct Snapshot: Stable {
-//        var snapshot: GameSnapshot
-//        var tags: Tags
-//        var invalid: Set<GameSnapshot>
-//        
-//        init(_ snapshot: GameSnapshot, _ tags: Tags) {
-//            self.snapshot = snapshot
-//            self.tags = tags
-//            self.invalid = .init()
-//        }
-//        
-//        var title: String { snapshot.title }
-//        var release: Date { snapshot.release }
-//        var boxart: Data? { snapshot.boxart }
-//        
-//        func isInvalid(_ builder: GameBuilder) -> Bool {
-//            let other: GameSnapshot = builder.game
-//            return self.invalid.contains(other) || other.title_canon.isEmpty
-//        }
-//        
-//        func equals(_ builder: GameBuilder) -> Bool {
-//            self.snapshot == builder.game &&
-//            self.tags == builder.tags
-//        }
-//        
-//    }
+    static var random: GameBuilder {
+       .init(.random, .random, .inactive)
+    }
     
-}
-
-extension GameBuilder {
-    
-    public func add(_ builder: TagBuilder) -> Void {
+    func add(_ builder: TagBuilder) -> Void {
+        self.insert(builder)
         self.tags += builder
     }
     
-    public func delete(_ builder: TagBuilder) -> Void {
+    func delete(_ builder: TagBuilder) -> Void {
+        self.remove(builder)
         self.tags -= builder
     }
     
-    public func delete(_ system: SystemBuilder) -> Void {
+    func delete(_ system: SystemBuilder) -> Void {
+        let builders: TagBuilders = self.tags[.system(system)]
+        self.remove(builders)
         self.tags -= system
     }
     
-    public func delete(_ system: SystemBuilder, _ format: FormatEnum) -> Void {
-        self.tags -= (system, format)
+    func delete(_ system: SystemBuilder, _ format: FormatEnum) -> Void {
+        let element: (SystemBuilder, FormatEnum) = (system, format)
+        let builders: TagBuilders = self.tags[.platform(element)]
+        self.remove(builders)
+        self.tags -= element
     }
     
-    public func delete(_ platform: PlatformBuilder) -> Void {
-        self.tags -= platform
+    func delete(_ platform: PlatformBuilder) -> Void {
+        let builder: TagBuilder = .platform(platform)
+        self.delete(builder)
+    }
+    
+}
+
+private extension GameBuilder {
+    
+    func insert(_ builder: TagBuilder) -> Void {
+        self.added += builder
+        self.deleted -= builder
+    }
+    
+    func remove(_ builder: TagBuilder) -> Void {
+        let builders: TagBuilders = .init(builder)
+        self.remove(builders)
+    }
+    
+    func remove(_ builders: TagBuilders) -> Void {
+        self.added -= builders
+        self.deleted += builders
     }
     
 }

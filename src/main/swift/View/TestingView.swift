@@ -9,7 +9,13 @@ import SwiftUI
 
 struct TestingView: View {
     
-    @State var tags: Tags = .init()
+    @StateObject var game: GameBuilder = .random
+    
+//    init() {
+//        self._game = .init(wrappedValue: .random)
+//    }
+    
+    var tags: Tags { self.game.tags }
     
     var body: some View {
         NavigationStack {
@@ -50,13 +56,7 @@ struct TestingView: View {
                 
                 ToolbarItem(placement: .topBarTrailing, content: {
                     Button("Add") {
-                        let s: SystemBuilder = .playstation(.ps3)
-                        let f: FormatBuilder = .random
-                        
-//                        tags += .mode(.random)
-//                        tags += Bool.random() ? .input(.random) : .mode(.random)
-                        tags += .platform(.init(s, f))
-//                        tags += random(.random)
+                        self.game.add(.random)
                     }
                 })
                 
@@ -86,8 +86,8 @@ struct TestingView: View {
                                 }
                                 .onDelete(action: { indexSet in
                                     indexSet.forEach {
-                                        tags -= .input(.init(input, strings[$0]))
-//                                        tags[input] = strings - $0
+                                        let i: InputBuilder = .init(input, strings[$0])
+                                        self.game.delete(.input(i))
                                     }
                                 })
                             }
@@ -114,7 +114,8 @@ struct TestingView: View {
                 }
                 .onDelete(action: { indexSet in
                     indexSet.forEach {
-                        tags -= .mode(modes[$0])
+                    
+                        self.game.delete(.mode(modes[$0]))
                     }
                 })
             }
@@ -130,7 +131,7 @@ struct TestingView: View {
                         SortedSetView(systemBuilders, content: SystemsView)
                             .onDelete(action: { indexSet in
                                 indexSet.forEach {
-                                    tags -= systemBuilders[$0]
+                                    self.game.delete(systemBuilders[$0])
                                 }
                             })
                     }
@@ -148,7 +149,7 @@ struct TestingView: View {
                 }
                 .onDelete(action: { indexSet in
                     indexSet.forEach {
-                        tags -= (system, formatEnums[$0])
+                        self.game.delete(system, formatEnums[$0])
                     }
                 })
                 
@@ -167,7 +168,8 @@ struct TestingView: View {
                 }
                 .onDelete(action: { indexSet in
                     indexSet.forEach {
-                        tags -= .init(system, formatBuilders[$0])
+                        let p: PlatformBuilder = .init(system, formatBuilders[$0])
+                        self.game.delete(p)
                     }
                 })
             })
