@@ -16,6 +16,7 @@
 		1E83704D2E4F9B810082F766 /* TagBuilderContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E83704C2E4F9B810082F766 /* TagBuilderContainer.swift */; };
 		1E90FC102DCB17F600682C80 /* autosaveApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E90FC0B2DCB17F600682C80 /* autosaveApp.swift */; };
 		624CA0292E412FB700C24DCB /* SortedSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624CA0282E412FB700C24DCB /* SortedSet.swift */; };
+		62C862932E563B3B00E7A99B /* MyTestingFIle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C862922E563B3B00E7A99B /* MyTestingFIle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		1E90FBF92DCB170700682C80 /* autosave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = autosave.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E90FC0B2DCB17F600682C80 /* autosaveApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = autosaveApp.swift; sourceTree = "<group>"; };
 		624CA0282E412FB700C24DCB /* SortedSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortedSet.swift; sourceTree = "<group>"; };
+		62C862922E563B3B00E7A99B /* MyTestingFIle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyTestingFIle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -107,6 +109,7 @@
 				1E83704C2E4F9B810082F766 /* TagBuilderContainer.swift */,
 				1E4BF5942E47AE1B00650250 /* TagContainer.swift */,
 				1E64E2F02E41812F0077E0C1 /* TestingObject.swift */,
+				62C862922E563B3B00E7A99B /* MyTestingFIle.swift */,
 				1E8370482E4EA3D80082F766 /* TagGroup.swift */,
 				1E639C872DCE4EC600E478BF /* Class */,
 				1E639C8C2DCE4ECD00E478BF /* Enum */,
@@ -225,6 +228,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				62C862932E563B3B00E7A99B /* MyTestingFIle.swift in Sources */,
 				624CA0292E412FB700C24DCB /* SortedSet.swift in Sources */,
 				1E4BF5962E47AE1B00650250 /* TagContainer.swift in Sources */,
 				1E64E2F12E41812F0077E0C1 /* TestingObject.swift in Sources */,

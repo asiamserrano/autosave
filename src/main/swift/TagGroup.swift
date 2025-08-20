@@ -38,17 +38,12 @@ public extension Tags {
         
         InputEnum.cases.forEach { i in
             let strings: StringBuilders = .random(RANDOM_RANGE)
-            strings.forEach { value in
-                let input: InputBuilder = .init(i, value.trim)
-                new += (.input(input))
-            }
+            strings.forEach { new += .input(i, $0.trim) }
         }
         
         ModeEnum.allCases.forEach { mode in
             bool = .random()
-            if bool {
-                new += (.mode(mode))
-            }
+            if bool { new += .mode(mode) }
         }
         
         let systems: SortedSet<SystemBuilder> = .random(RANDOM_RANGE)
@@ -56,10 +51,7 @@ public extension Tags {
         systems.forEach { system in
             system.formatBuilders.forEach { format in
                 bool = .random()
-                if bool {
-                    let platform: PlatformBuilder = .init(system, format)
-                    new += (.platform(platform))
-                }
+                if bool { new += .platform(system, format) }
             }
         }
         

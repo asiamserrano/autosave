@@ -56,6 +56,21 @@ public enum TagType: Encapsulable {
 
 public enum TagBuilder: Tagable {
     
+    public static func input(_ i: InputEnum, _ s: StringBuilder) -> Self {
+        let builder: InputBuilder = .init(i, s)
+        return .input(builder)
+    }
+    
+    public static func input(_ i: InputEnum, _ s: String) -> Self {
+        let builder: InputBuilder = .init(i, s)
+        return .input(builder)
+    }
+    
+    public static func platform(_ system: SystemBuilder, _ format: FormatBuilder) -> Self {
+        let builder: PlatformBuilder = .init(system, format)
+        return .platform(system, format)
+    }
+    
     public static var random: Self {
         let category: TagCategory = .random
         switch category {
