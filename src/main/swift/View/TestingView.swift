@@ -9,54 +9,50 @@ import SwiftUI
 
 struct TestingView: View {
     
-    @StateObject var game: GameBuilder = .random
-    
-//    init() {
-//        self._game = .init(wrappedValue: .random)
-//    }
+    @StateObject var game: GameBuilder = .init(.library)
     
     var tags: Tags { self.game.tags }
     
     var body: some View {
         NavigationStack {
             Form {
-                SortedSetView(TagCategory.self) { category in
-                    WrapperView(category.rawValue.pluralize()) { title in
-                        NavigationLink(destination: {
-                            Form {
-                                switch category {
-                                case .input: InputsView()
-                                case .mode: ModesView()
-                                case .platform: PlatformsView()
+                
+                FormattedView("Builders Count", tags.quantity)
+                
+                Section {
+                    QuantifiableView(tags.inputs) { inputs in
+                        SortedSetView(inputs) { input in
+                            DisclosureGroup(content: {
+                                QuantifiableView(tags.get(input)) { strings in
+                                    SortedSetView(strings) { string in
+                                        Text(string.rawValue)
+                                    }
+                                    .onDelete(action: { indexSet in
+                                        indexSet.forEach {
+                                            let i: InputBuilder = .init(input, strings[$0])
+                                            self.game.delete(.input(i))
+                                        }
+                                    })
                                 }
+                            }, label: {
+                                Text(input.rawValue)
+                            })
+                        }
+                        .onDelete(action: { indexSet in
+                            indexSet.forEach {
+                                self.game.delete(inputs[$0])
                             }
-                            .navigationTitle(title)
-                        }, label: {
-                            Text(title)
                         })
                     }
                 }
                 
-                QuantifiableView(tags.builders) { builders in
-                    Section("Builders") {
-                        SortedSetView(builders) { builder in
-                            switch builder {
-                            case .input(let input):
-                                FormattedView(input.type.rawValue, input.string)
-                            case .mode(let mode):
-                                FormattedView("Mode", mode.rawValue)
-                            case .platform(let platform):
-                                FormattedView(platform.system.rawValue, platform.format.rawValue)
-                            }
-                        }
-                    }
-                }
+                
             }
             .toolbar {
                 
                 ToolbarItem(placement: .topBarTrailing, content: {
                     Button("Add") {
-                        self.game.add(.random)
+                        self.game.add(.input(.random))
                     }
                 })
                 
@@ -70,6 +66,44 @@ struct TestingView: View {
         case .input: return .input(.random)
         case .mode: return .mode(.random)
         case .platform: return .platform(.random)
+        }
+    }
+    
+    @ViewBuilder
+    private func OldView() -> some View {
+        SortedSetView(TagCategory.self) { category in
+            WrapperView(category.rawValue.pluralize()) { title in
+                NavigationLink(destination: {
+                    Form {
+                        switch category {
+                        case .input: InputsView()
+                        case .mode: ModesView()
+                        case .platform: PlatformsView()
+                        }
+                    }
+                    .navigationTitle(title)
+                }, label: {
+                    Text(title)
+                })
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func BuildersView() -> some View {
+        QuantifiableView(tags.builders) { builders in
+            Section("Builders") {
+                SortedSetView(builders) { builder in
+                    switch builder {
+                    case .input(let input):
+                        FormattedView(input.type.rawValue, input.string)
+                    case .mode(let mode):
+                        FormattedView("Mode", mode.rawValue)
+                    case .platform(let platform):
+                        FormattedView(platform.system.rawValue, platform.format.rawValue)
+                    }
+                }
+            }
         }
     }
     

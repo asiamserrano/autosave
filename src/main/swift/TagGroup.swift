@@ -133,6 +133,10 @@ public extension Tags {
             lhs -= p
         }
     }
+    
+    static func -= (lhs: inout Self, rhs: InputEnum) -> Void {
+        lhs[rhs] = .defaultValue
+    }
 
     var inputs: InputEnums { .init(self.inputsMap.keys) }
     var systems: SystemEnums { .init(self.platformsMap.keys) }
@@ -144,16 +148,19 @@ public extension Tags {
     func get(_ system: SystemBuilder, _ format: FormatEnum) -> FormatBuilders { self[(system, format)] }
     
     enum PlatformsEnum {
-        case system(SystemBuilder)
-        case platform(PlatformElement)
+        case i(InputEnum)
+        case s(SystemBuilder)
+        case p(PlatformElement)
     }
     
     subscript(key: PlatformsEnum) -> TagBuilders {
         get {
             switch key {
-            case .system(let s):
+            case .i(let i):
+                return self[.input(i)]
+            case .s(let s):
                 return self[.platform(s)]
-            case .platform(let p):
+            case .p(let p):
                 return self[p].toBuilders(p.0)
             }
         }

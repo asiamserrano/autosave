@@ -106,15 +106,21 @@ public extension GameBuilder {
         self.tags -= builder
     }
     
+    func delete(_ input: InputEnum) -> Void {
+        let builders: TagBuilders = self.tags[.i(input)]
+        self.remove(builders)
+        self.tags -= input
+    }
+    
     func delete(_ system: SystemBuilder) -> Void {
-        let builders: TagBuilders = self.tags[.system(system)]
+        let builders: TagBuilders = self.tags[.s(system)]
         self.remove(builders)
         self.tags -= system
     }
     
     func delete(_ system: SystemBuilder, _ format: FormatEnum) -> Void {
         let element: (SystemBuilder, FormatEnum) = (system, format)
-        let builders: TagBuilders = self.tags[.platform(element)]
+        let builders: TagBuilders = self.tags[.p(element)]
         self.remove(builders)
         self.tags -= element
     }
