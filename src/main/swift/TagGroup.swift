@@ -9,8 +9,8 @@ import Foundation
 
 public struct Tags {
     
-    public private(set) var inputsMap: InputsMap = .defaultValue
-    public private(set) var platformsMap: PlatformsMap = .defaultValue
+    public private(set) var inputs: InputsMap = .defaultValue
+    public private(set) var platforms: PlatformsMap = .defaultValue
     public private(set) var modes: ModeEnums = .defaultValue
     
     public init() {}
@@ -18,7 +18,7 @@ public struct Tags {
 
 public extension Tags {
     
-    typealias Index = PlatformsMap.Index
+    typealias PlatformsIndex = PlatformsMap.Index
     
     static func random(_ status: GameStatusEnum) -> Self {
         switch status {
@@ -68,50 +68,50 @@ public extension Tags {
         return new
     }
     
-    static func -= (lhs: inout Self, rhs: Index) -> Void {
-        lhs --> (lhs.platformsMap - rhs)
+    static func -= (lhs: inout Self, rhs: PlatformsIndex) -> Void {
+        lhs --> (lhs.platforms - rhs)
     }
     
     static func -= (lhs: inout Self, rhs: SystemBuilder) -> Void {
-        lhs --> (lhs.platformsMap - rhs)
+        lhs --> (lhs.platforms - rhs)
     }
-
-    static func += (lhs: inout Self, rhs: TagBuilder) -> Void {
-        switch rhs {
-        case .input(let i):
-            lhs --> (lhs.inputsMap + i)
-        case .mode(let m):
-            lhs --> (lhs.modes + m)
-        case .platform(let p):
-            lhs --> (lhs.platformsMap + p)
-        }
+    
+    static func -= (lhs: inout Self, rhs: InputEnum) -> Void {
+        lhs --> (lhs.inputs - rhs)
     }
     
     static func -= (lhs: inout Self, rhs: TagBuilder) -> Void {
         switch rhs {
         case .input(let i):
-            lhs --> (lhs.inputsMap - i)
+            lhs --> (lhs.inputs - i)
         case .mode(let m):
             lhs --> (lhs.modes - m)
         case .platform(let p):
-            lhs --> (lhs.platformsMap - p)
+            lhs --> (lhs.platforms - p)
+        }
+    }
+
+    static func += (lhs: inout Self, rhs: TagBuilder) -> Void {
+        switch rhs {
+        case .input(let i):
+            lhs --> (lhs.inputs + i)
+        case .mode(let m):
+            lhs --> (lhs.modes + m)
+        case .platform(let p):
+            lhs --> (lhs.platforms + p)
         }
     }
     
-    static func -= (lhs: inout Self, rhs: InputEnum) -> Void {
-        lhs --> (lhs.inputsMap - rhs)
-    }
-
-    var inputs: InputEnums { self.inputsMap.keys }
-    var systems: SystemEnums { self.platformsMap.keys }
+//    var inputs: InputEnums { self.inputs.keys }
+//    var systems: SystemEnums { self.platforms.keys }
     
     var builders: TagBuilders {
-        self.inputsMap.builders + self.modes.builders + self.platformsMap.builders
+        self.inputs.builders + self.modes.builders + self.platforms.builders
     }
 
     subscript(key: InputEnum) -> StringBuilders {
         get {
-            self.inputsMap[key]
+            self.inputs[key]
         }
     }
     
@@ -121,7 +121,7 @@ public extension Tags {
         }
     }
     
-    subscript(key: Index) -> FormatBuilders {
+    subscript(key: PlatformsIndex) -> FormatBuilders {
         get {
             self[key.0][key.1]
         }
@@ -129,7 +129,7 @@ public extension Tags {
     
     subscript(key: SystemEnum) -> SystemsMap {
         get {
-            self.platformsMap[key]
+            self.platforms[key]
         }
     }
     
@@ -142,11 +142,11 @@ private extension Tags {
     }
     
     static func -->(lhs: inout Self, rhs: InputsMap) -> Void {
-        lhs.inputsMap = rhs
+        lhs.inputs = rhs
     }
     
     static func -->(lhs: inout Self, rhs: PlatformsMap) -> Void {
-        lhs.platformsMap = rhs
+        lhs.platforms = rhs
     }
     
 }

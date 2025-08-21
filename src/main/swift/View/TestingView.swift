@@ -20,7 +20,7 @@ struct TestingView: View {
                 FormattedView("Builders Count", tags.quantity)
                 
                 Section {
-                    QuantifiableView(tags.inputs) { inputs in
+                    QuantifiableView(tags.inputs.keys) { inputs in
                         SortedSetView(inputs) { input in
                             DisclosureGroup(content: {
                                 QuantifiableView(tags[input]) { strings in
@@ -111,7 +111,7 @@ struct TestingView: View {
     private func InputsView() -> some View {
         QuantifiableView(tags.inputs) { inputs in
             Section {
-                SortedSetView(inputs) { input in
+                SortedSetView(inputs.keys) { input in
                     NavigationLink(destination: {
                         Form {
                             QuantifiableView(tags[input]) { strings in
@@ -157,7 +157,7 @@ struct TestingView: View {
     
     @ViewBuilder
     private func PlatformsView() -> some View {
-        QuantifiableView(tags.systems) { systemEnums in
+        QuantifiableView(tags.platforms.keys) { systemEnums in
             SortedSetView(systemEnums) { systemEnum in
                 Section(systemEnum.rawValue) {
                     QuantifiableView(tags[systemEnum].keys) { systemBuilders in
