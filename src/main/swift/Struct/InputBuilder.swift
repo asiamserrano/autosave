@@ -33,12 +33,25 @@ public struct InputBuilder {
         .string(self.string)
     }
     
-//    public var canon: String {
-//        self.string.canonicalized
-//    }
-//    
-//    public var trim: String {
-//        self.string.trimmed
-//    }
+}
+
+extension InputBuilder: Comparable {
+    
+    public static func <(lhs: Self, rhs: Self) -> Bool {
+        if lhs.type == rhs.type {
+            return lhs.stringBuilder < rhs.stringBuilder
+        } else {
+            return lhs.type < rhs.type
+        }
+    }
+    
+}
+
+extension InputBuilder: Hashable {
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.type)
+        hasher.combine(self.stringBuilder)
+    }
     
 }

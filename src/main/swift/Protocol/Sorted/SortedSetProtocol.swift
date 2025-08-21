@@ -76,6 +76,7 @@ public extension SortedSetProtocol {
 
 // STATIC
 
+
 public extension SortedSetProtocol {
     
     static var defaultValue: Self { .init() }
@@ -127,6 +128,21 @@ public extension SortedSetProtocol {
         let group: Unordered = lhs.unordered.subtracting(rhs.unordered)
         return .init(group)
     }
+    
+//    static func ~(lhs: Self, rhs: Self) -> Self? {
+//        let new: Self = lhs - rhs
+//        return new.isVacant ? nil : new
+//    }
+//    
+//    static func ~(lhs: Self, rhs: Element) -> Self? {
+//        let new: Self = lhs - rhs
+//        return new.isVacant ? nil : new
+//    }
+//    
+//    static func ~(lhs: Self, rhs: Index) -> Self? {
+//        let new: Self = lhs - rhs
+//        return new.isVacant ? nil : new
+//    }
     
     static func < (lhs: Self, rhs: Self) -> Bool {
         lhs.hashValue < rhs.hashValue

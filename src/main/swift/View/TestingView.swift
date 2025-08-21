@@ -23,7 +23,7 @@ struct TestingView: View {
                     QuantifiableView(tags.inputs) { inputs in
                         SortedSetView(inputs) { input in
                             DisclosureGroup(content: {
-                                QuantifiableView(tags.get(input)) { strings in
+                                QuantifiableView(tags[input]) { strings in
                                     SortedSetView(strings.elements) { string in
                                         Text(string.rawValue)
                                     }
@@ -114,7 +114,7 @@ struct TestingView: View {
                 SortedSetView(inputs) { input in
                     NavigationLink(destination: {
                         Form {
-                            QuantifiableView(tags.get(input)) { strings in
+                            QuantifiableView(tags[input]) { strings in
                                 SortedSetView(strings.elements) { string in
                                     Text(string.rawValue)
                                 }
@@ -160,7 +160,7 @@ struct TestingView: View {
         QuantifiableView(tags.systems) { systemEnums in
             SortedSetView(systemEnums) { systemEnum in
                 Section(systemEnum.rawValue) {
-                    QuantifiableView(tags.get(systemEnum)) { systemBuilders in
+                    QuantifiableView(tags[systemEnum].keys) { systemBuilders in
                         SortedSetView(systemBuilders, content: SystemsView)
                             .onDelete(action: { indexSet in
                                 indexSet.forEach {
@@ -176,7 +176,7 @@ struct TestingView: View {
     @ViewBuilder
     private func SystemsView(_ system: SystemBuilder) -> some View {
         DisclosureGroup(content: {
-            QuantifiableView(tags.get(system)) { formatEnums in
+            QuantifiableView(tags[system].keys) { formatEnums in
                 SortedSetView(formatEnums) { formatEnum in
                     FormatsView(system, formatEnum)
                 }
@@ -195,7 +195,7 @@ struct TestingView: View {
     @ViewBuilder
     private func FormatsView(_ system: SystemBuilder, _ format: FormatEnum) -> some View {
         DisclosureGroup(content: {
-            QuantifiableView(tags.get(system, format), content: { formatBuilders in
+            QuantifiableView(tags[(system, format)], content: { formatBuilders in
                 SortedSetView(formatBuilders.elements) { formatBuilder in
                     Text(formatBuilder.rawValue)
                 }
