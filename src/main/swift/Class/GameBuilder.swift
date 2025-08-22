@@ -107,20 +107,22 @@ public extension GameBuilder {
     }
     
     func delete(_ input: InputEnum) -> Void {
-        let builders: TagBuilders = self.tags[input].builders
+        let builders: TagBuilders = self.tags.inputs[input]
         self.remove(builders)
         self.tags -= input
     }
     
     func delete(_ system: SystemBuilder) -> Void {
-        let builders: TagBuilders = self.tags[system].builders
+        //TODO: fix
+        let builders: TagBuilders = .defaultValue//self.tags[system].builders
         self.remove(builders)
         self.tags -= system
     }
     
     func delete(_ system: SystemBuilder, _ format: FormatEnum) -> Void {
         let element: Tags.PlatformsIndex = (system, format)
-        let builders: TagBuilders = self.tags[element].builders
+        //TODO: Fix
+        let builders: TagBuilders = .defaultValue//self.tags.platforms[system].
         self.remove(builders)
         self.tags -= element
     }

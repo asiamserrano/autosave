@@ -24,7 +24,7 @@ struct TestingView: View {
                         SortedSetView(inputs) { input in
                             DisclosureGroup(content: {
                                 QuantifiableView(tags[input]) { strings in
-                                    SortedSetView(strings.elements) { string in
+                                    SortedSetView(strings) { string in
                                         Text(string.rawValue)
                                     }
                                     .onDelete(action: { indexSet in
@@ -115,7 +115,8 @@ struct TestingView: View {
                     NavigationLink(destination: {
                         Form {
                             QuantifiableView(tags[input]) { strings in
-                                SortedSetView(strings.elements) { string in
+                                
+                                SortedSetView(strings) { string in
                                     Text(string.rawValue)
                                 }
                                 .onDelete(action: { indexSet in
@@ -196,7 +197,7 @@ struct TestingView: View {
     private func FormatsView(_ system: SystemBuilder, _ format: FormatEnum) -> some View {
         DisclosureGroup(content: {
             QuantifiableView(tags[(system, format)], content: { formatBuilders in
-                SortedSetView(formatBuilders.elements) { formatBuilder in
+                SortedSetView(formatBuilders) { formatBuilder in
                     Text(formatBuilder.rawValue)
                 }
                 .onDelete(action: { indexSet in

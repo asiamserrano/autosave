@@ -7,172 +7,318 @@
 
 import Foundation
 
+public typealias StringBuilders = SortedSet<StringBuilder>
+public typealias FormatBuilders = SortedSet<FormatBuilder>
 
-/*
- - original group of tags
- - added group of tags
- - deleted group of tags
- 
- - map of input to group of strings
- - group of modes
- - map of system categories to map of systems to map of format categories to map of formats
- 
- - corresponding groups of tags to those maps
- 
- __keys__
- InputEnum
- SystemEnum
- SystemBuilder
- SystemBuilder, FormatEnum
- 
- __values__
- InputEnum
- InputBuilder (TagBuilder)
- Modes
- ModeEnum (TagBuilder)
- SystemEnum
- SystemBuilder
- PlatformBuilder (TagBuilder)
- (SystemBuilder, FormatEnum)
- 
- !_adding_!
- - add to correct map
- - add to added
- - remove from deleted
- - add to builder map
- 
- !_removing_!
- - remove from correct map
- - remove from added
- - add to remove deleted
- - remove from builder map
- 
- *-maps-*
- - update value for key (map[key] = value + *update*)
- - remove entire key (map[key] = nil)
- - insert entire element (map[key] = value)
- 
- 
- 
- */
+// TagsMapProtocol
+public protocol TagsMapProtocol2: TempProtocol {
+    
+    associatedtype Key: Enumerable
+    associatedtype Value: Defaultable
+    
+    typealias Record = TagBuilders
+    typealias Values = [Key: Value]
+    typealias Records = [Key: Record]
+    typealias Keys = SortedSet<Key>
+    
+    var values: Values { get }
+    var records: Records { get }
+    
+    static func -(lhs: Self, rhs: Key) -> Self
+        
+}
 
+extension TagsMapProtocol2 {
+    
+    public subscript(key: Key) -> Value {
+        get {
+            self.values[key] ?? .defaultValue
+        }
+    }
+    
+    public subscript(key: Key) -> Record {
+        get {
+            self.records[key] ?? .defaultValue
+        }
+    }
+ 
+}
 
+// TagsMapProtocol Impl
+public struct InputsMap: TagsMapProtocol2 {
+        
+    public static func += (lhs: inout Self, rhs: Element) -> Void {
+        let key: Key = rhs.type
+        let builder: TagBuilder = .input(rhs)
+        
+        // add the string to the correct key in key value map
+        lhs.values --> (lhs[key] + rhs.stringBuilder, key)
+        // add the tagbuilder to the correct key in key builder map
+        lhs.records --> (lhs[key] + builder, key)
+        // add the tagbuilder to tag builders
+        lhs.builders += builder
+    }
+    
+    public static func -= (lhs: inout Self, rhs: Element) -> Void {
+        let key: Key = rhs.type
+        let builder: TagBuilder = .input(rhs)
+        
+        // remove the string to the correct key in key value map
+        lhs.values --> (lhs[key] - rhs.stringBuilder, key)
+        // remove the tagbuilder to the correct key in key builder map
+        lhs.records --> (lhs[key] - builder, key)
+        // remove the tagbuilder to tag builders
+        lhs.builders -= builder
+    }
+    
+    public static func -(lhs: Self, rhs: Key) -> Self {
+        var new: Self = lhs
+        // remove key from key value map
+        new.values --> (nil, rhs)
+        // remove key from key builder map
+        new.records --> (nil, rhs)
+        // remove tag builders for key from key builder map
+        new.builders -= lhs[rhs]
+        return new
+    }
+    
+    public typealias Key = InputEnum
+    public typealias Value = StringBuilders
+    public typealias Element = InputBuilder
+    
+    public private(set) var values: Values
+    public private(set) var records: Records
+    public private(set) var keys: Keys
+    
+    public private(set) var builders: TagBuilders
 
-//public protocol TagsSortedMapProtocol: NewTempProtocol where Element == Value.Element {
-//    
-//    associatedtype Key: Enumerable
-//    associatedtype Value: TempProtocol
-//    
-//    typealias Keys = SortedSet<Key>
-//    typealias Map = [Key: Value]
-//    typealias MapElement = (key: Key, value: Value)
-//    typealias ValueElement = (key: Key, value: Value.Element)
-//    
-//    init()
-//    
-//    subscript(key: Key) -> Value { get }
-//    
-////    static func +(lhs: Self, rhs: ValueElement) -> Void
-//        
-//    var map: Map { get }
-//    
-//}
-//
-//extension TagsSortedMapProtocol {
-//    
-//    public static var defaultValue: Self { .init() }
-//    
-//    public var quantity: Int { self.builders.count }
-//    
-//    public var builders: TagBuilders { .init(self.keys.flatMap { self[$0].builders }) }
-//    
-//    public var keys: Keys { .init(self.map.keys) }
-//    
-//    public func hash(into hasher: inout Hasher) {
-//        hasher.combine(<#T##value: Hashable##Hashable#>)
-//    }
-//
-//}
-//
-//public struct SortedMap<Key, Value>: TagsSortedMapProtocol where Key: Enumerable, Value: NewTagsSortedSetProtocol {
-//    
-//    public typealias Element = Value.Element
-//    
-//    
-//    public private(set) var map: Map
-//    
-//    public init() {
-//        self.map = .defaultValue
-//    }
-//    
-//    public private(set) subscript (key: Key) -> Value {
-//        get {
-//            map[key] ?? .defaultValue
-//        } set {
-//            map[key] = newValue.isVacant ? nil : newValue
-//        }
-//    }
-//    
-//    public static func -->(lhs: inout Self, rhs: MapElement) -> Void {
-//        lhs[rhs.key] = rhs.value
-//    }
-//    
-////    public static func +=(lhs: inout Self, rhs: ValueElement) -> Void {
-////        let key: Key = rhs.key
-////        lhs --> (key: key, value: (lhs[key] + rhs.value))
-////    }
-//    
-//    public static func +(lhs: Self, rhs: Element) -> Self {
-//        var new: Self = lhs
-//        
-//        new --> (key: rhs.key, value: new[rhs.key] + rhs.value)
-//        return new
-//    }
-//    
-//    public static func -(lhs: Self, rhs: Element) -> Self {
-//        var new: Self = lhs
-//        
-////        new --> (key: rhs.key, value: new[rhs.key] + rhs.value)
-//        return new
-////        var new: Self = lhs
-//        
-////        new --> (key: rhs.key, value: new[rhs.key] + rhs.value)
-//    }
-//        
-//}
+    public init() {
+        self.values = .defaultValue
+        self.records = .defaultValue
+        self.keys = .defaultValue
+        self.builders = .defaultValue
+    }
+    
+}
 
+public struct FormatsMap: TagsMapProtocol2 {
+        
+    public static func += (lhs: inout Self, rhs: Element) -> Void {
+        let format: FormatBuilder = rhs.format
+        let key: Key = format.type
+        let builder: TagBuilder = .platform(rhs)
+        
+        // add the formatbuilder to the correct key in key value map
+        lhs.values --> (lhs[key] + rhs.format, key)
+        // add the tagbuilder to the correct key in key builder map
+        lhs.records --> (lhs[key] + builder, key)
+        // add the tagbuilder to tag builders
+        lhs.builders += builder
 
+    }
+    
+    public static func -= (lhs: inout Self, rhs: Element) -> Void {
+        let format: FormatBuilder = rhs.format
+        let key: Key = format.type
+        let builder: TagBuilder = .platform(rhs)
+        
+        // remove the formatbuilder to the correct key in key value map
+        lhs.values --> (lhs[key] - rhs.format, key)
+        // remove the tagbuilder from the correct key in key builder map
+        lhs.records --> (lhs[key] - builder, key)
+        // remove the tagbuilder from the tag builders
+        lhs.builders -= builder
+    }
+    
+    public static func -(lhs: Self, rhs: Key) -> Self {
+        var new: Self = lhs
+        // remove key from key value map
+        new.values --> (nil, rhs)
+        // remove key from key builder map
+        new.records --> (nil, rhs)
+        // remove tag builders for key from key builder map
+        new.builders -= lhs[rhs]
+        return new
+    }
+    
+    public typealias Key = FormatEnum
+    public typealias Value = FormatBuilders
+    public typealias Element = PlatformBuilder
+    
+    public private(set) var values: Values
+    public private(set) var records: Records
+    public private(set) var keys: Keys
+    
+    public private(set) var builders: TagBuilders
 
-////public struct SystemSortedMap: TagsSortedMapProtocol {
-////    
-////    public typealias Key = SystemBuilder
-////    public typealias Value = FormatBuilders
-////    
-////    public private(set) var map: [Key: Value]
-////    
-////    public init() {
-////        self.map = .defaultValue
-////    }
-////        
-////}
-//
-////public struct PlatformSortedMap: TagsSortedMapProtocol {
-////    
-////    public typealias Key = SystemEnum
-////    public typealias Value = SystemSortedMap
-////    
-////    private var map: [Key: Value]
-////    
-////    public init() {
-////        self.map = .defaultValue
-////    }
-////    
-////    subscript (key: Key) -> Value {
-////        get {
-////            map[key] ?? .defaultValue
-////        }
-////    }
-////    
-////    public var keys: Keys { .init(self.map.keys) }
-////        
-////}
+    public init() {
+        self.values = .defaultValue
+        self.records = .defaultValue
+        self.keys = .defaultValue
+        self.builders = .defaultValue
+    }
+    
+}
+
+public struct SystemsMap: TagsMapProtocol2 {
+        
+    public static func += (lhs: inout Self, rhs: Element) -> Void {
+        let key: Key = rhs.system
+        let builder: TagBuilder = .platform(rhs)
+
+        // add the platformbuilder to the formatsmap of the correct key
+        lhs.values --> (lhs[key] + rhs, key)
+        // add the tagbuilder to the correct key in key builder map
+        lhs.records --> (lhs[key] + builder, key)
+        // add the tagbuilder to tag builders
+        lhs.builders += builder
+
+    }
+    
+    public static func -= (lhs: inout Self, rhs: Element) -> Void {
+        let key: Key = rhs.system
+        let builder: TagBuilder = .platform(rhs)
+        
+        // remove the platformbuilder to the formatsmap of the correct key
+        lhs.values --> (lhs[key] - rhs, key)
+        // remove the tagbuilder from the correct key in key builder map
+        lhs.records --> (lhs[key] - builder, key)
+        // remove the tagbuilder from the tag builders
+        lhs.builders -= builder
+    }
+    
+    public static func -(lhs: Self, rhs: Key) -> Self {
+        var new: Self = lhs
+        // remove key from key value map
+        new.values --> (nil, rhs)
+        // remove key from key builder map
+        new.records --> (nil, rhs)
+        // remove tag builders for key from key builder map
+        new.builders -= lhs[rhs]
+        return new
+    }
+    
+    public static func -(lhs: Self, rhs: Index) -> Self {
+        let key: Key = rhs.0
+        let format: FormatEnum = rhs.1
+        let value: Value = lhs[key] // formatsmap
+        let record: Record = value[format] // tagbuilders of the key in the formatsmap
+        
+        var new: Self = lhs
+        // remove the formatenum key of the formatsmap from the key value map
+        new.values --> (value - format, key)
+        // remove the tagbuilders of the formatenum key of the formatsmap from the key builder map
+        new.records --> (lhs[key] - record, key)
+        // remove the tagbuilders of the formatenum key of the formatsmap from the tagbuilders
+        new.builders -= record
+        return new
+    }
+    
+    public typealias Key = SystemBuilder
+    public typealias Value = FormatsMap
+    public typealias Element = PlatformBuilder
+    public typealias Index = (Key, Value.Key)
+    
+    public private(set) var values: Values
+    public private(set) var records: Records
+    public private(set) var keys: Keys
+    
+    public private(set) var builders: TagBuilders
+
+    public init() {
+        self.values = .defaultValue
+        self.records = .defaultValue
+        self.keys = .defaultValue
+        self.builders = .defaultValue
+    }
+    
+}
+
+public struct PlatformsMap: TagsMapProtocol2 {
+        
+    public static func += (lhs: inout Self, rhs: Element) -> Void {
+        let key: Key = rhs.system.type
+        let builder: TagBuilder = .platform(rhs)
+
+        // add the platformbuilder to the systemsmap of the correct key
+        lhs.values --> (lhs[key] + rhs, key)
+        // add the tagbuilder to the correct key in key builder map
+        lhs.records --> (lhs[key] + builder, key)
+        // add the tagbuilder to tag builders
+        lhs.builders += builder
+    }
+    
+    public static func -= (lhs: inout Self, rhs: Element) -> Void {
+        let key: Key = rhs.system.type
+        let builder: TagBuilder = .platform(rhs)
+        
+        // remove the platformbuilder from the systemsmap of the correct key
+        lhs.values --> (lhs[key] - rhs, key)
+        // remove the tagbuilder from the correct key in key builder map
+        lhs.records --> (lhs[key] - builder, key)
+        // remove the tagbuilder from tag builders
+        lhs.builders -= builder
+    }
+    
+    public static func -(lhs: Self, rhs: Key) -> Self {
+        var new: Self = lhs
+        // remove key from key value map
+        new.values --> (nil, rhs)
+        // remove key from key builder map
+        new.records --> (nil, rhs)
+        // remove tag builders for key from key builder map
+        new.builders -= lhs[rhs]
+        return new
+    }
+    
+    public static func -(lhs: Self, rhs: Value.Key) -> Self {
+        let key: Key = rhs.type
+        let value: Value = lhs[key]
+        let record: Record = value[rhs]
+        
+        var new: Self = lhs
+        // remove the systembuilder from the systemsmap for the correct key
+        new.values --> (value - rhs, key)
+        // remove the tagbuilders of the systembuilder key in the systemsmap from the key builder map
+        new.records --> (lhs[key] - record, key)
+        // remove the tagbuilders of the systembuilder key in the systemsmap from the tag builders
+        new.builders -= record
+        return new
+    }
+    
+    public static func -(lhs: Self, rhs: Index) -> Self {
+        let system: SystemBuilder = rhs.0
+        let format: FormatEnum = rhs.1
+        let key: Key = system.type
+        let value: Value = lhs[key]
+        let record: Record = value[system][format]
+        
+        var new: Self = lhs
+        // remove the formatenum key of the formatsmap from the systembuilder key of the systemsmap from the key value map
+        new.values --> (lhs[key] - (system, format), key)
+        // remove the tag builders of formatenum key of the formatsmap from the systembuilder key of the systemsmap from the key value map
+        new.records --> (lhs[key] - record, key)
+        // remove the tag builders of formatenum key of the formatsmap from the systembuilder key of the systemsmap from the tag builders
+        new.builders -= record
+        return new
+    }
+    
+    public typealias Key = SystemEnum
+    public typealias Value = SystemsMap
+    public typealias Element = PlatformBuilder
+    public typealias Index = Value.Index
+    
+    public private(set) var values: Values
+    public private(set) var records: Records
+    public private(set) var keys: Keys
+    
+    public private(set) var builders: TagBuilders
+
+    public init() {
+        self.values = .defaultValue
+        self.records = .defaultValue
+        self.keys = .defaultValue
+        self.builders = .defaultValue
+    }
+        
+}
