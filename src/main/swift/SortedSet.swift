@@ -31,67 +31,22 @@ public extension SortedSet {
     
 }
 
-private extension SortedSet {
-        
-    static func random(_ range: Range<Int>, method: @escaping () -> Element) -> Self {
+extension SortedSet where Element: Randomizable {
+            
+    public static func random(_ range: Range<Int>) -> Self {
         let size: Int = Int.random(in: range)
-        
         var new: Self = .init()
         
         while new.count < size {
-            new += method()
+            let element: Element = .random
+            new += element
         }
         
         return new
     }
     
-}
-
-extension SortedSet where Element == SystemBuilder {
-    
-    public static func random(_ range: Range<Int>) -> Self {
-        Self.random(range) {
-            .random
-        }
-    }
-    
-}
-
-//extension SortedSet where Element == StringBuilder {
-//    
-//    public static func random(_ range: Range<Int>) -> Self {
-//        Self.random(range) {
-//            .string(.random)
-//        }
-//    }
-//    
-//    public var strings: SortedSet<String> {
-//        .init(self.map { $0.trim })
-//    }
-//    
-//    public func toBuilders(_ input: InputEnum) -> TagBuilders {
-//        let inputs: [InputBuilder] = self.map { .init(input, $0) }
-//        let tags: [TagBuilder] = inputs.map { .input($0) }
-//        return .init(tags)
-//    }
-//    
-//}
-//
-//extension SortedSet where Element == ModeEnum {
-//    
-//    public var toBuilders: TagBuilders {
-//        let tags: [TagBuilder] = self.map { .mode($0) }
-//        return .init(tags)
-//    }
-//    
-//}
-
-extension SortedSet where Element == FormatBuilder {
-    
-    public func toBuilders(_ system: SystemBuilder) -> TagBuilders {
-        let platforms: [PlatformBuilder] = self.map { .init(system, $0) }
-        let tags: [TagBuilder] = platforms.map { .platform($0) }
-        return .init(tags)
+    public static var random: Self {
+        .random(1..<3)
     }
     
 }

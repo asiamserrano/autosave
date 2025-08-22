@@ -54,3 +54,9 @@ extension StringBuilder: Identifiable {
     public var id: Int { self.hashValue }
     
 }
+
+extension StringBuilder: Randomizable {
+    
+    public static var random: Self { .string(.random) }
+    
+}

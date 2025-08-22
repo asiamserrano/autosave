@@ -9,13 +9,17 @@ import SwiftUI
 
 struct TestingView: View {
     
-    @StateObject var game: GameBuilder = .init(.library)
+    @StateObject var game: GameBuilder = .init(.random, .random, .inactive)
     
     var tags: Tags { self.game.tags }
     
     var body: some View {
         NavigationStack {
             Form {
+                
+                FormattedView("Inputs Count", tags.inputs.quantity)
+                FormattedView("Modes Count", tags.modes.quantity)
+                FormattedView("Platforms Count", tags.platforms.quantity)
                 
                 FormattedView("Builders Count", tags.quantity)
                 
@@ -202,8 +206,7 @@ struct TestingView: View {
                 }
                 .onDelete(action: { indexSet in
                     indexSet.forEach {
-                        let p: PlatformBuilder = .init(system, formatBuilders[$0])
-                        self.game.delete(p)
+                        self.game.delete(system, formatBuilders[$0])
                     }
                 })
             })

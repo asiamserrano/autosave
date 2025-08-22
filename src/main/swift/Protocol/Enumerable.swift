@@ -9,7 +9,7 @@ import Foundation
 
 public typealias Enumeror = any Enumerable
 
-public protocol Enumerable: Identifiable, Hashable, Comparable, Equatable, CaseIterable, Iterable, Valuable {
+public protocol Enumerable: Identifiable, Hashable, Comparable, Equatable, CaseIterable, Iterable, Valuable, Randomizable {
     
     typealias Cases = [Self]
     

@@ -12,6 +12,10 @@ import PhotosUI
 // TODO: implement logic that keeps track of what properties were added and deleted
 public class GameBuilder: ObservableObject {
     
+    public static var random: GameBuilder {
+       .init(.random, .random, .inactive)
+    }
+    
     @Published public var title: String
     @Published public var release: Date
     @Published public var boxart: Data?
@@ -21,18 +25,17 @@ public class GameBuilder: ObservableObject {
     @Published public var editMode: EditMode
     @Published public var tagType: TagType = .defaultValue
     
-    // tag tracking
-//    @Published private var master: SortedSet<TagBuilder> = .init()
-    
+    // tracking
     @Published private var added: TagBuilders = .defaultValue
     @Published private var deleted: TagBuilders = .defaultValue
-
+    @Published private var master: TagBuilders
+    @Published private var tracker: Tracker
   
     // constant
     public let status: GameStatusEnum
     public let uuid: UUID
     
-    private init(_ snap: GameSnapshot, _ tags: Tags, _ edit: EditMode) {
+    public init(_ snap: GameSnapshot, _ tags: Tags, _ edit: EditMode) {
         self.uuid = snap.uuid
         self.title = snap.title
         self.release = snap.release
@@ -40,6 +43,8 @@ public class GameBuilder: ObservableObject {
         self.status = snap.status
         self.tags = tags
         self.editMode = edit
+        self.master = tags.builders
+        self.tracker = .init(snap, tags)
     }
     
     public convenience init(_ status: GameStatusEnum) {
@@ -57,16 +62,17 @@ public class GameBuilder: ObservableObject {
 
 extension GameBuilder {
 
-//    public func fail() -> Void {
-//        self.original.invalid.insert(self.game)
-//    }
-//    
-//    public func cancel() -> Void {
-//        self.title = self.original.title
-//        self.release = self.original.release
-//        self.boxart = self.original.boxart
-//        self.tags = self.original.tags
-//    }
+    public func fail() -> Void {
+        self.tracker.invalid += self.game
+    }
+
+    public func cancel() -> Void {
+        let snapshot: GameSnapshot = self.tracker.snapshot
+        self.title = snapshot.title
+        self.release = snapshot.release
+        self.boxart = snapshot.boxart
+        self.tags = self.tracker.tags
+    }
 //    
 //    public func save() -> Void {
 //        self.original.snapshot = self.game
@@ -74,27 +80,16 @@ extension GameBuilder {
 //        self.original.invalid = .init()
 //    }
 //        
-//    public var isDisabled: Bool {
-//        let isInvalid: Bool = self.original.isInvalid(self)
-//        let isSame: Bool = self.original.equals(self)
-//        return self.editMode == .active ? isInvalid || isSame : false
-//    }
-    
-    public var count: Int {
-        self.tags.quantity
-    }
-    
-    public var game: GameSnapshot {
-        .fromBuilder(self)
+    public var isDisabled: Bool {
+        let o: GameSnapshot = self.game
+        let isInvalid: Bool = self.tracker.invalid.contains(o) || o.title_canon.isEmpty
+        let isSame: Bool = self.tracker.snapshot == o || self.tracker.tags == self.tags
+        return self.editMode == .active ? isInvalid || isSame : false
     }
 
 }
 
 public extension GameBuilder {
-    
-    static var random: GameBuilder {
-       .init(.random, .random, .inactive)
-    }
     
     func add(_ builder: TagBuilder) -> Void {
         self.insert(builder)
@@ -107,30 +102,33 @@ public extension GameBuilder {
     }
     
     func delete(_ input: InputEnum) -> Void {
-        let builders: TagBuilders = self.tags.inputs[input]
-        self.remove(builders)
+        self.remove(tags[input])
         self.tags -= input
     }
     
     func delete(_ system: SystemBuilder) -> Void {
-        //TODO: fix
-        let builders: TagBuilders = .defaultValue//self.tags[system].builders
-        self.remove(builders)
+        self.remove(tags[system])
         self.tags -= system
     }
     
     func delete(_ system: SystemBuilder, _ format: FormatEnum) -> Void {
         let element: Tags.PlatformsIndex = (system, format)
-        //TODO: Fix
-        let builders: TagBuilders = .defaultValue//self.tags.platforms[system].
-        self.remove(builders)
+        self.remove(tags[element])
         self.tags -= element
     }
     
-    func delete(_ platform: PlatformBuilder) -> Void {
-        let builder: TagBuilder = .platform(platform)
+    func delete(_ system: SystemBuilder, _ format: FormatBuilder) -> Void {
+        let builder: TagBuilder = .platform(system, format)
         self.delete(builder)
     }
+    
+//    func delete(_ platform: PlatformBuilder) -> Void {
+//        let builder: TagBuilder = .platform(platform)
+//        self.delete(builder)
+//    }
+    
+    var count: Int { self.tags.quantity }
+    var game: GameSnapshot { .fromBuilder(self) }
     
 }
 
@@ -149,6 +147,21 @@ private extension GameBuilder {
     func remove(_ builders: TagBuilders) -> Void {
         self.added -= builders
         self.deleted += builders
+    }
+    
+    struct Tracker {
+        
+        let snapshot: GameSnapshot
+        let tags: Tags
+        
+        var invalid: SortedSet<GameSnapshot>
+        
+        init(_ snap: GameSnapshot, _ tags: Tags) {
+            self.snapshot = snap
+            self.invalid = .init(snap)
+            self.tags = tags
+        }
+        
     }
     
 }

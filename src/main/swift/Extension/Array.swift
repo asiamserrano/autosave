@@ -12,6 +12,8 @@ extension Array {
     
     public static var defaultValue: Self { .init() }
     
+    
+    
     public init(_ elements: Element...) {
         self = elements
     }
@@ -33,6 +35,10 @@ extension Array: Quantifiable {
 }
 
 public extension Array where Element: Hashable {
+    
+    static func -(lhs: Self, rhs: Self) -> Self {
+        lhs.filter { rhs.lacks($0) }
+    }
     
     var deduped: Self {
         self.toSet.map(\.self)

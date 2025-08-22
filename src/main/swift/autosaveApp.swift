@@ -39,13 +39,12 @@ fileprivate struct ContentView: Configurable {
     var body: some View {
         NavigationStack {
             Group {
-                EmptyView()
-//                switch self.menu {
-//                case .game(let status):
-//                    GamesListView(status)
-//                case .properties:
-//                    PropertiesListView()
-//                }
+                switch self.menu {
+                case .game(let status):
+                    GamesListView(status)
+                case .properties:
+                    Text("TBD")
+                }
             }
             .navigationTitle(self.menu.rawValue)
             .toolbar {
@@ -75,7 +74,7 @@ fileprivate struct ContentView: Configurable {
 
 #Preview {
     
-//    let games_max: Int = 20
+    let games_max: Int = 20
     
     let previewModelContainer: ModelContainer = {
         
@@ -84,19 +83,18 @@ fileprivate struct ContentView: Configurable {
         container.mainContext.autosaveEnabled = false
         container.mainContext.undoManager = .init()
                 
-//        var isLibraryEmpty: Bool = true
-//        
-//        while container.mainContext.fetchCount(.game) < games_max || isLibraryEmpty {
-//            if let model: GameModel = container.mainContext.save(.random) {
-//                if model.status_bool {
-//                    isLibraryEmpty = false
-//                    let tags: TagContainer = .random
-//                    tags.builders.forEach { builder in
-//                        container.mainContext.save(model, builder)
-//                    }
-//                }
-//            }
-//        }
+        var isLibraryEmpty: Bool = true
+        
+        while container.mainContext.fetchCount(.game) < games_max || isLibraryEmpty {
+            if let model: GameModel = container.mainContext.save(.random) {
+                if model.status_bool {
+                    isLibraryEmpty = false
+                    Tags.random.builders.forEach { builder in
+                        container.mainContext.save(model, builder)
+                    }
+                }
+            }
+        }
         
         return container
         

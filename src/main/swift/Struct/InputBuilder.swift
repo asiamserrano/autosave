@@ -9,14 +9,6 @@ import Foundation
 
 public struct InputBuilder {
     
-    public static func random(_ input: InputEnum) -> Self {
-        .init(input, .random)
-    }
-    
-    public static var random: Self {
-        .random(.random)
-    }
-    
     let type: InputEnum
     let string: String
     
@@ -52,6 +44,19 @@ extension InputBuilder: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(self.type)
         hasher.combine(self.stringBuilder)
+    }
+    
+}
+
+extension InputBuilder: Randomizable {
+    
+    public static func random(_ input: InputEnum) -> Self {
+        let string: String = .random
+        return .init(input, string)
+    }
+    
+    public static var random: Self {
+        .random(.random)
     }
     
 }

@@ -86,3 +86,15 @@ extension GameSnapshot: Stable {
     }
     
 }
+
+extension GameSnapshot: Comparable {
+    
+    public static func <(lhs: Self, rhs: Self) -> Bool {
+        if lhs.title_canon == rhs.title_canon {
+            return lhs.release_date < rhs.release_date
+        } else {
+            return lhs.title_canon < rhs.title_canon
+        }
+    }
+    
+}
