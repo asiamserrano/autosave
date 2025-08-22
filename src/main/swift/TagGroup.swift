@@ -9,16 +9,16 @@ import Foundation
 
 public struct Tags {
     
-    public private(set) var inputs: InputsMap = .defaultValue
-    public private(set) var platforms: PlatformsMap = .defaultValue
-    public private(set) var modes: ModeEnums = .defaultValue
+    public private(set) var inputs: Inputs = .defaultValue
+    public private(set) var platforms: Platforms = .defaultValue
+    public private(set) var modes: Modes = .defaultValue
     
     public init() {}
 }
 
 public extension Tags {
     
-    typealias PlatformsIndex = PlatformsMap.Index
+    typealias PlatformsIndex = Platforms.Index
     
     static func random(_ status: GameStatusEnum) -> Self {
         switch status {
@@ -101,10 +101,7 @@ public extension Tags {
             lhs --> (lhs.platforms + p)
         }
     }
-    
-//    var inputs: InputEnums { self.inputs.keys }
-//    var systems: SystemEnums { self.platforms.keys }
-    
+
     var builders: TagBuilders {
         self.inputs.builders + self.modes.builders + self.platforms.builders
     }
@@ -115,7 +112,7 @@ public extension Tags {
         }
     }
     
-    subscript(key: SystemBuilder) -> FormatsMap {
+    subscript(key: SystemBuilder) -> Formats {
         get {
             self[key.type][key]
         }
@@ -127,7 +124,7 @@ public extension Tags {
         }
     }
     
-    subscript(key: SystemEnum) -> SystemsMap {
+    subscript(key: SystemEnum) -> Systems {
         get {
             self.platforms[key]
         }
@@ -137,15 +134,15 @@ public extension Tags {
 
 private extension Tags {
     
-    static func -->(lhs: inout Self, rhs: ModeEnums) -> Void {
+    static func -->(lhs: inout Self, rhs: Modes) -> Void {
         lhs.modes = rhs
     }
     
-    static func -->(lhs: inout Self, rhs: InputsMap) -> Void {
+    static func -->(lhs: inout Self, rhs: Inputs) -> Void {
         lhs.inputs = rhs
     }
     
-    static func -->(lhs: inout Self, rhs: PlatformsMap) -> Void {
+    static func -->(lhs: inout Self, rhs: Platforms) -> Void {
         lhs.platforms = rhs
     }
     

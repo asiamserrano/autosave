@@ -7,11 +7,8 @@
 
 import Foundation
 
-public typealias StringBuilders = SortedSet<StringBuilder>
-public typealias FormatBuilders = SortedSet<FormatBuilder>
-
 // TagsMapProtocol
-public protocol TagsMapProtocol2: TempProtocol {
+public protocol TagsMapProtocol: TempProtocol {
     
     associatedtype Key: Enumerable
     associatedtype Value: Defaultable
@@ -28,7 +25,7 @@ public protocol TagsMapProtocol2: TempProtocol {
         
 }
 
-extension TagsMapProtocol2 {
+extension TagsMapProtocol {
     
     public subscript(key: Key) -> Value {
         get {
@@ -45,7 +42,7 @@ extension TagsMapProtocol2 {
 }
 
 // TagsMapProtocol Impl
-public struct InputsMap: TagsMapProtocol2 {
+public struct Inputs: TagsMapProtocol {
         
     public static func += (lhs: inout Self, rhs: Element) -> Void {
         let key: Key = rhs.type
@@ -101,7 +98,7 @@ public struct InputsMap: TagsMapProtocol2 {
     
 }
 
-public struct FormatsMap: TagsMapProtocol2 {
+public struct Formats: TagsMapProtocol {
         
     public static func += (lhs: inout Self, rhs: Element) -> Void {
         let format: FormatBuilder = rhs.format
@@ -160,7 +157,7 @@ public struct FormatsMap: TagsMapProtocol2 {
     
 }
 
-public struct SystemsMap: TagsMapProtocol2 {
+public struct Systems: TagsMapProtocol {
         
     public static func += (lhs: inout Self, rhs: Element) -> Void {
         let key: Key = rhs.system
@@ -187,17 +184,6 @@ public struct SystemsMap: TagsMapProtocol2 {
         lhs.builders -= builder
     }
     
-    public static func -(lhs: Self, rhs: Key) -> Self {
-        var new: Self = lhs
-        // remove key from key value map
-        new.values --> (nil, rhs)
-        // remove key from key builder map
-        new.records --> (nil, rhs)
-        // remove tag builders for key from key builder map
-        new.builders -= lhs[rhs]
-        return new
-    }
-    
     public static func -(lhs: Self, rhs: Index) -> Self {
         let key: Key = rhs.0
         let format: FormatEnum = rhs.1
@@ -213,9 +199,20 @@ public struct SystemsMap: TagsMapProtocol2 {
         new.builders -= record
         return new
     }
-    
+
+    public static func -(lhs: Self, rhs: Key) -> Self {
+        var new: Self = lhs
+        // remove key from key value map
+        new.values --> (nil, rhs)
+        // remove key from key builder map
+        new.records --> (nil, rhs)
+        // remove tag builders for key from key builder map
+        new.builders -= lhs[rhs]
+        return new
+    }
+        
     public typealias Key = SystemBuilder
-    public typealias Value = FormatsMap
+    public typealias Value = Formats
     public typealias Element = PlatformBuilder
     public typealias Index = (Key, Value.Key)
     
@@ -232,9 +229,15 @@ public struct SystemsMap: TagsMapProtocol2 {
         self.builders = .defaultValue
     }
     
+    public subscript(key: Index) -> Record {
+        get {
+            self[key.0][key.1]
+        }
+    }
+
 }
 
-public struct PlatformsMap: TagsMapProtocol2 {
+public struct Platforms: TagsMapProtocol {
         
     public static func += (lhs: inout Self, rhs: Element) -> Void {
         let key: Key = rhs.system.type
@@ -260,17 +263,21 @@ public struct PlatformsMap: TagsMapProtocol2 {
         lhs.builders -= builder
     }
     
-    public static func -(lhs: Self, rhs: Key) -> Self {
+    public static func -(lhs: Self, rhs: Index) -> Self {
+        let key: Key = rhs.0.type
+        let value: Value = lhs[key]
+        let record: Record = value[rhs]
+        
         var new: Self = lhs
-        // remove key from key value map
-        new.values --> (nil, rhs)
-        // remove key from key builder map
-        new.records --> (nil, rhs)
-        // remove tag builders for key from key builder map
-        new.builders -= lhs[rhs]
+        // remove the formatenum key of the formatsmap from the systembuilder key of the systemsmap from the key value map
+        new.values --> (lhs[key] - rhs, key)
+        // remove the tag builders of formatenum key of the formatsmap from the systembuilder key of the systemsmap from the key value map
+        new.records --> (lhs[key] - record, key)
+        // remove the tag builders of formatenum key of the formatsmap from the systembuilder key of the systemsmap from the tag builders
+        new.builders -= record
         return new
     }
-    
+
     public static func -(lhs: Self, rhs: Value.Key) -> Self {
         let key: Key = rhs.type
         let value: Value = lhs[key]
@@ -285,26 +292,20 @@ public struct PlatformsMap: TagsMapProtocol2 {
         new.builders -= record
         return new
     }
-    
-    public static func -(lhs: Self, rhs: Index) -> Self {
-        let system: SystemBuilder = rhs.0
-        let format: FormatEnum = rhs.1
-        let key: Key = system.type
-        let value: Value = lhs[key]
-        let record: Record = value[system][format]
-        
+
+    public static func -(lhs: Self, rhs: Key) -> Self {
         var new: Self = lhs
-        // remove the formatenum key of the formatsmap from the systembuilder key of the systemsmap from the key value map
-        new.values --> (lhs[key] - (system, format), key)
-        // remove the tag builders of formatenum key of the formatsmap from the systembuilder key of the systemsmap from the key value map
-        new.records --> (lhs[key] - record, key)
-        // remove the tag builders of formatenum key of the formatsmap from the systembuilder key of the systemsmap from the tag builders
-        new.builders -= record
+        // remove key from key value map
+        new.values --> (nil, rhs)
+        // remove key from key builder map
+        new.records --> (nil, rhs)
+        // remove tag builders for key from key builder map
+        new.builders -= lhs[rhs]
         return new
     }
-    
+        
     public typealias Key = SystemEnum
-    public typealias Value = SystemsMap
+    public typealias Value = Systems
     public typealias Element = PlatformBuilder
     public typealias Index = Value.Index
     
