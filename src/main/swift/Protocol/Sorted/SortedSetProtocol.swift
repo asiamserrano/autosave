@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol SortedSetProtocol: Defaultable, Hashable, Quantifiable, RandomAccessCollection where Element: Hashable & Comparable, Index == Ordered.Index {
+public protocol SortedSetProtocol: Universable, RandomAccessCollection where Element: Hashable & Comparable, Index == Ordered.Index {
     
     typealias Party = any Collection<Element>
     typealias Unordered = Set<Element>

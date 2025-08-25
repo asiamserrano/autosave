@@ -41,6 +41,18 @@ extension View {
     }
     
     @ViewBuilder
+    public func FormattedView(_ tag: TagBuilder) -> some View {
+        switch tag {
+        case .input(let inputBuilder):
+            FormattedView(inputBuilder.type.rawValue, inputBuilder.string)
+        case .mode(let modeEnum):
+            FormattedView("Mode", modeEnum.rawValue)
+        case .platform(let platformBuilder):
+            FormattedView(platformBuilder.system.rawValue, platformBuilder.format.rawValue)
+        }
+    }
+    
+    @ViewBuilder
     public func CustomText(_ constant: ConstantEnum) -> some View {
         Text(constant.rawValue)
     }

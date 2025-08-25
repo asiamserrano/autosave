@@ -29,6 +29,10 @@ public extension SortedSet {
         lhs.ordered = rhs.sorted()
     }
     
+    func lacks(_ element: Element) -> Bool {
+        !self.contains(element)
+    }
+    
 }
 
 extension SortedSet where Element: Randomizable {

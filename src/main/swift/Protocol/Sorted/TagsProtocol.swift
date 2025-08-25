@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol TagsProtocol: Defaultable, Stable, Quantifiable {
+public protocol TagsProtocol: Universable {
     
     associatedtype Element: Hashable & Comparable
 
@@ -29,7 +29,7 @@ extension TagsProtocol {
     
     public static func -(lhs: Self, rhs: Element) -> Self {
         var new: Self = lhs
-        new += rhs
+        new -= rhs
         return new
     }
 

@@ -8,7 +8,25 @@
 import Foundation
 
 public struct Inputs: TagsMapProtocol {
+    
+    public static var random: Self {
+        var new: Self = .init()
+        InputEnum.cases.forEach { i in StringBuilders.random.forEach { new += .init(i, $0) } }
+        return new
+    }
         
+    public static func -->(lhs: inout Self, rhs: Values.Element) -> Void {
+        let key: Key = rhs.key
+        let value: Value = rhs.value
+        let builders: TagBuilders = .init(value.map { .input(key, $0) })
+        
+        lhs -= key
+        
+        lhs.values --> (value, key)
+        lhs.records --> (builders, key)
+        lhs.builders += builders
+    }
+    
     public static func += (lhs: inout Self, rhs: Element) -> Void {
         let key: Key = rhs.type
         let builder: TagBuilder = .input(rhs)
@@ -33,15 +51,13 @@ public struct Inputs: TagsMapProtocol {
         lhs.builders -= builder
     }
     
-    public static func -(lhs: Self, rhs: Key) -> Self {
-        var new: Self = lhs
+    public static func -=(lhs: inout Self, rhs: Key) -> Void {
         // remove key from key value map
-        new.values --> (nil, rhs)
+        lhs.values --> (nil, rhs)
         // remove key from key builder map
-        new.records --> (nil, rhs)
+        lhs.records --> (nil, rhs)
         // remove tag builders for key from key builder map
-        new.builders -= lhs[rhs]
-        return new
+        lhs.builders -= lhs[rhs]
     }
     
     public typealias Key = InputEnum

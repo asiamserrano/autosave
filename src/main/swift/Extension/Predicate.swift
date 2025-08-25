@@ -126,10 +126,10 @@ extension PropertyPredicate {
         }
     }
     
-    public static func getByLabel(_ enumeror: Enumeror, _ search: Binding<String>, _ sorted: SortedSet<String>) -> PropertyPredicate {
+    public static func getByLabel(_ enumeror: Enumeror, _ search: Binding<String>, _ sorted: StringBuilders) -> PropertyPredicate {
         let label_id: String = enumeror.id
         let canon = search.wrappedValue.canonicalized
-        let strings: [String] = sorted.ordered
+        let strings: [String] = sorted.map(\.rawValue)
         switch canon.count {
         case 0:
             return #Predicate {

@@ -13,6 +13,12 @@ public struct Modes: TagsProtocol {
     public typealias Elements = SortedSet<Element>
     public typealias Index = Elements.Index
     
+    public static var random: Self {
+        var new: Self = .init()
+        ModeEnum.allCases.forEach { if Bool.random() { new += $0 } }
+        return new
+    }
+    
     public static func += (lhs: inout Self, rhs: Element) -> Void {
         lhs.elements += rhs
         lhs.builders += .mode(rhs)
@@ -51,5 +57,9 @@ public struct Modes: TagsProtocol {
     public subscript(index: Index) -> Element {
         get { elements[index] }
     }
-
+    
+    public func contains(_ element: Element) -> Bool {
+        self.elements.contains(element)
+    }
+    
 }

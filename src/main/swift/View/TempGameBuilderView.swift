@@ -1,188 +1,41 @@
 //
-//  GameView.swift
+//  TempGameBuilderView.swift
 //  autosave
 //
-//  Created by Asia Serrano on 8/22/25.
+//  Created by Asia Serrano on 8/24/25.
 //
 
 import SwiftUI
-import SwiftData
 
-struct GameView: View {
+struct TempGameBuilderView: TagsObservableProtocol {
     
-    private let input: Input
-    
-    init(_ model: GameModel) {
-        self.input = .model(model)
-    }
-    
-    init(_ status: GameStatusEnum) {
-        self.input = .status(status)
-    }
+    @StateObject fileprivate var observable: TagsObservable = .random
     
     var body: some View {
-        switch input {
-        case .model(let model):
-            QueryRelationView(model)
-        case .status(let status):
-            BuilderView(status)
-        }
-    }
-    
-    private struct QueryRelationView: View {
-        @Query var relations: [RelationModel]
-        
-        let model: GameModel
-        
-        init(_ model: GameModel) {
-            let predicate: RelationPredicate = .getByGame(model.uuid)
-            self._relations = .init(filter: predicate)
-            self.model = model
-        }
-        
-        var body: some View {
-            QueryPropertyView(relations, model)
-        }
-    }
-    
-    private struct QueryPropertyView: View {
-        
-        @Query var properties: [PropertyModel]
-        
-        let relations: [RelationModel]
-        let model: GameModel
-        
-        init(_ relations: [RelationModel], _ model: GameModel) {
-            self.relations = relations
-            let predicate: PropertyPredicate = .getByRelations(relations)
-            self._properties = .init(filter: predicate, sort: .defaultValue)
-            self.model = model
-        }
-        
-        var body: some View {
-            BuilderView(model, relations, properties)
-        }
-        
-    }
-    
-    private struct BuilderView: Gameopticable {
-        
-        @Environment(\.dismiss) private var dismiss
-        
-        @Environment(\.modelContext) private var modelContext
-        
-        @StateObject var builder: GameBuilder
-        
-        let isNewGame: Bool
-        
-        init(_ model: GameModel, _ relations: [RelationModel], _ properties: [PropertyModel]) {
-            self._builder = .init(wrappedValue: .init(model, relations, properties))
-            self.isNewGame = false
-        }
-        
-        init(_ status: GameStatusEnum) {
-            self._builder = .init(wrappedValue: .init(status))
-            self.isNewGame = true
-        }
-        
-        var body: some View {
+        NavigationStack {
             Form {
-                GameImageView()
-                BooleanView(isEditing, trueView: EditOnView, falseView: EditOffView)
                 PropertiesView()
             }
-            .navigationBarBackButtonHidden()
-            .environment(\.editMode, $builder.editMode)
-            .environmentObject(self.builder)
+            .environment(\.editMode, $observable.editMode)
+            .environmentObject(self.observable)
             .toolbar {
                 
-                //1
-                
-                ToolbarItem(placement: .topBarTrailing, content: {
-                    Button(action: {
-                        // TODO: do the save logic
-                        self.toggleEditMode()
-//                        boolean_action(isEditing, TRUE: {
-//                            self.builder.save()
-//                            self.modelContext.save(self.builder)
-//                            self.toggleEditMode()
-//                        }, FALSE: self.toggleEditMode)
-                    }, label: {
-                        CustomText(self.topBarTrailingButton)
-                    })
-                    .disabled(builder.isDisabled)
-                })
-                
-                //2
-                
-                ToolbarItem(placement: .topBarLeading, content: {
-                    Button(action: {
-                        boolean_action(isEditing, TRUE: {
-                            boolean_action(isNewGame, TRUE: self.exit, FALSE: {
-                                self.builder.cancel()
-                                self.toggleEditMode()
-                            })
-                        }, FALSE: self.exit)
-                    }, label: {
-                        BooleanView(isEditing, trueView: {
-                            CustomText(.cancel)
-                        }, falseView: {
-                            HStack(alignment: .center, spacing: 5, content: {
-                                IconView(.chevron_left, .blue)
-                                CustomText(.back)
-                            })
-                        })
-                    })
-                })
-                
-            }
-        }
-        
-        @ViewBuilder
-        private func EditOnView() -> some View {
-            Section {
-                CustomTextField(.title, $builder.title)
-            }
-            Section {
-                CustomDatePicker(.release_date, $builder.release)
-            }
-            
-            Section {
-                Picker(ConstantEnum.property.rawValue, selection: $builder.tagType) {
-                    ForEach(TagType.cases) { tag in
-                        Text(tag.rawValue)
-                            .tag(tag)
+                ToolbarItem {
+                    Button(self.isEditing ? "Done": "Edit") {
+                        let edit: EditMode = self.observable.editMode
+                        self.observable.editMode = edit.toggle
                     }
                 }
-                .pickerStyle(.menu)
-            }
-            
-        }
-        
-        @ViewBuilder
-        private func EditOffView() -> some View {
-            Section {
-                FormattedView(.title, self.title)
-                FormattedView(.release_date, self.release.long)
+                
             }
         }
-        
-        private func exit() -> Void {
-            self.dismiss()
-        }
-        
-    }
-    
-    private enum Input {
-        case model(GameModel)
-        case status(GameStatusEnum)
     }
     
 }
 
-fileprivate struct PropertiesView: Gameopticable {
+fileprivate struct PropertiesView: TagsObservableProtocol {
     
-    @EnvironmentObject public var builder: GameBuilder
+    @EnvironmentObject public var observable: TagsObservable
     
     var body: some View {
         QuantifiableView(tags) { tags in
@@ -212,14 +65,14 @@ fileprivate struct PropertiesView: Gameopticable {
         
 }
 
-fileprivate struct TagsElementView: Gameopticable {
+fileprivate struct TagsElementView: TagsObservableProtocol {
     
     typealias Element = TagsElement
-        
-    @EnvironmentObject public var builder: GameBuilder
-    
+            
     @State var navigation: Bool = false
     @State var navigationEnum: NavigationEnum? = .none
+    
+    @EnvironmentObject public var observable: TagsObservable
     
     let element: Element
     
@@ -229,16 +82,6 @@ fileprivate struct TagsElementView: Gameopticable {
     
     var body: some View {
         BooleanView(isEditing, trueView: EditOnView, falseView: EditOffView)
-            .navigationDestination(isPresented: $navigation, destination: {
-                OptionalView(self.navigationEnum) { nav in
-                    switch nav {
-                    case .property(let gameBuilder, let inputEnum, let array):
-                        AddInputView(gameBuilder, inputEnum, array)
-                    case .platform(let gameBuilder, let systemBuilder):
-                        AddPlatformView(gameBuilder, systemBuilder)
-                    }
-                }
-            })
     }
     
     @ViewBuilder
@@ -274,6 +117,17 @@ fileprivate struct TagsElementView: Gameopticable {
     
     @ViewBuilder
     private func EditOnView() -> some View {
+        
+        Section {
+            Picker(ConstantEnum.property.rawValue, selection: $observable.tagType) {
+                ForEach(TagType.cases) { tag in
+                    Text(tag.rawValue)
+                        .tag(tag)
+                }
+            }
+            .pickerStyle(.menu)
+        }
+        
         switch element {
         case .inputs(let inputs):
             InputsEditOnView(inputs)
@@ -282,6 +136,10 @@ fileprivate struct TagsElementView: Gameopticable {
         case .platforms(let platforms):
             PlatformsEditOnView(platforms)
         }
+        
+        Section("Master") {
+            SortedSetView(self.builders, content: FormattedView)
+        }
     }
     
     @ViewBuilder
@@ -289,8 +147,8 @@ fileprivate struct TagsElementView: Gameopticable {
         OptionalView(InputEnum.convert(tagType)) { input in
             QuantifiableView(inputs[input]) { (strings: StringBuilders) in
                 ButtonSection("add \(input.rawValue.lowercased())", action: {
-                    self.navigationEnum = .property(builder, input, strings)
-                    self.navigation.toggle()
+//                    self.navigationEnum = .property(builder, input, strings)
+//                    self.navigation.toggle()
                 }, content: {
                     SortedSetView(strings) { string in
                         Text(string.rawValue).tag(string)
@@ -300,7 +158,7 @@ fileprivate struct TagsElementView: Gameopticable {
                             let value: StringBuilder = strings[index]
                             let builder: InputBuilder = .init(input, value)
                             let tag: TagBuilder = .input(builder)
-                            self.builder.delete(tag)
+                            self.observable.delete(tag)
                         }
                     })
                 })
@@ -325,8 +183,8 @@ fileprivate struct TagsElementView: Gameopticable {
     @ViewBuilder
     private func PlatformsEditOnView(_ platforms: Platforms) -> some View {
         ButtonSection("add \(self.tagType.rawValue)", platforms.unused.isEmpty, action: {
-            self.navigationEnum = .platform(builder, nil)
-            self.navigation.toggle()
+//            self.navigationEnum = .platform(builder, nil)
+//            self.navigation.toggle()
         }, content: {
             SortedSetView(platforms.keys) { systemEnum in
                 OptionalView(platforms[systemEnum], content: { systems in
@@ -354,7 +212,7 @@ fileprivate struct TagsElementView: Gameopticable {
             }
             .onDelete(action: {
                 $0.forEach { index in
-                    self.builder.delete(systemBuilders[index])
+                    self.observable.delete(systemBuilders[index])
                 }
             })
         }
@@ -368,7 +226,7 @@ fileprivate struct TagsElementView: Gameopticable {
             }
             .onDelete(action: {
                 $0.forEach { index in
-                    self.builder.delete(systemBuilder, formatEnums[index])
+                    self.observable.delete(systemBuilder, formatEnums[index])
                 }
             })
         }
@@ -386,7 +244,7 @@ fileprivate struct TagsElementView: Gameopticable {
                 }
                 .onDelete(action: {
                     $0.forEach { index in
-                        self.builder.delete(systemBuilder, formatBuilders[index])
+                        self.observable.delete(systemBuilder, formatBuilders[index])
                     }
                 })
             }, label: {
@@ -404,9 +262,9 @@ fileprivate struct TagsElementView: Gameopticable {
             self.contains(mode)
         }, set: { newValue in
             self.boolean_action(newValue, TRUE: {
-                self.builder.add(mode)
+                self.observable.add(mode)
             }, FALSE: {
-                self.builder.delete(mode)
+                self.observable.delete(mode)
             })
         }))
     }
@@ -427,8 +285,6 @@ fileprivate struct TagsElementView: Gameopticable {
             }
         }
     }
-    
-    
 
         
 }
@@ -471,4 +327,86 @@ fileprivate enum TagsElement: Quantifiable {
             return p.quantity
         }
     }
+}
+
+fileprivate class TagsObservable: ObservableObject {
+    
+    public static var random: TagsObservable {
+       .init(.random)
+    }
+    
+    @Published var tags: Tags
+    @Published var editMode: EditMode
+    @Published var tagType: TagType
+    
+    init(_ t: Tags) {
+        self.tags = t
+        self.tagType = .mode
+        self.editMode = .active
+    }
+
+//    @MainActor
+    func delete(_ builder: TagBuilder) {
+        self.tags -= builder
+    }
+    
+    var builders: TagBuilders { self.tags.builders }
+    
+    func add(_ i: InputBuilder) -> Void {
+        let builder: TagBuilder = .input(i)
+        self.add(builder)
+    }
+    
+    func delete(_ i: InputBuilder) -> Void {
+        self.tags -= .input(i)
+    }
+    
+    func add(_ builder: TagBuilder) -> Void {
+        self.tags += builder
+    }
+    
+    func delete(_ input: InputEnum) -> Void {
+        self.tags -= input
+    }
+    
+    func delete(_ system: SystemBuilder) -> Void {
+        self.tags -= system
+    }
+    
+    func delete(_ system: SystemBuilder, _ format: FormatEnum) -> Void {
+        self.tags -= (system, format)
+    }
+    
+    func delete(_ system: SystemBuilder, _ format: FormatBuilder) -> Void {
+        let builder: TagBuilder = .platform(system, format)
+        self.delete(builder)
+    }
+    
+    func set(_ member: Platforms.Member) -> Void {
+        self.tags --> (member.key, member.value)
+    }
+    
+}
+
+fileprivate protocol TagsObservableProtocol: View {
+    var observable: TagsObservable { get }
+}
+
+extension TagsObservableProtocol {
+    
+    var tags: Tags { self.observable.tags }
+    var builders: TagBuilders { self.observable.builders }
+    var inputs: Inputs { self.tags.inputs }
+    var isEditing: Bool {  self.observable.editMode == .active }
+    var tagType: TagType { self.observable.tagType }
+    
+    func contains(_ tag: TagBuilder) -> Bool {
+        self.builders.contains(tag)
+    }
+    
+}
+
+
+#Preview {
+    TempGameBuilderView()
 }

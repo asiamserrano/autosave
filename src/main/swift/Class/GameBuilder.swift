@@ -28,7 +28,6 @@ public class GameBuilder: ObservableObject {
     // tracking
     @Published private var added: TagBuilders = .defaultValue
     @Published private var deleted: TagBuilders = .defaultValue
-    @Published private var master: TagBuilders
     @Published private var tracker: Tracker
   
     // constant
@@ -43,7 +42,6 @@ public class GameBuilder: ObservableObject {
         self.status = snap.status
         self.tags = tags
         self.editMode = edit
-        self.master = tags.builders
         self.tracker = .init(snap, tags)
     }
     
@@ -73,13 +71,13 @@ extension GameBuilder {
         self.boxart = snapshot.boxart
         self.tags = self.tracker.tags
     }
-//    
-//    public func save() -> Void {
-//        self.original.snapshot = self.game
-//        self.original.tags = self.tags
-//        self.original.invalid = .init()
-//    }
-//        
+    
+    public func save() -> Void {
+        self.added = .defaultValue
+        self.deleted = .defaultValue
+        self.tracker = .init(self)
+    }
+    
     public var isDisabled: Bool {
         let o: GameSnapshot = self.game
         let isInvalid: Bool = self.tracker.invalid.contains(o) || o.title_canon.isEmpty
@@ -91,12 +89,29 @@ extension GameBuilder {
 
 public extension GameBuilder {
     
+    var inputs: Inputs { self.tags.inputs }
+    var builders: TagBuilders { self.tags.builders }
+    
+    func add(_ i: InputBuilder) -> Void {
+        let builder: TagBuilder = .input(i)
+        self.insert(builder)
+        self.tags += builder
+    }
+    
+    func delete(_ i: InputBuilder) -> Void {
+        let builder: TagBuilder = .input(i)
+        print("deleting")
+        self.remove(builder)
+        self.tags -= builder
+    }
+    
     func add(_ builder: TagBuilder) -> Void {
         self.insert(builder)
         self.tags += builder
     }
     
     func delete(_ builder: TagBuilder) -> Void {
+        print("deleting")
         self.remove(builder)
         self.tags -= builder
     }
@@ -122,10 +137,12 @@ public extension GameBuilder {
         self.delete(builder)
     }
     
-//    func delete(_ platform: PlatformBuilder) -> Void {
-//        let builder: TagBuilder = .platform(platform)
-//        self.delete(builder)
-//    }
+    func set(_ member: Platforms.Member) -> Void {
+        let system: SystemBuilder = member.key
+        self.delete(system)
+        self.tags --> (system, member.value)
+        self.insert(tags[system])
+    }
     
     var count: Int { self.tags.quantity }
     var game: GameSnapshot { .fromBuilder(self) }
@@ -137,6 +154,11 @@ private extension GameBuilder {
     func insert(_ builder: TagBuilder) -> Void {
         self.added += builder
         self.deleted -= builder
+    }
+    
+    func insert(_ builders: TagBuilders) -> Void {
+        self.added += builders
+        self.deleted -= builders
     }
     
     func remove(_ builder: TagBuilder) -> Void {
@@ -160,6 +182,10 @@ private extension GameBuilder {
             self.snapshot = snap
             self.invalid = .init(snap)
             self.tags = tags
+        }
+        
+        init(_ builder: GameBuilder) {
+            self.init(builder.game, builder.tags)
         }
         
     }

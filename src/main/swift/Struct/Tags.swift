@@ -9,6 +9,12 @@ import Foundation
 
 public struct Tags: TagsProtocol {
     
+    public func copy() -> Self {
+        var new: Self = .init()
+        self.builders.forEach { new += $0 }
+        return new
+    }
+    
     public private(set) var inputs: Inputs = .defaultValue
     public private(set) var platforms: Platforms = .defaultValue
     public private(set) var modes: Modes = .defaultValue
@@ -33,8 +39,11 @@ public extension Tags {
     static var random: Self {
         var new: Self = .init()
         
-        InputEnum.cases.forEach { i in StringBuilders.random.forEach { new += .input(i, $0) } }
-        ModeEnum.allCases.forEach { if Bool.random() { new += .mode($0) } }
+        Inputs.random.builders.forEach { new += $0 }
+        Modes.random.builders.forEach { new += $0 }
+        
+//        InputEnum.cases.forEach { i in StringBuilders.random.forEach { new += .input(i, $0) } }
+//        ModeEnum.allCases.forEach { if Bool.random() { new += .mode($0) } }
         SystemBuilders.random.forEach { s in s.formatBuilders.forEach { if Bool.random() { new += .platform(s, $0) } } }
         return new
     }
@@ -55,6 +64,10 @@ public extension Tags {
     
     static func -= (lhs: inout Self, rhs: InputEnum) -> Void {
         lhs --> (lhs.inputs - rhs)
+    }
+    
+    static func --> (lhs: inout Self, rhs: Platforms.Member) -> Void {
+        lhs --> (lhs.platforms --> rhs)
     }
     
     static func -= (lhs: inout Self, rhs: Element) -> Void {
@@ -95,9 +108,13 @@ public extension Tags {
         }
     }
     
-    subscript(key: SystemBuilder) -> Formats {
+    subscript(key: SystemBuilder?) -> Formats {
         get {
-            self[key.type][key]
+            if let key: SystemBuilder = key {
+                return self[key.type][key]
+            } else {
+                return .defaultValue
+            }
         }
     }
     
@@ -148,33 +165,3 @@ private extension Tags {
     }
     
 }
-
-extension Tags: Stable {
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(self.builders)
-    }
-    
-}
-
-extension Tags: Defaultable {
-    
-    public static var defaultValue: Self { .init() }
-    
-}
-
-extension Tags: Quantifiable {
-    
-    public var quantity: Int { self.builders.count }
-    
-}
-
-//public extension Tags {
-//    
-//    enum Grouping {
-//        case inputs(Inputs)
-//        case modes(Modes)
-//        case platforms(Platforms)
-//    }
-//    
-//}

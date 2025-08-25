@@ -8,6 +8,19 @@
 import Foundation
 
 public struct Platforms: TagsMapProtocol {
+    
+    public static func -->(lhs: Self, rhs: Member) -> Self {
+        let key: Key = rhs.key.type
+        let value: Value = lhs[key] --> rhs
+        let builders: TagBuilders = value.builders
+        
+        var new: Self = lhs
+        new -= key
+        new.values --> (value, key)
+        new.records --> (builders, key)
+        new.builders += builders
+        return new
+    }
         
     public static func += (lhs: inout Self, rhs: Element) -> Void {
         let key: Key = rhs.system.type
@@ -64,21 +77,20 @@ public struct Platforms: TagsMapProtocol {
         return new
     }
 
-    public static func -(lhs: Self, rhs: Key) -> Self {
-        var new: Self = lhs
+    public static func -=(lhs: inout Self, rhs: Key) -> Void {
         // remove key from key value map
-        new.values --> (nil, rhs)
+        lhs.values --> (nil, rhs)
         // remove key from key builder map
-        new.records --> (nil, rhs)
+        lhs.records --> (nil, rhs)
         // remove tag builders for key from key builder map
-        new.builders -= lhs[rhs]
-        return new
+        lhs.builders -= lhs[rhs]
     }
         
     public typealias Key = SystemEnum
     public typealias Value = Systems
     public typealias Element = PlatformBuilder
     public typealias Index = Value.Index
+    public typealias Member = Value.Member
     
     public private(set) var values: Values
     public private(set) var records: Records
@@ -88,6 +100,14 @@ public struct Platforms: TagsMapProtocol {
         self.values = .defaultValue
         self.records = .defaultValue
         self.builders = .defaultValue
+    }
+    
+    public var used: SystemBuilders {
+        .init(self.values.flatMap { $0.value.keys })
+    }
+    
+    public var unused: SystemBuilders {
+        .init(SystemBuilder.cases) - self.used
     }
         
 }

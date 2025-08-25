@@ -8,6 +8,19 @@
 import Foundation
 
 public struct Systems: TagsMapProtocol {
+    
+    public static func -->(lhs: Self, rhs: Member) -> Self {
+        let key: Key = rhs.key
+        let value: Value = rhs.value
+        let builders: TagBuilders = value.builders
+        
+        var new: Self = lhs
+        new -= key
+        new.values --> (value, key)
+        new.records --> (builders, key)
+        new.builders += builders
+        return new
+    }
         
     public static func += (lhs: inout Self, rhs: Element) -> Void {
         let key: Key = rhs.system
@@ -50,21 +63,20 @@ public struct Systems: TagsMapProtocol {
         return new
     }
 
-    public static func -(lhs: Self, rhs: Key) -> Self {
-        var new: Self = lhs
+    public static func -=(lhs: inout Self, rhs: Key) -> Void {
         // remove key from key value map
-        new.values --> (nil, rhs)
+        lhs.values --> (nil, rhs)
         // remove key from key builder map
-        new.records --> (nil, rhs)
+        lhs.records --> (nil, rhs)
         // remove tag builders for key from key builder map
-        new.builders -= lhs[rhs]
-        return new
+        lhs.builders -= lhs[rhs]
     }
         
     public typealias Key = SystemBuilder
     public typealias Value = Formats
     public typealias Element = PlatformBuilder
     public typealias Index = (Key, Value.Key)
+    public typealias Member = Values.Element
     
     public private(set) var values: Values
     public private(set) var records: Records
