@@ -37,7 +37,7 @@ public struct Modes: TagsProtocol {
     
     public static func -(lhs: Self, rhs: Element) -> Self {
         var new: Self = lhs
-        new += rhs
+        new -= rhs
         return new
     }
     

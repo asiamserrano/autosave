@@ -11,11 +11,11 @@ struct TempModesView: View {
     
 //    @State var modes: Modes = .random
     
-//    @StateObject var builder: GameBuilder = .random
+    @StateObject var builder: GameBuilder = .random
     
-    @State var tags: Tags = .random
+//    @State var tags: Tags = .random
     
-    var modes: Modes { self.tags.modes }
+    var modes: Modes { self.builder.tags.modes }
     
     var body: some View {
         NavigationStack {
@@ -32,7 +32,7 @@ struct TempModesView: View {
                 }
                 
                 Section("Master") {
-                    SortedSetView(self.tags.builders, content: FormattedView)
+                    SortedSetView(self.builder.builders, content: FormattedView)
                 }
             }
         }
@@ -45,11 +45,11 @@ struct TempModesView: View {
         }, set: { newValue in
             let b: TagBuilder = .mode(mode)
             self.boolean_action(newValue, TRUE: {
-//                self.builder.add(b)
-                self.tags += b
+                self.builder.add(b)
+//                self.tags += b
             }, FALSE: {
-//                self.builder.delete(b)
-                self.tags -= b
+                self.builder.delete(b)
+//                self.tags -= b
             })
         }))
     }
