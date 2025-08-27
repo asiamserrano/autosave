@@ -61,7 +61,7 @@ public class GameBuilder: ObservableObject {
 extension GameBuilder {
 
     public func fail() -> Void {
-        self.tracker.invalid += self.game
+        self.tracker.invalid += self.snapshot
     }
 
     public func cancel() -> Void {
@@ -79,10 +79,15 @@ extension GameBuilder {
     }
     
     public var isDisabled: Bool {
-        let o: GameSnapshot = self.game
-        let isInvalid: Bool = self.tracker.invalid.contains(o) || o.title_canon.isEmpty
-        let isSame: Bool = self.tracker.snapshot == o || self.tracker.tags == self.tags
+        let snap: GameSnapshot = self.snapshot
+        let isInvalid: Bool = self.tracker.invalid.contains(snap) || snap.title_canon.isEmpty
+        let isSame: Bool = self.tracker.tags == self.tags
         return self.editMode == .active ? isInvalid || isSame : false
+        
+//        let o: GameSnapshot = self.game
+//        let isInvalid: Bool = self.tracker.invalid.contains(o) || o.title_canon.isEmpty
+//        let isSame: Bool = self.tracker.snapshot == o || self.tracker.tags == self.tags
+//        return self.editMode == .active ? isInvalid || isSame : false
     }
 
 }
@@ -145,7 +150,7 @@ public extension GameBuilder {
     }
     
     var count: Int { self.tags.quantity }
-    var game: GameSnapshot { .fromBuilder(self) }
+    var snapshot: GameSnapshot { .fromBuilder(self) }
     
 }
 
@@ -185,7 +190,7 @@ private extension GameBuilder {
         }
         
         init(_ builder: GameBuilder) {
-            self.init(builder.game, builder.tags)
+            self.init(builder.snapshot, builder.tags)
         }
         
     }

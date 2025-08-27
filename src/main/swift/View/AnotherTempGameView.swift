@@ -1,4 +1,13 @@
 //
+//  AnotherTempGameView.swift
+//  autosave
+//
+//  Created by Asia Michelle Serrano on 8/26/25.
+//
+
+import SwiftUI
+
+//
 //  GameView.swift
 //  autosave
 //
@@ -8,184 +17,227 @@
 import SwiftUI
 import SwiftData
 
-struct GameView: View {
+class VideoGameBuilder: ObservableObject {
     
-    private let input: Input
+    @Published public var title: String
+    @Published public var release: Date
+    @Published public var boxart: Data?
     
-    public init(_ model: GameModel) {
-        self.input = .model(model)
+    // view modification
+    @Published public var editMode: EditMode
+  
+    // constant
+    public let status: GameStatusEnum
+    public let uuid: UUID
+    
+    public init(_ snap: GameSnapshot, _ edit: EditMode) {
+        self.uuid = snap.uuid
+        self.title = snap.title
+        self.release = snap.release
+        self.boxart = snap.boxart
+        self.status = snap.status
+        self.editMode = edit
     }
     
-    public init(_ status: GameStatusEnum) {
-        self.input = .status(status)
+    public convenience init(_ status: GameStatusEnum) {
+        self.init(.defaultValue(status), .active)
     }
     
-    fileprivate init() {
-        self.input = .builder
-    }
-    
-    var body: some View {
-        switch input {
-        case .model(let model):
-            QueryRelationView(model)
-        case .status(let status):
-            BuilderView(status)
-        case .builder:
-            BuilderView()
-        }
-    }
-    
-    private struct QueryRelationView: View {
-        @Query var relations: [RelationModel]
-        
-        let model: GameModel
-        
-        init(_ model: GameModel) {
-            let predicate: RelationPredicate = .getByGame(model.uuid)
-            self._relations = .init(filter: predicate)
-            self.model = model
-        }
-        
-        var body: some View {
-            QueryPropertyView(relations, model)
-        }
-    }
-    
-    private struct QueryPropertyView: View {
-        
-        @Query var properties: [PropertyModel]
-        
-        let relations: [RelationModel]
-        let model: GameModel
-        
-        init(_ relations: [RelationModel], _ model: GameModel) {
-            self.relations = relations
-            let predicate: PropertyPredicate = .getByRelations(relations)
-            self._properties = .init(filter: predicate, sort: .defaultValue)
-            self.model = model
-        }
-        
-        var body: some View {
-            BuilderView(model, relations, properties)
-        }
-        
-    }
-    
-    private struct BuilderView: Gameopticable {
-        
-        @Environment(\.dismiss) private var dismiss
-        
-        @Environment(\.modelContext) private var modelContext
-        
-        @StateObject var builder: GameBuilder
-        
-        let isNewGame: Bool
-        
-        init(_ model: GameModel, _ relations: [RelationModel], _ properties: [PropertyModel]) {
-            self._builder = .init(wrappedValue: .init(model, relations, properties))
-            self.isNewGame = false
-        }
-        
-        init(_ status: GameStatusEnum) {
-            self._builder = .init(wrappedValue: .init(status))
-            self.isNewGame = true
-        }
-        
-        init() {
-            self._builder = .init(wrappedValue: .random)
-            self.isNewGame = false
-        }
-        
-        var body: some View {
-            Form {
-                GameImageView()
-                BooleanView(isEditing, trueView: EditOnView, falseView: EditOffView)
-                PropertiesView()
-            }
-            .navigationBarBackButtonHidden()
-            .environment(\.editMode, $builder.editMode)
-            .environmentObject(self.builder)
-            .toolbar {
-                
-                //1
-                
-                ToolbarItem(placement: .topBarTrailing, content: {
-                    Button(action: {
-                        // TODO: do the save logic
-                        self.toggleEditMode()
-                    }, label: {
-                        CustomText(self.topBarTrailingButton)
-                    })
-                    .disabled(builder.isDisabled)
-                })
-                
-                //2
-                
-                ToolbarItem(placement: .topBarLeading, content: {
-                    Button(action: {
-                        boolean_action(isEditing, TRUE: {
-                            boolean_action(isNewGame, TRUE: self.exit, FALSE: {
-                                self.builder.cancel()
-                                self.toggleEditMode()
-                            })
-                        }, FALSE: self.exit)
-                    }, label: {
-                        BooleanView(isEditing, trueView: {
-                            CustomText(.cancel)
-                        }, falseView: {
-                            HStack(alignment: .center, spacing: 5, content: {
-                                IconView(.chevron_left, .blue)
-                                CustomText(.back)
-                            })
-                        })
-                    })
-                })
-                
-            }
-        }
-        
-        @ViewBuilder
-        private func EditOnView() -> some View {
-            Section {
-                CustomTextField(.title, $builder.title)
-            }
-            Section {
-                CustomDatePicker(.release_date, $builder.release)
-            }
-            
-            Section {
-                Picker(ConstantEnum.property.rawValue, selection: $builder.tagType) {
-                    ForEach(TagType.cases) { tag in
-                        Text(tag.rawValue)
-                            .tag(tag)
-                    }
-                }
-                .pickerStyle(.menu)
-            }
-            
-        }
-        
-        @ViewBuilder
-        private func EditOffView() -> some View {
-            Section {
-                FormattedView(.title, self.title)
-                FormattedView(.release_date, self.release.long)
-            }
-        }
-        
-        private func exit() -> Void {
-            self.dismiss()
-        }
-        
-    }
-    
-    private enum Input {
-        case model(GameModel)
-        case status(GameStatusEnum)
-        case builder
+    public convenience init(_ model: GameModel) {
+        self.init(model.snapshot, .inactive)
     }
     
 }
+
+
+
+
+//struct AnotherTempGameView: View {
+//    
+//    private let input: Input
+//    
+//    public init(_ model: GameModel) {
+//        self.input = .model(model)
+//    }
+//    
+//    public init(_ status: GameStatusEnum) {
+//        self.input = .status(status)
+//    }
+//    
+//    fileprivate init() {
+//        self.input = .builder
+//    }
+//    
+//    var body: some View {
+//        switch input {
+//        case .model(let model):
+//            QueryRelationView(model)
+//        case .status(let status):
+//            BuilderView(status)
+//        case .builder:
+//            BuilderView()
+//        }
+//    }
+//    
+//    private struct QueryRelationView: View {
+//        @Query var relations: [RelationModel]
+//        
+//        let model: GameModel
+//        
+//        init(_ model: GameModel) {
+//            let predicate: RelationPredicate = .getByGame(model.uuid)
+//            self._relations = .init(filter: predicate)
+//            self.model = model
+//        }
+//        
+//        var body: some View {
+//            QueryPropertyView(relations, model)
+//        }
+//    }
+//    
+//    private struct QueryPropertyView: View {
+//        
+//        @Query var properties: [PropertyModel]
+//        
+//        let relations: [RelationModel]
+//        let model: GameModel
+//        
+//        init(_ relations: [RelationModel], _ model: GameModel) {
+//            self.relations = relations
+//            let predicate: PropertyPredicate = .getByRelations(relations)
+//            self._properties = .init(filter: predicate, sort: .defaultValue)
+//            self.model = model
+//        }
+//        
+//        var body: some View {
+//            BuilderView(model, relations, properties)
+//        }
+//        
+//    }
+//    
+//    private struct BuilderView: View {
+//        
+//        @Environment(\.dismiss) private var dismiss
+//        
+//        @Environment(\.modelContext) private var modelContext
+//        
+//        @State var title: String
+//        @State var release: Date
+//        @State var boxart: Data?
+//        @State var tags: Tags
+//        
+//        let isNewGame: Bool
+//        
+//        init(_ model: GameModel, _ relations: [RelationModel], _ properties: [PropertyModel]) {
+//            self.init(.fromModel(model), .build(relations, properties), false)
+//        }
+//        
+//        init(_ status: GameStatusEnum) {
+//            self.init(.defaultValue(status), .defaultValue, true)
+//        }
+//        
+//        init() {
+//            self.init(.random, .random, false)
+//        }
+//        
+//        private init(_ snapshot: GameSnapshot,  _ tags: Tags, _ isNewGame: Bool) {
+//            self._title = .init(initialValue: snapshot.title)
+//            self._release = .init(initialValue: snapshot.release)
+//            self._boxart = .init(initialValue: snapshot.boxart)
+//            self._tags = .init(initialValue: tags)
+//            self.isNewGame = isNewGame
+//        }
+//        
+//        var body: some View {
+//            Form {
+//                GameImageView()
+////                BooleanView(isEditing, trueView: EditOnView, falseView: EditOffView)
+////                PropertiesView()
+//            }
+//            .navigationBarBackButtonHidden()
+//            .environment(\.editMode, $builder.editMode)
+//            .environmentObject(self.builder)
+//            .toolbar {
+//                
+//                //1
+//                
+//                ToolbarItem(placement: .topBarTrailing, content: {
+//                    Button(action: {
+//                        // TODO: do the save logic
+//                        self.toggleEditMode()
+//                    }, label: {
+//                        CustomText(self.topBarTrailingButton)
+//                    })
+//                    .disabled(builder.isDisabled)
+//                })
+//                
+//                //2
+//                
+//                ToolbarItem(placement: .topBarLeading, content: {
+//                    Button(action: {
+//                        boolean_action(isEditing, TRUE: {
+//                            boolean_action(isNewGame, TRUE: self.exit, FALSE: {
+//                                self.builder.cancel()
+//                                self.toggleEditMode()
+//                            })
+//                        }, FALSE: self.exit)
+//                    }, label: {
+//                        BooleanView(isEditing, trueView: {
+//                            CustomText(.cancel)
+//                        }, falseView: {
+//                            HStack(alignment: .center, spacing: 5, content: {
+//                                IconView(.chevron_left, .blue)
+//                                CustomText(.back)
+//                            })
+//                        })
+//                    })
+//                })
+//                
+//            }
+//        }
+//        
+//        @ViewBuilder
+//        private func EditOnView() -> some View {
+//            Section {
+//                CustomTextField(.title, $builder.title)
+//            }
+//            Section {
+//                CustomDatePicker(.release_date, $builder.release)
+//            }
+//            
+//            Section {
+//                Picker(ConstantEnum.property.rawValue, selection: $builder.tagType) {
+//                    ForEach(TagType.cases) { tag in
+//                        Text(tag.rawValue)
+//                            .tag(tag)
+//                    }
+//                }
+//                .pickerStyle(.menu)
+//            }
+//            
+//        }
+//        
+//        @ViewBuilder
+//        private func EditOffView() -> some View {
+//            Section {
+//                FormattedView(.title, self.title)
+//                FormattedView(.release_date, self.release.long)
+//            }
+//        }
+//        
+//        private func exit() -> Void {
+//            self.dismiss()
+//        }
+//        
+//    }
+//    
+//    private enum Input {
+//        case model(GameModel)
+//        case status(GameStatusEnum)
+//        case builder
+//    }
+//    
+//}
 
 fileprivate struct PropertiesView: Gameopticable {
     
@@ -476,10 +528,7 @@ fileprivate enum TagsElement: Quantifiable {
     }
 }
 
-#Preview {
-    NavigationStack {
-        GameView()
-    }
-    
-    
-}
+
+//#Preview {
+//    AnotherTempGameView()
+//}

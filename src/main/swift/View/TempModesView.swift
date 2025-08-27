@@ -22,12 +22,24 @@ struct TempModesView: View {
             Form {
                 Section {
                     SortedSetView(ModeEnum.self) { mode in
-                        HStack {
-                            IconView(mode.icon)
-                            Text(mode.rawValue)
-                            Spacer()
-                            ModeToggle(mode)
+                        WrapperView(.mode(mode)) { (b: TagBuilder) in
+                            Toggle(isOn: .init(get: {
+                                self.modes.contains(mode)
+                            }, set: { newValue in
+                                self.boolean_action(newValue, TRUE: {
+                                    self.builder.add(b)
+                                }, FALSE: {
+                                    self.builder.delete(b)
+                                })
+                            }), label: {
+                                HStack {
+                                    IconView(mode.icon)
+                                    Text(mode.rawValue)
+                                    Spacer()
+                                }
+                            })
                         }
+                        
                     }
                 }
                 
@@ -40,18 +52,38 @@ struct TempModesView: View {
     
     @ViewBuilder
     private func ModeToggle(_ mode: ModeEnum) -> some View {
-        Toggle(String.defaultValue, isOn: .init(get: {
+        Toggle(isOn: .init(get: {
             self.modes.contains(mode)
         }, set: { newValue in
             let b: TagBuilder = .mode(mode)
             self.boolean_action(newValue, TRUE: {
                 self.builder.add(b)
-//                self.tags += b
             }, FALSE: {
                 self.builder.delete(b)
-//                self.tags -= b
             })
-        }))
+        }), label: {
+            HStack {
+                IconView(mode.icon)
+                Text(mode.rawValue)
+                Spacer()
+            }
+        })
+//        HStack {
+//           
+//        }
+        
+//        Toggle(String.defaultValue, isOn: .init(get: {
+//            self.modes.contains(mode)
+//        }, set: { newValue in
+//            let b: TagBuilder = .mode(mode)
+//            self.boolean_action(newValue, TRUE: {
+//                self.builder.add(b)
+////                self.tags += b
+//            }, FALSE: {
+//                self.builder.delete(b)
+////                self.tags -= b
+//            })
+//        }))
     }
     
 }

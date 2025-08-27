@@ -37,7 +37,7 @@ extension ModelContext {
     @discardableResult
     // TODO: Does not work
     func save(_ builder: GameBuilder) -> GameResult {
-        let current: GameSnapshot = builder.game
+        let current: GameSnapshot = builder.snapshot
         let composite: GameFetchDescriptor = .getBySnapshot(current)
         let new: GameModel? = self.fetchModel(composite)
         
