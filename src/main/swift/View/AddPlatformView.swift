@@ -37,9 +37,7 @@ struct AddPlatformView: AddPlatformProtocol {
     var body: some View {
         
         Form {
-            
-            Text("object count: \(self.object.count.description)")
-            
+                        
             BooleanView(self.isNavigationLinkDisabled, trueView: PlatformLabel, falseView: FalseView)
             
             OptionalView(self.system) { systemBuilder in
@@ -109,7 +107,14 @@ struct AddPlatformView: AddPlatformProtocol {
     
     @ViewBuilder
     private func PlatformLabel() -> some View {
-        SpacedLabel("Platform", self.display, self.emphasis)
+        HStack {
+            Text("Platform")
+                .foregroundStyle(.red)
+            Spacer()
+            Text(self.display)
+        }
+//        SpacedLabel("Platform", self.display, self.emphasis)
+//            .foregroundStyle(.red)
     }
     
 }

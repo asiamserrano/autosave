@@ -78,16 +78,13 @@ extension GameBuilder {
         self.tracker = .init(self)
     }
     
+    public var isEditing: Bool { self.editMode == .active }
+    
     public var isDisabled: Bool {
         let snap: GameSnapshot = self.snapshot
         let isInvalid: Bool = self.tracker.invalid.contains(snap) || snap.title_canon.isEmpty
         let isSame: Bool = self.tracker.tags == self.tags
-        return self.editMode == .active ? isInvalid || isSame : false
-        
-//        let o: GameSnapshot = self.game
-//        let isInvalid: Bool = self.tracker.invalid.contains(o) || o.title_canon.isEmpty
-//        let isSame: Bool = self.tracker.snapshot == o || self.tracker.tags == self.tags
-//        return self.editMode == .active ? isInvalid || isSame : false
+        return isEditing ? isInvalid && isSame : false
     }
 
 }

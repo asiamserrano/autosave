@@ -41,10 +41,8 @@ public extension Tags {
         
         Inputs.random.builders.forEach { new += $0 }
         Modes.random.builders.forEach { new += $0 }
-        
-//        InputEnum.cases.forEach { i in StringBuilders.random.forEach { new += .input(i, $0) } }
-//        ModeEnum.allCases.forEach { if Bool.random() { new += .mode($0) } }
         SystemBuilders.random.forEach { s in s.formatBuilders.forEach { if Bool.random() { new += .platform(s, $0) } } }
+        
         return new
     }
     

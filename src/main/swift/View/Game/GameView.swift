@@ -364,11 +364,22 @@ fileprivate struct TagsElementView: Gameopticable {
                         FormatEnumsView(systemEnum, systemBuilder, formats)
                     }
                 }, label: {
-                    HStack(alignment: .center, spacing: 10) {
-                        Text(systemBuilder.rawValue)
-                            .foregroundColor(.blue)
-                        Spacer()
-                    }
+                    Button(action: {
+                        self.navigationEnum = .platform(builder, systemBuilder)
+                        self.navigation.toggle()
+                    }, label: {
+                        HStack(alignment: .center, spacing: 10) {
+                            Text(systemBuilder.rawValue)
+                                .foregroundColor(.blue)
+                            Spacer()
+                        }
+                    })
+                    
+//                    HStack(alignment: .center, spacing: 10) {
+//                        Text(systemBuilder.rawValue)
+//                            .foregroundColor(.blue)
+//                        Spacer()
+//                    }
                 })
             }
             .onDelete(action: {

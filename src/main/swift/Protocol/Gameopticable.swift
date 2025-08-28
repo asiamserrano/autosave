@@ -63,7 +63,7 @@ public extension Gameopticable {
     }
     
     var isEditing: Bool {
-        self.editMode == .active
+        self.builder.isEditing
     }
     
     var topBarTrailingButton: ConstantEnum {
@@ -92,34 +92,7 @@ public extension Gameopticable {
     }
     
     func contains(_ builder: TagBuilder) -> Bool {
-        false
-//        self.tags.contains(builder)
+        self.tags.builders.contains(builder)
     }
-    
-    
-    
-//    func delete(_ builder: Tags.Builder) -> Void {
-//        self.builder.delete(builder)
-//    }
-//    
-    
-    
-//    func setData(_ data: Data?, _ picker: ImagePickerEnum) -> Void {
-//        withAnimation {
-//            self.builder.boxart = data
-//            self.setPicker(picker)
-//        }
-//    }
-    
-//    func setPicker(_ picker: ImagePickerEnum) -> Void {
-//        self.builder.imagePicker = picker
-//    }
-//    
-//    func resetPhotosPickerItem() -> Void {
-//        self.builder.photosPickerItem = nil
-//    }
-    
-//    var propertyEnum: PropertyEnum { self.observer.propertyEnum }
-//    var properties: PropertyBuilderGroup { self.observer.properties }
 
 }
