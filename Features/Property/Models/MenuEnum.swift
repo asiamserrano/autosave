@@ -17,7 +17,7 @@ public enum MenuEnum: Enumerable {
 
 public extension MenuEnum {
     
-    var icon: IconEnum {
+    var icon: AppIcon {
         switch self {
         case .properties: return .list_clipboard
         case .wishlist: return .list_star

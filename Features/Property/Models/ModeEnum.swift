@@ -19,7 +19,7 @@ public enum ModeEnum: Enumerable {
         }
     }
     
-    var icon: IconEnum {
+    var icon: AppIcon {
         switch self {
         case .single: return .person_fill
         case .two: return .person_2_fill

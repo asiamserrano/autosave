@@ -1,5 +1,5 @@
 //
-//  IconEnum.swift
+//  AppIcon.swift
 //  autosave
 //
 //  Created by Asia Michelle Serrano on 5/7/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum IconEnum: Enumerable {
+public enum AppIcon: Enumerable {
     case plus
     case trash
     case pencil

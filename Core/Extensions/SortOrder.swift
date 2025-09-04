@@ -13,7 +13,7 @@ extension SortOrder: Iterable {
     
     public static var cases: [SortOrder] { [.forward, .reverse] }
     
-    public var icon: IconEnum {
+    public var icon: AppIcon {
         switch self {
         case .forward: return .chevron_up
         case .reverse: return .chevron_down

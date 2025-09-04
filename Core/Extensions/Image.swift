@@ -18,7 +18,7 @@ extension Image {
         }
     }
     
-    public init(_ icon: IconEnum) {
+    public init(_ icon: AppIcon) {
         self.init(systemName: icon.rawValue)
     }
     

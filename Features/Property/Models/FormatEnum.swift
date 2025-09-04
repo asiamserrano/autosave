@@ -10,7 +10,7 @@ import Foundation
 public enum FormatEnum: Enumerable {
     case digital, physical
     
-    public var icon: IconEnum {
+    public var icon: AppIcon {
         switch self {
         case .digital: return .arrow_down_circle_fill
         case .physical: return .opticaldisc_fill

@@ -34,7 +34,7 @@ public extension GameSort {
         }
     }
     
-    var icon: IconEnum { self.order.icon }
+    var icon: AppIcon { self.order.icon }
     
     enum TypeEnum: Enumerable {
         case release, title

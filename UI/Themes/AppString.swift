@@ -1,5 +1,5 @@
 //
-//  ConstantEnum.swift
+//  AppString.swift
 //  autosave
 //
 //  Created by Asia Serrano on 5/8/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum ConstantEnum: Enumerable {
+public enum AppString: Enumerable {
     
     case title
     case release_date
@@ -26,7 +26,7 @@ public enum ConstantEnum: Enumerable {
     
 }
 
-extension ConstantEnum {
+extension AppString {
     
     public var rawValue: String {
         self.id.replacingOccurrences(of: "_", with: " ").capitalized

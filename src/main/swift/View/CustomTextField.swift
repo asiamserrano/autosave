@@ -20,7 +20,7 @@ struct CustomTextField: View {
         self.prompt = prompt
     }
     
-    public init(_ constant: ConstantEnum, _ binding: Binding<String>) {
+    public init(_ constant: AppString, _ binding: Binding<String>) {
         self._binding = binding
         self.keyboard = .alphabet
         self.prompt = constant.rawValue
