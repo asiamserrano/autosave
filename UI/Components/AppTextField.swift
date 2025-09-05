@@ -1,5 +1,5 @@
 //
-//  CustomTextField.swift
+//  AppTextField.swift
 //  autosave
 //
 //  Created by Asia Serrano on 5/8/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CustomTextField: View {
+struct AppTextField: View {
     
     @Binding private var binding: String
     
@@ -38,7 +38,7 @@ struct CustomTextField: View {
                 Button(action: {
                     self.binding = .init()
                 }, label: {
-                    IconView(.xmark_circle_fill)
+                    AppIconView(.xmark_circle_fill)
                 })
                 .buttonStyle(.plain)
             }

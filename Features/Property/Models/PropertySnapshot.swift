@@ -11,22 +11,22 @@ public struct PropertySnapshot {
     
 //    public static func fromBuilder(_ builder: PropertyBuilder) -> Self {
 //        let type: PropertyEnum = builder.type
-//        let string: StringBuilder = .fromPropertyBuilder(builder)
+//        let string: CanonicalString = .fromPropertyBuilder(builder)
 //        return .init(.init(), type, string)
 //    }
     
     public static func fromModel(_ model: PropertyModel) -> Self {
         let uuid: UUID = model.uuid
         let type: PropertyEnum = .init(model.type_id)
-        let string: StringBuilder = .fromPropertyModel(model)
+        let string: CanonicalString = .fromPropertyModel(model)
         return .init(uuid, type, string)
     }
  
     public let uuid: UUID
     public let type: PropertyEnum
-    public let string: StringBuilder
+    public let string: CanonicalString
     
-    private init(_ uuid: UUID, _ type: PropertyEnum, _ string: StringBuilder) {
+    private init(_ uuid: UUID, _ type: PropertyEnum, _ string: CanonicalString) {
         self.uuid = uuid
         self.type = type
         self.string = string

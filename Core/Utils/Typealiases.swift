@@ -8,6 +8,6 @@
 import Foundation
 
 //public typealias TagBuilders = SortedSet<TagBuilder>
-//public typealias StringBuilders = SortedSet<StringBuilder>
+//public typealias CanonicalStrings = SortedSet<CanonicalString>
 //public typealias FormatBuilders = SortedSet<FormatBuilder>
 //public typealias SystemBuilders = SortedSet<SystemBuilder>

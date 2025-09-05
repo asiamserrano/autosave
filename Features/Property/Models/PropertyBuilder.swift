@@ -51,11 +51,11 @@ public enum PropertyBuilder {
         }
     }
     
-    public var stringBuilder: StringBuilder {
+    public var stringBuilder: CanonicalString {
         .fromPropertyBuilder(self)
     }
     
-//    public var stringBuilder: StringBuilder {
+//    public var stringBuilder: CanonicalString {
 //        switch self {
 //        case .input(let inputBuilder):
 //            let key: String = inputBuilder.canon

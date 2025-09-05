@@ -32,7 +32,7 @@ struct GameForm: View {
         NavigationStack {
             Form {
                 Section {
-                    CustomTextField(.title, $builder.title)
+                    AppTextField(.title, $builder.title)
                 }
                 Section {
                     CustomDatePicker(.release_date, $builder.release)

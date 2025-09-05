@@ -32,7 +32,7 @@ struct GamesListView: View {
                 NavigationLink(destination: {
                     GameForm(self.status)
                 }, label: {
-                    IconView(.plus)
+                    AppIconView(.plus)
                 })
             })
         }
@@ -67,7 +67,7 @@ fileprivate struct SearchView: View {
                                 .bold()
                             HStack {
                                 HStack(spacing: 8) {
-                                    IconView(.calendar, 20, 20)
+                                    AppIconView(.calendar, 20, 20)
                                     Text(snapshot.release.dashes)
                                         .foregroundColor(.gray)
                                 }

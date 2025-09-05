@@ -1,5 +1,5 @@
 //
-//  IconView.swift
+//  AppIconView.swift
 //  autosave
 //
 //  Created by Asia Michelle Serrano on 5/7/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct IconView: View {
+public struct AppIconView: View {
 
     private var iconName: AppIcon
     private var iconColor: Color
