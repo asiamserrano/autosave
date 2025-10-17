@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "release": {
+      "type": "integer"
+    },
+    "status": {
+      "type": "string"
+    },
+    "properties": {
+      "type": "object",
+      "properties": {
+        "series": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "developers": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "publishers": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "modes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "platforms": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "system": {
+                  "type": "string"
+                },
+                "format": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "system",
+                "format"
+              ]
+            }
+          ]
+        }
+      },
+      "required": [
+        "series",
+        "developers",
+        "publishers",
+        "modes",
+        "platforms"
+      ]
+    }
+  },
+  "required": [
+    "title",
+    "release",
+    "status",
+    "properties"
+  ]
+}

@@ -9,51 +9,19 @@
 /* Begin PBXBuildFile section */
 		1E639C822DCE4BE800E478BF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1E639C812DCE4BE800E478BF /* Assets.xcassets */; };
 		1E90FC102DCB17F600682C80 /* autosaveApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E90FC0B2DCB17F600682C80 /* autosaveApp.swift */; };
+		6277476B2EA28E200018B340 /* PRD_v1_1.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 627747692EA28E200018B340 /* PRD_v1_1.pdf */; };
+		6277476C2EA28E200018B340 /* autosaveAppUploadSchema.json in Resources */ = {isa = PBXBuildFile; fileRef = 627747682EA28E200018B340 /* autosaveAppUploadSchema.json */; };
+		6277476D2EA28E200018B340 /* PRD_v1_2_Addendum.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 6277476A2EA28E200018B340 /* PRD_v1_2_Addendum.pdf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		1E639C812DCE4BE800E478BF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1E90FBF92DCB170700682C80 /* autosave.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = autosave.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E90FC0B2DCB17F600682C80 /* autosaveApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = autosaveApp.swift; sourceTree = "<group>"; };
+		627747682EA28E200018B340 /* autosaveAppUploadSchema.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = autosaveAppUploadSchema.json; sourceTree = "<group>"; };
+		627747692EA28E200018B340 /* PRD_v1_1.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PRD_v1_1.pdf; sourceTree = "<group>"; };
+		6277476A2EA28E200018B340 /* PRD_v1_2_Addendum.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PRD_v1_2_Addendum.pdf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		1E639C872DCE4EC600E478BF /* Class */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Class;
-			sourceTree = "<group>";
-		};
-		1E639C8C2DCE4ECD00E478BF /* Enum */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Enum;
-			sourceTree = "<group>";
-		};
-		1E639C9E2DCE4ECF00E478BF /* Extension */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Extension;
-			sourceTree = "<group>";
-		};
-		1E639CAE2DCE4ED400E478BF /* Model */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Model;
-			sourceTree = "<group>";
-		};
-		1E639CB22DCE4ED700E478BF /* Protocol */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Protocol;
-			sourceTree = "<group>";
-		};
-		1E639CB82DCE4ED900E478BF /* Struct */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Struct;
-			sourceTree = "<group>";
-		};
-		1E639CC22DCE4EDB00E478BF /* View */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = View;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		1E90FBF62DCB170700682C80 /* Frameworks */ = {
@@ -78,6 +46,9 @@
 		1E639C842DCE4C2C00E478BF /* resources */ = {
 			isa = PBXGroup;
 			children = (
+				627747682EA28E200018B340 /* autosaveAppUploadSchema.json */,
+				627747692EA28E200018B340 /* PRD_v1_1.pdf */,
+				6277476A2EA28E200018B340 /* PRD_v1_2_Addendum.pdf */,
 				1E639C812DCE4BE800E478BF /* Assets.xcassets */,
 			);
 			path = resources;
@@ -87,13 +58,6 @@
 			isa = PBXGroup;
 			children = (
 				1E90FC0B2DCB17F600682C80 /* autosaveApp.swift */,
-				1E639C872DCE4EC600E478BF /* Class */,
-				1E639C8C2DCE4ECD00E478BF /* Enum */,
-				1E639C9E2DCE4ECF00E478BF /* Extension */,
-				1E639CAE2DCE4ED400E478BF /* Model */,
-				1E639CB22DCE4ED700E478BF /* Protocol */,
-				1E639CB82DCE4ED900E478BF /* Struct */,
-				1E639CC22DCE4EDB00E478BF /* View */,
 			);
 			path = swift;
 			sourceTree = "<group>";
@@ -136,15 +100,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				1E639C872DCE4EC600E478BF /* Class */,
-				1E639C8C2DCE4ECD00E478BF /* Enum */,
-				1E639C9E2DCE4ECF00E478BF /* Extension */,
-				1E639CAE2DCE4ED400E478BF /* Model */,
-				1E639CB22DCE4ED700E478BF /* Protocol */,
-				1E639CB82DCE4ED900E478BF /* Struct */,
-				1E639CC22DCE4EDB00E478BF /* View */,
 			);
 			name = autosave;
 			packageProductDependencies = (
@@ -193,6 +148,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6277476B2EA28E200018B340 /* PRD_v1_1.pdf in Resources */,
+				6277476C2EA28E200018B340 /* autosaveAppUploadSchema.json in Resources */,
+				6277476D2EA28E200018B340 /* PRD_v1_2_Addendum.pdf in Resources */,
 				1E639C822DCE4BE800E478BF /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
