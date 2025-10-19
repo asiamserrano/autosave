@@ -12,6 +12,28 @@
 		6277476B2EA28E200018B340 /* PRD_v1_1.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 627747692EA28E200018B340 /* PRD_v1_1.pdf */; };
 		6277476C2EA28E200018B340 /* autosaveAppUploadSchema.json in Resources */ = {isa = PBXBuildFile; fileRef = 627747682EA28E200018B340 /* autosaveAppUploadSchema.json */; };
 		6277476D2EA28E200018B340 /* PRD_v1_2_Addendum.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 6277476A2EA28E200018B340 /* PRD_v1_2_Addendum.pdf */; };
+		627747812EA28F050018B340 /* 01_Library.svg in Resources */ = {isa = PBXBuildFile; fileRef = 6277476E2EA28F050018B340 /* 01_Library.svg */; };
+		627747822EA28F050018B340 /* 02_Game_Detail.svg in Resources */ = {isa = PBXBuildFile; fileRef = 6277476F2EA28F050018B340 /* 02_Game_Detail.svg */; };
+		627747832EA28F050018B340 /* 06_Select_Items.svg in Resources */ = {isa = PBXBuildFile; fileRef = 6277477B2EA28F050018B340 /* 06_Select_Items.svg */; };
+		627747842EA28F050018B340 /* 08_Edit_Platform.svg in Resources */ = {isa = PBXBuildFile; fileRef = 6277477D2EA28F050018B340 /* 08_Edit_Platform.svg */; };
+		627747852EA28F050018B340 /* 05_Settings (1).svg in Resources */ = {isa = PBXBuildFile; fileRef = 627747792EA28F050018B340 /* 05_Settings (1).svg */; };
+		627747862EA28F050018B340 /* 05_Settings.svg in Resources */ = {isa = PBXBuildFile; fileRef = 627747732EA28F050018B340 /* 05_Settings.svg */; };
+		627747872EA28F050018B340 /* 07_Platforms_Manager.svg in Resources */ = {isa = PBXBuildFile; fileRef = 6277477C2EA28F050018B340 /* 07_Platforms_Manager.svg */; };
+		627747882EA28F050018B340 /* 09_Select_System.svg in Resources */ = {isa = PBXBuildFile; fileRef = 6277477E2EA28F050018B340 /* 09_Select_System.svg */; };
+		627747892EA28F050018B340 /* 04_Property_Manager (1).svg in Resources */ = {isa = PBXBuildFile; fileRef = 627747782EA28F050018B340 /* 04_Property_Manager (1).svg */; };
+		6277478A2EA28F050018B340 /* 03_Add_Edit_Game (1).svg in Resources */ = {isa = PBXBuildFile; fileRef = 627747772EA28F050018B340 /* 03_Add_Edit_Game (1).svg */; };
+		6277478B2EA28F050018B340 /* 01_Library (1).svg in Resources */ = {isa = PBXBuildFile; fileRef = 627747752EA28F050018B340 /* 01_Library (1).svg */; };
+		6277478C2EA28F050018B340 /* 03_Add_Edit_Game.svg in Resources */ = {isa = PBXBuildFile; fileRef = 627747702EA28F050018B340 /* 03_Add_Edit_Game.svg */; };
+		6277478D2EA28F050018B340 /* 10_Select_Format.svg in Resources */ = {isa = PBXBuildFile; fileRef = 6277477F2EA28F050018B340 /* 10_Select_Format.svg */; };
+		6277478E2EA28F050018B340 /* 03b_Add_Edit_Game_MultiSelect.svg in Resources */ = {isa = PBXBuildFile; fileRef = 627747712EA28F050018B340 /* 03b_Add_Edit_Game_MultiSelect.svg */; };
+		6277478F2EA28F050018B340 /* 02_Game_Detail (1).svg in Resources */ = {isa = PBXBuildFile; fileRef = 627747762EA28F050018B340 /* 02_Game_Detail (1).svg */; };
+		627747902EA28F050018B340 /* 04_Property_Manager.svg in Resources */ = {isa = PBXBuildFile; fileRef = 627747722EA28F050018B340 /* 04_Property_Manager.svg */; };
+		627747932EA28F5A0018B340 /* 01_Library.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627747922EA28F5A0018B340 /* 01_Library.swift */; };
+		627747962EA2901A0018B340 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627747952EA2901A0018B340 /* String.swift */; };
+		6277486B2EA294210018B340 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6277486A2EA294210018B340 /* Date.swift */; };
+		6277486D2EA2942F0018B340 /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6277486C2EA2942F0018B340 /* DateFormatter.swift */; };
+		6277486F2EA294470018B340 /* Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6277486E2EA294470018B340 /* Int.swift */; };
+		627748762EA296DA0018B340 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 627748752EA296DA0018B340 /* View.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +43,28 @@
 		627747682EA28E200018B340 /* autosaveAppUploadSchema.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = autosaveAppUploadSchema.json; sourceTree = "<group>"; };
 		627747692EA28E200018B340 /* PRD_v1_1.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PRD_v1_1.pdf; sourceTree = "<group>"; };
 		6277476A2EA28E200018B340 /* PRD_v1_2_Addendum.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PRD_v1_2_Addendum.pdf; sourceTree = "<group>"; };
+		6277476E2EA28F050018B340 /* 01_Library.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = 01_Library.svg; sourceTree = "<group>"; };
+		6277476F2EA28F050018B340 /* 02_Game_Detail.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = 02_Game_Detail.svg; sourceTree = "<group>"; };
+		627747702EA28F050018B340 /* 03_Add_Edit_Game.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = 03_Add_Edit_Game.svg; sourceTree = "<group>"; };
+		627747712EA28F050018B340 /* 03b_Add_Edit_Game_MultiSelect.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = 03b_Add_Edit_Game_MultiSelect.svg; sourceTree = "<group>"; };
+		627747722EA28F050018B340 /* 04_Property_Manager.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = 04_Property_Manager.svg; sourceTree = "<group>"; };
+		627747732EA28F050018B340 /* 05_Settings.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = 05_Settings.svg; sourceTree = "<group>"; };
+		627747752EA28F050018B340 /* 01_Library (1).svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = "01_Library (1).svg"; sourceTree = "<group>"; };
+		627747762EA28F050018B340 /* 02_Game_Detail (1).svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = "02_Game_Detail (1).svg"; sourceTree = "<group>"; };
+		627747772EA28F050018B340 /* 03_Add_Edit_Game (1).svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = "03_Add_Edit_Game (1).svg"; sourceTree = "<group>"; };
+		627747782EA28F050018B340 /* 04_Property_Manager (1).svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = "04_Property_Manager (1).svg"; sourceTree = "<group>"; };
+		627747792EA28F050018B340 /* 05_Settings (1).svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = "05_Settings (1).svg"; sourceTree = "<group>"; };
+		6277477B2EA28F050018B340 /* 06_Select_Items.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = 06_Select_Items.svg; sourceTree = "<group>"; };
+		6277477C2EA28F050018B340 /* 07_Platforms_Manager.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = 07_Platforms_Manager.svg; sourceTree = "<group>"; };
+		6277477D2EA28F050018B340 /* 08_Edit_Platform.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = 08_Edit_Platform.svg; sourceTree = "<group>"; };
+		6277477E2EA28F050018B340 /* 09_Select_System.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = 09_Select_System.svg; sourceTree = "<group>"; };
+		6277477F2EA28F050018B340 /* 10_Select_Format.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = 10_Select_Format.svg; sourceTree = "<group>"; };
+		627747922EA28F5A0018B340 /* 01_Library.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = 01_Library.swift; sourceTree = "<group>"; };
+		627747952EA2901A0018B340 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
+		6277486A2EA294210018B340 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
+		6277486C2EA2942F0018B340 /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
+		6277486E2EA294470018B340 /* Int.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Int.swift; sourceTree = "<group>"; };
+		627748752EA296DA0018B340 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,6 +90,9 @@
 		1E639C842DCE4C2C00E478BF /* resources */ = {
 			isa = PBXGroup;
 			children = (
+				627747742EA28F050018B340 /* wireframes v1.1 */,
+				6277477A2EA28F050018B340 /* wireframes v1.2 */,
+				627747802EA28F050018B340 /* wireframes v1.3 */,
 				627747682EA28E200018B340 /* autosaveAppUploadSchema.json */,
 				627747692EA28E200018B340 /* PRD_v1_1.pdf */,
 				6277476A2EA28E200018B340 /* PRD_v1_2_Addendum.pdf */,
@@ -58,6 +105,8 @@
 			isa = PBXGroup;
 			children = (
 				1E90FC0B2DCB17F600682C80 /* autosaveApp.swift */,
+				627747942EA290150018B340 /* Extensions */,
+				627747912EA28F430018B340 /* wireframes v1.1 */,
 			);
 			path = swift;
 			sourceTree = "<group>";
@@ -76,6 +125,63 @@
 				1E90FBF92DCB170700682C80 /* autosave.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		627747742EA28F050018B340 /* wireframes v1.1 */ = {
+			isa = PBXGroup;
+			children = (
+				6277476E2EA28F050018B340 /* 01_Library.svg */,
+				6277476F2EA28F050018B340 /* 02_Game_Detail.svg */,
+				627747702EA28F050018B340 /* 03_Add_Edit_Game.svg */,
+				627747712EA28F050018B340 /* 03b_Add_Edit_Game_MultiSelect.svg */,
+				627747722EA28F050018B340 /* 04_Property_Manager.svg */,
+				627747732EA28F050018B340 /* 05_Settings.svg */,
+			);
+			path = "wireframes v1.1";
+			sourceTree = "<group>";
+		};
+		6277477A2EA28F050018B340 /* wireframes v1.2 */ = {
+			isa = PBXGroup;
+			children = (
+				627747752EA28F050018B340 /* 01_Library (1).svg */,
+				627747762EA28F050018B340 /* 02_Game_Detail (1).svg */,
+				627747772EA28F050018B340 /* 03_Add_Edit_Game (1).svg */,
+				627747782EA28F050018B340 /* 04_Property_Manager (1).svg */,
+				627747792EA28F050018B340 /* 05_Settings (1).svg */,
+			);
+			path = "wireframes v1.2";
+			sourceTree = "<group>";
+		};
+		627747802EA28F050018B340 /* wireframes v1.3 */ = {
+			isa = PBXGroup;
+			children = (
+				6277477B2EA28F050018B340 /* 06_Select_Items.svg */,
+				6277477C2EA28F050018B340 /* 07_Platforms_Manager.svg */,
+				6277477D2EA28F050018B340 /* 08_Edit_Platform.svg */,
+				6277477E2EA28F050018B340 /* 09_Select_System.svg */,
+				6277477F2EA28F050018B340 /* 10_Select_Format.svg */,
+			);
+			path = "wireframes v1.3";
+			sourceTree = "<group>";
+		};
+		627747912EA28F430018B340 /* wireframes v1.1 */ = {
+			isa = PBXGroup;
+			children = (
+				627747922EA28F5A0018B340 /* 01_Library.swift */,
+			);
+			path = "wireframes v1.1";
+			sourceTree = "<group>";
+		};
+		627747942EA290150018B340 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				6277486A2EA294210018B340 /* Date.swift */,
+				6277486E2EA294470018B340 /* Int.swift */,
+				6277486C2EA2942F0018B340 /* DateFormatter.swift */,
+				627747952EA2901A0018B340 /* String.swift */,
+				627748752EA296DA0018B340 /* View.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		62C56B312DCBA88B00C68855 /* src */ = {
@@ -152,6 +258,22 @@
 				6277476C2EA28E200018B340 /* autosaveAppUploadSchema.json in Resources */,
 				6277476D2EA28E200018B340 /* PRD_v1_2_Addendum.pdf in Resources */,
 				1E639C822DCE4BE800E478BF /* Assets.xcassets in Resources */,
+				627747812EA28F050018B340 /* 01_Library.svg in Resources */,
+				627747822EA28F050018B340 /* 02_Game_Detail.svg in Resources */,
+				627747832EA28F050018B340 /* 06_Select_Items.svg in Resources */,
+				627747842EA28F050018B340 /* 08_Edit_Platform.svg in Resources */,
+				627747852EA28F050018B340 /* 05_Settings (1).svg in Resources */,
+				627747862EA28F050018B340 /* 05_Settings.svg in Resources */,
+				627747872EA28F050018B340 /* 07_Platforms_Manager.svg in Resources */,
+				627747882EA28F050018B340 /* 09_Select_System.svg in Resources */,
+				627747892EA28F050018B340 /* 04_Property_Manager (1).svg in Resources */,
+				6277478A2EA28F050018B340 /* 03_Add_Edit_Game (1).svg in Resources */,
+				6277478B2EA28F050018B340 /* 01_Library (1).svg in Resources */,
+				6277478C2EA28F050018B340 /* 03_Add_Edit_Game.svg in Resources */,
+				6277478D2EA28F050018B340 /* 10_Select_Format.svg in Resources */,
+				6277478E2EA28F050018B340 /* 03b_Add_Edit_Game_MultiSelect.svg in Resources */,
+				6277478F2EA28F050018B340 /* 02_Game_Detail (1).svg in Resources */,
+				627747902EA28F050018B340 /* 04_Property_Manager.svg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -162,7 +284,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				627748762EA296DA0018B340 /* View.swift in Sources */,
+				627747962EA2901A0018B340 /* String.swift in Sources */,
+				627747932EA28F5A0018B340 /* 01_Library.swift in Sources */,
 				1E90FC102DCB17F600682C80 /* autosaveApp.swift in Sources */,
+				6277486F2EA294470018B340 /* Int.swift in Sources */,
+				6277486B2EA294210018B340 /* Date.swift in Sources */,
+				6277486D2EA2942F0018B340 /* DateFormatter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
